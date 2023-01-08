@@ -4,6 +4,7 @@
       v-model="showLoginPopup"
       v-model:current-form="currentForm"
       :bg-style="backgroundStyle"
+      :login-captcha-required="false"
     />
   </div>
 </template>
