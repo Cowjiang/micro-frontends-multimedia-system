@@ -1,10 +1,12 @@
 <template>
   <v-overlay
     v-model="props.modelValue"
-    :style="{backdropFilter: `${props.modelValue ? 'blur(40px)' : 'unset'}`}"
+    attach
+    :style="{backdropFilter: `${props.modelValue ? 'blur(30px)' : 'unset'}`}"
   >
     <v-dialog
       v-model="props.modelValue"
+      attach
       persistent
       width="75vw"
       max-width="900"
@@ -253,6 +255,7 @@
       </div>
     </v-dialog>
   </v-overlay>
+
 </template>
 
 <script lang="ts" setup>
@@ -372,6 +375,7 @@
       loginForm.value?.validate().then(async (res: any) => {
         if (res.valid) {
           loginBtnLoading.value = true;
+          await router.push('/index');
           window?.$wujie?.bus.$emit('login', loginFormValue);
           const res = await loginApi({
             username: loginFormValue.account,

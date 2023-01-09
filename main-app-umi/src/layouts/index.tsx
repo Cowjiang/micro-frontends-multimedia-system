@@ -1,5 +1,6 @@
 import { Outlet, useModel } from '@@/exports';
 import { Spin } from 'antd';
+import React from 'react';
 
 export default () => {
   const {loading} = useModel('global');

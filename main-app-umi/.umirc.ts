@@ -16,8 +16,13 @@ export default defineConfig({
       component: './index',
     },
     {
-      title: '登录页',
+      title: '登录',
       path: '/login',
+      component: './login',
+    },
+    {
+      title: '注册',
+      path: '/register',
       component: './login',
     },
     {

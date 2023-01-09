@@ -1,10 +1,12 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import Login from '@/views/login/index.vue'
+import Login from '@/views/login/index.vue';
+import Default from '@/layouts/default/Default.vue';
+import Index from '@/views/index/index.vue';
 
-const routes: RouteRecordRaw[] = [
+export const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    component: () => import('@/layouts/default/Default.vue'),
+    component: () => Default,
     children: [
       {
         path: '',
@@ -20,6 +22,10 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/login',
     component: Login
+  },
+  {
+    path: '/index',
+    component: Index
   }
 ];
 

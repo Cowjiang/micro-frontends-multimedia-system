@@ -28,3 +28,11 @@ $content-nav-bg-color: #edeef0;
     transition: color .2s ease;
   }
 }
+
+html {
+  overflow-y: auto !important;
+}
+
+body {
+  position: relative;
+}

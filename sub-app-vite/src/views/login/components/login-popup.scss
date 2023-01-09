@@ -4,12 +4,8 @@ $popup-max-height: 580;
 $form-max-width: 57%;
 $custom-color: var(--custom-color, #fff);
 
-::v-deep(.v-dialog) {
-  border-radius: 0.8em;
-}
-
-::v-deep(.v-overlay__scrim) {
-  backdrop-filter: blur(50px);
+::v-deep(.v-overlay__content) {
+  contain: unset;
 }
 
 ::v-deep(.login-popup-container) {
