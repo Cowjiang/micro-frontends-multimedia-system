@@ -7,7 +7,6 @@
     <v-dialog
       v-model="props.modelValue"
       attach
-      persistent
       width="75vw"
       max-width="900"
       hide-overlay

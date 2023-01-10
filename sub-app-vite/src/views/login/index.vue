@@ -14,6 +14,8 @@
   import { FormType } from '@/views/login/components/typings';
   import type * as CSS from 'csstype';
 
+  const router = useRouter()
+
   const showLoginPopup = ref(false);
   const currentForm = ref<FormType>(FormType.LOGIN);
   const backgroundStyle = ref<CSS.Properties>({
@@ -29,6 +31,24 @@
     showLoginPopup.value = true;
     // }, 500);
   });
+
+  watch(
+    () => router.currentRoute.value,
+    (nval) => {
+      nval.path.includes('login') && (currentForm.value = FormType.LOGIN)
+      nval.path.includes('register') && (currentForm.value = FormType.REGISTER)
+    },
+    {immediate: true}
+  );
+
+  watch(
+    () => currentForm.value,
+    (nval) => {
+      window?.$wujie?.bus.$emit('loginFormTypeChange', nval);
+      currentForm.value === FormType.LOGIN && router.push('/login')
+      currentForm.value === FormType.REGISTER && router.push('/register')
+    }
+  );
 </script>
 
 <style lang="scss" scoped>

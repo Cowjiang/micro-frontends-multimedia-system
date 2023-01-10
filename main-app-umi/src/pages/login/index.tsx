@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
+import { history } from '@@/exports';
 import WujieReact from 'wujie-react';
 import { useLocation, useNavigate } from '@@/exports';
 import NProgress from 'nprogress';
@@ -13,6 +14,14 @@ export default function Page() {
     // navigate('../register', {replace: true});
   });
 
+  bus.$on('loginFormTypeChange', (loginFormType: number) => {
+    if (loginFormType === 1) {
+      navigate('../register', {replace: false});
+    } else {
+      navigate('../login', {replace: false});
+    }
+  })
+
   const pathName = useMemo(() => pathname, [pathname]);
 
   return (
@@ -21,12 +30,9 @@ export default function Page() {
         width="100%"
         height="100%"
         name="vite"
-        url="http://localhost:3000/login"
-        alive={false}
+        url={`http://localhost:3000${pathName}`}
+        alive={true}
         sync={false}
-        // props={{
-        //   formType: pathName === '/register' ? 1 : 0
-        // }}
         afterMount={() => {
           NProgress.done();
         }}

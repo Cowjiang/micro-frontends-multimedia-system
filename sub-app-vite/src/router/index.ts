@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import Login from '@/views/login/index.vue';
 import Default from '@/layouts/default/Default.vue';
-import Index from '@/views/index/index.vue';
 
 export const routes: RouteRecordRaw[] = [
   {
@@ -24,8 +23,8 @@ export const routes: RouteRecordRaw[] = [
     component: Login
   },
   {
-    path: '/index',
-    component: Index
+    path: '/register',
+    component: Login
   }
 ];
 
