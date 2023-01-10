@@ -13,7 +13,7 @@ $custom-color: var(--custom-color, #fff);
   height: #{$popup-max-height}px;
   display: flex;
   flex-direction: row;
-  background-color: #fff;
+  background-color: rgb(var(--v-theme-background));
 
   .left-content {
     width: 100%;
@@ -26,7 +26,7 @@ $custom-color: var(--custom-color, #fff);
     height: 100%;
     flex-shrink: 0;
     padding: 40px 60px;
-    background-color: #fff;
+    background-color: rgb(var(--v-theme-background));
 
     .login-form, .register-form {
       padding: 0 20px;
@@ -37,19 +37,21 @@ $custom-color: var(--custom-color, #fff);
 
         span {
           font-size: 13px;
-          color: #555;
+          color: rgba(var(--v-theme-on-background), var(--v-high-emphasis-opacity));
+          opacity: var(--v-medium-emphasis-opacity);
         }
 
         .change-btn {
           cursor: pointer;
           color: $custom-color;
+          opacity: 1;
         }
       }
 
       .form-title {
         margin-top: 30px;
         font-size: 32px;
-        color: #333;
+        color: rgb(var(--v-theme-surface-variant));
       }
     }
 
@@ -207,7 +209,7 @@ $custom-color: var(--custom-color, #fff);
     }
   }
 
-  @media screen and (max-width: 900px) {
+  @media screen and (max-width: 800px) {
     width: #{$popup-min-width-percent}vw;
 
     .left-content {
