@@ -1,5 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
-import { history } from '@@/exports';
+import React, { useEffect } from 'react';
 import WujieReact from 'wujie-react';
 import { useLocation, useNavigate } from '@@/exports';
 import NProgress from 'nprogress';
@@ -9,20 +8,27 @@ export default function Page() {
   const {pathname} = useLocation();
 
   const {bus} = WujieReact;
-  bus.$on('login', (res: any) => {
+
+  const handleLoginSuccess = (res: any) => {
     console.log(res);
-    // navigate('../register', {replace: true});
-  });
+  };
 
-  bus.$on('loginFormTypeChange', (loginFormType: number) => {
-    if (loginFormType === 1) {
-      navigate('../register', {replace: false});
-    } else {
-      navigate('../login', {replace: false});
-    }
-  })
+  useEffect(() => {
+    const handleLoginFormTypeChange = (loginFormType: number) => {
+      navigate(loginFormType === 1 ? '../register' : '../login', {replace: true});
+    };
 
-  const pathName = useMemo(() => pathname, [pathname]);
+    bus.$on('loginSuccess', handleLoginSuccess);
+    bus.$on('loginFormTypeChange', handleLoginFormTypeChange);
+    return () => {
+      bus.$off('loginFormTypeChange', handleLoginFormTypeChange);
+      bus.$off('loginSuccess', handleLoginSuccess);
+    };
+  }, []);
+
+  useEffect(() => {
+    bus.$emit('loginFormTypeChange', pathname === '/register' ? 1 : 0);
+  }, [pathname]);
 
   return (
     <div>
@@ -30,7 +36,7 @@ export default function Page() {
         width="100%"
         height="100%"
         name="vite"
-        url={`http://localhost:3000${pathName}`}
+        url={`http://localhost:3000${pathname}`}
         alive={true}
         sync={false}
         afterMount={() => {

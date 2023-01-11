@@ -1,34 +1,29 @@
 import { defineConfig } from '@umijs/max';
 
 export default defineConfig({
-  locale: { antd: true },
+  locale: {antd: true},
   access: {},
   model: {},
   initialState: {},
   request: {},
-  proxy: {
-
-  },
+  proxy: {},
   routes: [
     {
-      title: '主应用首页',
       path: '/index',
-      component: './index',
-    },
-    {
-      title: '登录',
-      path: '/login',
-      component: './login',
-    },
-    {
-      title: '注册',
-      path: '/register',
-      component: './login',
+      component: './index'
     },
     {
       path: '/',
       redirect: '/index'
-    }
+    },
+    {
+      path: '',
+      component: '@/pages/login/index',
+      routes: [
+        {path: '/login', component: '@/pages/login/index'},
+        {path: '/register', component: '@/pages/login/index'}
+      ]
+    },
   ],
   npmClient: 'pnpm',
   tailwindcss: {}

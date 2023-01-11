@@ -34,6 +34,7 @@ $custom-color: var(--custom-color, #fff);
       .change-form {
         width: 100%;
         text-align: right;
+        user-select: none;
 
         span {
           font-size: 13px;

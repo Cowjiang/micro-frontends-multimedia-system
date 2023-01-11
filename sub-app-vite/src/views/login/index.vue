@@ -14,7 +14,7 @@
   import { FormType } from '@/views/login/components/typings';
   import type * as CSS from 'csstype';
 
-  const router = useRouter()
+  const router = useRouter();
 
   const showLoginPopup = ref(false);
   const currentForm = ref<FormType>(FormType.LOGIN);
@@ -26,17 +26,24 @@
     backgroundPosition: 'center'
   });
 
+  const handleLoginFormTypeChange = (formType: FormType) => {
+    currentForm.value = formType;
+  };
+
   onMounted(() => {
-    // setTimeout(() => {
     showLoginPopup.value = true;
-    // }, 500);
+    window?.$wujie?.bus.$on('loginFormTypeChange', handleLoginFormTypeChange);
+  });
+
+  onUnmounted(() => {
+    window?.$wujie?.bus.$off('loginFormTypeChange', handleLoginFormTypeChange);
   });
 
   watch(
     () => router.currentRoute.value,
     (nval) => {
-      nval.path.includes('login') && (currentForm.value = FormType.LOGIN)
-      nval.path.includes('register') && (currentForm.value = FormType.REGISTER)
+      nval.path.includes('login') && (currentForm.value = FormType.LOGIN);
+      nval.path.includes('register') && (currentForm.value = FormType.REGISTER);
     },
     {immediate: true}
   );
@@ -45,8 +52,8 @@
     () => currentForm.value,
     (nval) => {
       window?.$wujie?.bus.$emit('loginFormTypeChange', nval);
-      currentForm.value === FormType.LOGIN && router.push('/login')
-      currentForm.value === FormType.REGISTER && router.push('/register')
+      currentForm.value === FormType.LOGIN && router.replace('/login');
+      currentForm.value === FormType.REGISTER && router.replace('/register');
     }
   );
 </script>
