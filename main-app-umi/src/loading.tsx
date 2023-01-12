@@ -4,18 +4,16 @@ import 'nprogress/nprogress.css';
 import '@/loading.less';
 import { useLocation } from '@@/exports';
 
-function PageLoading() {
+export default function PageLoading() {
   const {pathname} = useLocation();
 
   useEffect(() => {
     NProgress.start();
     return () => {
-      if (!['login', 'register'].includes(pathname)) {
+      if (!['login', 'register'].filter(v => pathname.includes(v)).length) {
         NProgress.done();
       }
     };
   }, []);
   return <></>;
-}
-
-export default PageLoading;
+};

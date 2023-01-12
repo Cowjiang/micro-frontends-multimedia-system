@@ -4,7 +4,6 @@ import { useLocation, useNavigate } from '@@/exports';
 import NProgress from 'nprogress';
 import { FormType, LoginPageState } from '@/pages/login/typings';
 
-
 export default function Page() {
   const navigate = useNavigate();
   const {pathname, state} = useLocation();
@@ -54,7 +53,7 @@ export default function Page() {
         url={`http://localhost:3000${pathname}`}
         alive={true}
         sync={false}
-        afterMount={() => NProgress.done()}
+        beforeMount={() => NProgress.done()}
       />
     </div>
   );
