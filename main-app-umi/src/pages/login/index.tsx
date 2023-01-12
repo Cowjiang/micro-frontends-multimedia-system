@@ -2,27 +2,42 @@ import React, { useEffect } from 'react';
 import WujieReact from 'wujie-react';
 import { useLocation, useNavigate } from '@@/exports';
 import NProgress from 'nprogress';
+import { FormType, LoginPageState } from '@/pages/login/typings';
+
 
 export default function Page() {
   const navigate = useNavigate();
-  const {pathname} = useLocation();
+  const {pathname, state} = useLocation();
+  const {bus, destroyApp} = WujieReact;
 
-  const {bus} = WujieReact;
+  // 重定向至上一页或首页
+  const redirectToPrePage = () => {
+    const redirectPath = (state as LoginPageState)?.from ?? '../index';
+    navigate(redirectPath, {replace: true});
+  };
 
+  // 子应用登陆成功
   const handleLoginSuccess = (res: any) => {
     console.log(res);
+    redirectToPrePage();
+  };
+
+  // 子应用切换登录/注册
+  const handleLoginFormTypeChange = (loginFormType: number) => {
+    navigate(loginFormType === FormType.REGISTER ? '/register' : '/login', {replace: true});
   };
 
   useEffect(() => {
-    const handleLoginFormTypeChange = (loginFormType: number) => {
-      navigate(loginFormType === 1 ? '../register' : '../login', {replace: true});
-    };
-
+    if (sessionStorage.getItem('TOKEN')) {
+      // 已登录验证
+      redirectToPrePage();
+    }
     bus.$on('loginSuccess', handleLoginSuccess);
     bus.$on('loginFormTypeChange', handleLoginFormTypeChange);
     return () => {
       bus.$off('loginFormTypeChange', handleLoginFormTypeChange);
       bus.$off('loginSuccess', handleLoginSuccess);
+      destroyApp('vite');
     };
   }, []);
 
@@ -39,9 +54,7 @@ export default function Page() {
         url={`http://localhost:3000${pathname}`}
         alive={true}
         sync={false}
-        afterMount={() => {
-          NProgress.done();
-        }}
+        afterMount={() => NProgress.done()}
       />
     </div>
   );

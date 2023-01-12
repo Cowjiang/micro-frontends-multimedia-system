@@ -3,10 +3,14 @@ import { Button } from 'antd';
 import { useNavigate } from '@@/exports';
 
 const IndexPage: React.FC = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const gotoLogin = () => {
-    navigate("../login");
-  }
+    navigate('../login', {
+      state: {
+        from: '/index'
+      }
+    });
+  };
 
   return (
     <div className="w-screen h-screen flex justify-center items-center">

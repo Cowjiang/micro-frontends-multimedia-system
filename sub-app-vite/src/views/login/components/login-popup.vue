@@ -375,8 +375,7 @@
       loginForm.value?.validate().then(async (res: any) => {
         if (res.valid) {
           loginBtnLoading.value = true;
-          await router.push('/index');
-          window?.$wujie?.bus.$emit('login', loginFormValue);
+          window?.$wujie?.bus.$emit('loginSuccess', loginFormValue);
           const res = await loginApi({
             username: loginFormValue.account,
             password: loginFormValue.password,

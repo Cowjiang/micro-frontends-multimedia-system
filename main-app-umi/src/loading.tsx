@@ -5,12 +5,12 @@ import '@/loading.less';
 import { useLocation } from '@@/exports';
 
 function PageLoading() {
-  const {pathname} = useLocation()
+  const {pathname} = useLocation();
 
   useEffect(() => {
     NProgress.start();
     return () => {
-      if (!['/login', 'register'].includes(pathname)) {
+      if (!['login', 'register'].includes(pathname)) {
         NProgress.done();
       }
     };
