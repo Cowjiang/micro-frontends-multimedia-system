@@ -50,7 +50,7 @@ export default function Page() {
         name="vite"
         width="100vw"
         height="100vh"
-        url={`http://localhost:3000${pathname}`}
+        url={`http://localhost:3001${pathname}`}
         alive={true}
         sync={false}
         beforeLoad={() => NProgress.start()}

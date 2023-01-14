@@ -1,12 +1,12 @@
 // 运行时配置
 import React, { ReactElement } from 'react';
 import { StyleProvider, legacyLogicalPropertiesTransformer } from '@ant-design/cssinjs';
-import { RequestConfig, AxiosResponse } from '@@/plugin-request/request';
 import dayjs from 'dayjs';
 import isoWeekPlugin from 'dayjs/plugin/isoWeek';
 import weekOfYearPlugin from 'dayjs/plugin/weekOfYear';
 import isoWeeksInYearPlugin from 'dayjs/plugin/isoWeeksInYear';
 import isLeapYearPlugin from 'dayjs/plugin/isLeapYear';
+import { requestConfig } from '@/services';
 
 dayjs.extend(isoWeekPlugin);
 dayjs.extend(isoWeeksInYearPlugin);
@@ -39,34 +39,4 @@ export function rootContainer(container: ReactElement): React.FunctionComponentE
 //   };
 // };
 
-export const request: RequestConfig = {
-  // timeout: 1000,
-  // headers: {'X-Requested-With': 'XMLHttpRequest'},
-  requestInterceptors: [
-    (url, options) => {
-      // console.log(url, options);
-      const token = localStorage.getItem('token') ?? '';
-      if (token) {
-        options.headers['Authorization'] = token;
-      }
-      if (['post', 'put'].includes(options.method.toLowerCase())) {
-        options.headers['Content-Type'] = 'application/json';
-      }
-      return {url, options};
-    }
-  ],
-  responseInterceptors: [
-    (response: AxiosResponse<any>) => {
-      const {data: resData} = response;
-      // if(!resData.success){
-      //   console.error('请求失败！');
-      // }
-      const data = resData?.data ?? null;
-      if (data?.token) {
-        localStorage.setItem('token', data.token);
-      }
-      // console.log(resData)
-      return response;
-    }
-  ]
-};
+export const request = requestConfig;

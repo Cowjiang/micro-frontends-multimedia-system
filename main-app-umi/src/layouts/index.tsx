@@ -1,7 +1,7 @@
 import { Outlet, useAppData, useLocation, useModel } from '@@/exports';
-import { Spin } from 'antd';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useSetDocTitle } from '@/utils/hooks';
+import Loading from '@/components/loading';
 
 export default () => {
   const {loading} = useModel('global');
@@ -11,12 +11,12 @@ export default () => {
   useSetDocTitle(title);
 
   return (
-    <Spin
+    <Loading
       spinning={loading}
       size="large"
-      className="!h-screen !max-h-screen"
+      className="!h-screen !max-h-screen bg-white"
     >
       <Outlet />
-    </Spin>
+    </Loading>
   );
 };
