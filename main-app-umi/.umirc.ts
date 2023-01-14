@@ -10,7 +10,8 @@ export default defineConfig({
   routes: [
     {
       path: '/index',
-      component: './index'
+      component: './index',
+      title: '首页'
     },
     {
       path: '/',
@@ -20,10 +21,10 @@ export default defineConfig({
       path: '',
       component: '@/pages/login/index',
       routes: [
-        {path: '/login', component: '@/pages/login/index'},
-        {path: '/register', component: '@/pages/login/index'}
+        {path: '/login', component: '@/pages/login/index', title: '账户登录'},
+        {path: '/register', component: '@/pages/login/index', title: '新用户注册'}
       ]
-    },
+    }
   ],
   npmClient: 'pnpm',
   tailwindcss: {}

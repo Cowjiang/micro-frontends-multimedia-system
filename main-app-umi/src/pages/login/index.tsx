@@ -11,7 +11,7 @@ export default function Page() {
 
   // 重定向至上一页或首页
   const redirectToPrePage = () => {
-    const redirectPath = (state as LoginPageState)?.from ?? '../index';
+    const redirectPath = (state as LoginPageState)?.from ?? '/index';
     navigate(redirectPath, {replace: true});
   };
 
@@ -47,13 +47,15 @@ export default function Page() {
   return (
     <div>
       <WujieReact
-        width="100%"
-        height="100%"
         name="vite"
+        width="100vw"
+        height="100vh"
         url={`http://localhost:3000${pathname}`}
         alive={true}
         sync={false}
+        beforeLoad={() => NProgress.start()}
         beforeMount={() => NProgress.done()}
+        loadError={() => NProgress.done()}
       />
     </div>
   );

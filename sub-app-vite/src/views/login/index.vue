@@ -1,5 +1,5 @@
 <template>
-  <div class="custom-container" :style="backgroundStyle">
+  <div class="w-screen h-100" :style="backgroundStyle">
     <login-popup
       v-model="showLoginPopup"
       v-model:current-form="currentForm"
@@ -58,10 +58,4 @@
   );
 </script>
 
-<style lang="scss" scoped>
-  .custom-container {
-    width: 100vw;
-    height: 100%;
-    box-sizing: border-box;
-  }
-</style>
+<style lang="scss" scoped></style>
