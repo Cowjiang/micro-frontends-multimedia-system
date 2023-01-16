@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import WujieReact from 'wujie-react';
-import { useLocation, useNavigate } from '@@/exports';
+import { useLocation, useModel, useNavigate } from '@@/exports';
 import NProgress from 'nprogress';
 import { FormType, LoginPageState } from '@/pages/login/typings';
 
@@ -44,19 +44,34 @@ export default function Page() {
     bus.$emit('loginFormTypeChange', pathname === '/register' ? 1 : 0);
   }, [pathname]);
 
+  const {setLoading} = useModel('global');
+
+  const wujieInstance = useMemo(() => (
+    <WujieReact
+      name="vite"
+      width="100vw"
+      height="100vh"
+      url={`http://localhost:3000${pathname}`}
+      alive={true}
+      sync={false}
+      beforeLoad={() => {
+        NProgress.start();
+        setLoading(true);
+      }}
+      beforeMount={() => {
+        NProgress.done();
+        setLoading(false);
+      }}
+      loadError={() => {
+        NProgress.done();
+        setLoading(false);
+      }}
+    />
+  ), [pathname]);
+
   return (
     <div>
-      <WujieReact
-        name="vite"
-        width="100vw"
-        height="100vh"
-        url={`http://localhost:3001${pathname}`}
-        alive={true}
-        sync={false}
-        beforeLoad={() => NProgress.start()}
-        beforeMount={() => NProgress.done()}
-        loadError={() => NProgress.done()}
-      />
+      {wujieInstance}
     </div>
   );
 }

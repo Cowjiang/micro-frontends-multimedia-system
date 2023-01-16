@@ -6,3 +6,21 @@ body {
 :root {
   --primary-color: #1890ff;
 }
+
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 0;
+}
+
+::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 5px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  cursor: pointer;
+  border-radius: 5px;
+  background: #ccc;
+  transition: color .2s ease;
+}
