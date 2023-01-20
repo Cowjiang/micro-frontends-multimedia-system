@@ -1,5 +1,6 @@
+import React, { useEffect } from 'react';
 import { Outlet, useAppData, useLocation, useModel } from '@@/exports';
-import React from 'react';
+import { ConfigProvider, Layout, message, theme } from 'antd';
 import { useSetDocTitle } from '@/utils/hooks';
 import Loading from '@/components/loading';
 
@@ -10,13 +11,34 @@ export default () => {
   const title = (Object.values(routes).find(({path}) => path?.includes(pathname)) as any)?.title ?? '';
   useSetDocTitle(title);
 
+  const [messageApi, contextHolder] = message.useMessage();
+  const {setMessageApi} = useModel('messageApi');
+  useEffect(() => {
+    setMessageApi(messageApi);
+    // message.success('成功')
+  }, []);
+
+  const {darkTheme} = useModel('theme');
+
   return (
-    <Loading
-      spinning={loading}
-      size="large"
-      className="!h-screen !max-h-screen bg-white"
+    <ConfigProvider
+      theme={{
+        token: {
+          // colorPrimary: '#00b96b'
+        },
+        algorithm: darkTheme ? theme.darkAlgorithm : theme.defaultAlgorithm
+      }}
     >
-      <Outlet />
-    </Loading>
+      <Layout>
+        <Loading
+          spinning={loading}
+          size="large"
+          className="!h-screen !max-h-screen bg-white"
+        >
+          {contextHolder}
+          <Outlet />
+        </Loading>
+      </Layout>
+    </ConfigProvider>
   );
 };

@@ -3,6 +3,7 @@ import WujieReact from 'wujie-react';
 import { useLocation, useModel, useNavigate } from '@@/exports';
 import NProgress from 'nprogress';
 import { FormType, LoginPageState } from '@/pages/login/typings';
+import { Modal } from 'antd';
 
 export default function Page() {
   const navigate = useNavigate();
@@ -45,6 +46,8 @@ export default function Page() {
   }, [pathname]);
 
   const {setLoading} = useModel('global');
+  const {messageApi} = useModel('messageApi');
+  const [modal, contextHolder] = Modal.useModal();
 
   const wujieInstance = useMemo(() => (
     <WujieReact
@@ -63,8 +66,14 @@ export default function Page() {
         setLoading(false);
       }}
       loadError={() => {
+        // messageApi.error('加载失败')
         NProgress.done();
         setLoading(false);
+        modal.error({
+          centered: true,
+          title: '服务加载失败',
+          content: '请检查网络连接或联系管理员'
+        });
       }}
     />
   ), [pathname]);
@@ -72,6 +81,7 @@ export default function Page() {
   return (
     <div>
       {wujieInstance}
+      {contextHolder}
     </div>
   );
 }
