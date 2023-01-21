@@ -1,5 +1,5 @@
 <template>
-  <v-theme-provider theme="light">
+  <v-theme-provider :theme="dark ? 'dark' : 'light'">
     <v-app>
       <router-view />
     </v-app>
@@ -10,6 +10,8 @@
   import router from '@/router';
 
   window.$wujie?.bus.$on('vite-router-change', (path: string) => router.push(path));
+
+  const dark = useStorage('dark', false);
 
   // onMounted(() => {
   //   window.$wujie?.bus.$on('vite-router-change', (path: string) => router.push(path));

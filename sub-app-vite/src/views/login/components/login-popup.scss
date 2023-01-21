@@ -8,6 +8,10 @@ $custom-color: var(--custom-color, #fff);
   contain: unset;
 }
 
+::v-deep(.v-overlay__scrim) {
+  background: #000000;
+}
+
 ::v-deep(.login-popup-container) {
   width: #{$popup-max-width}px;
   height: #{$popup-max-height}px;
