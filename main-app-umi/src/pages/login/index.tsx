@@ -75,9 +75,7 @@ export default function Page() {
           content: '请检查网络连接或联系管理员',
           keyboard: false,
           okText: '返回',
-          onOk: () => {
-            navigate(-1);
-          }
+          onOk: redirectToPrePage
         });
       }}
     />

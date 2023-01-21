@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Outlet, useAppData, useLocation, useModel, useSearchParams } from '@@/exports';
+import React, { useEffect, useMemo } from 'react';
+import { Outlet, useAppData, useLocation, useModel } from '@@/exports';
 import { ConfigProvider, Layout, message, theme } from 'antd';
 import { useSetDocTitle } from '@/utils/hooks';
 import Loading from '@/components/loading';
@@ -10,8 +10,6 @@ export default () => {
   const {routes} = useAppData();
   const title = (Object.values(routes).find(({path}) => path?.includes(pathname)) as any)?.title ?? '';
   useSetDocTitle(title);
-  const [searchParams, setSearchParams] = useSearchParams();
-  console.log(searchParams.get('theme'));
 
   const [messageApi, contextHolder] = message.useMessage();
   const {setMessageApi} = useModel('messageApi');
@@ -21,6 +19,11 @@ export default () => {
   }, []);
 
   const {darkTheme} = useModel('theme');
+  const {defaultAlgorithm, darkAlgorithm, defaultSeed} = theme;
+  const {colorBgContainer} = useMemo(
+    () => darkTheme ? darkAlgorithm(defaultSeed) : defaultAlgorithm(defaultSeed),
+    [darkTheme]
+  );
 
   return (
     <ConfigProvider
@@ -31,7 +34,7 @@ export default () => {
         algorithm: darkTheme ? theme.darkAlgorithm : theme.defaultAlgorithm
       }}
     >
-      <Layout>
+      <Layout style={{background: colorBgContainer}}>
         <Loading
           spinning={loading}
           size="large"

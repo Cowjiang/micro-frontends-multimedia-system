@@ -1,6 +1,7 @@
 import React from 'react';
-import { Button, Space } from 'antd';
+import { Button, Space, Switch } from 'antd';
 import { useModel, useNavigate } from '@@/exports';
+
 
 const IndexPage: React.FC = () => {
   const navigate = useNavigate();
@@ -22,8 +23,8 @@ const IndexPage: React.FC = () => {
   };
 
   const {darkTheme, setDarkTheme} = useModel('theme');
-  const switchTheme = () => {
-    setDarkTheme(!darkTheme);
+  const switchTheme = (checked: boolean) => {
+    setDarkTheme(checked);
   };
 
   return (
@@ -31,23 +32,21 @@ const IndexPage: React.FC = () => {
       <Space>
         <Button
           type="primary"
-          size="large"
           onClick={() => gotoLogin()}
         >
           跳转登录页
         </Button>
         <Button
-          size="large"
           onClick={() => showMessage()}
         >
           全局消息提醒
         </Button>
-        <Button
-          size="large"
-          onClick={() => switchTheme()}
-        >
-          黑暗模式切换
-        </Button>
+        <Switch
+          checkedChildren="暗黑"
+          unCheckedChildren="浅色"
+          defaultChecked={darkTheme}
+          onChange={switchTheme}
+        />
       </Space>
     </div>
   );
