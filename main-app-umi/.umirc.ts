@@ -24,6 +24,10 @@ export default defineConfig({
         {path: '/login', component: '@/pages/login/index', title: '账户登录'},
         {path: '/register', component: '@/pages/login/index', title: '新用户注册'}
       ]
+    },
+    {
+      path: '/*',
+      redirect: '/index'
     }
   ],
   npmClient: 'pnpm',

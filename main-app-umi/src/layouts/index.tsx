@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import { Outlet, useAppData, useLocation, useModel } from '@@/exports';
+import { Outlet, useAppData, useLocation, useModel, useSearchParams } from '@@/exports';
 import { ConfigProvider, Layout, message, theme } from 'antd';
 import { useSetDocTitle } from '@/utils/hooks';
 import Loading from '@/components/loading';

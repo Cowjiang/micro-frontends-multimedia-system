@@ -1,7 +1,21 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useLocalStorageState } from 'ahooks';
 
 export default () => {
-  const [darkTheme, setDarkTheme] = useState(false);
+  const [dark, setDark] = useLocalStorageState<boolean | undefined>(
+    'dark',
+    {
+      defaultValue: false
+    }
+  );
+  const [darkTheme, setDarkTheme] = useState(dark);
+
+  useEffect(() => {
+    if (darkTheme !== dark) {
+      setDark(darkTheme);
+    }
+  }, [darkTheme]);
+
   return {
     darkTheme,
     setDarkTheme

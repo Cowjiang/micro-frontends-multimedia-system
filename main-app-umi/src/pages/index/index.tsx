@@ -6,7 +6,7 @@ import { useModel, useNavigate } from '@@/exports';
 const IndexPage: React.FC = () => {
   const navigate = useNavigate();
   const gotoLogin = () => {
-    navigate('../login', {
+    navigate('/login', {
       state: {
         from: '/index'
       }
