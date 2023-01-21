@@ -72,7 +72,12 @@ export default function Page() {
         modal.error({
           centered: true,
           title: '服务加载失败',
-          content: '请检查网络连接或联系管理员'
+          content: '请检查网络连接或联系管理员',
+          keyboard: false,
+          okText: '返回',
+          onOk: () => {
+            navigate(-1);
+          }
         });
       }}
     />

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Outlet, useAppData, useLocation, useModel } from '@@/exports';
+import { Outlet, useAppData, useLocation, useModel, useSearchParams } from '@@/exports';
 import { ConfigProvider, Layout, message, theme } from 'antd';
 import { useSetDocTitle } from '@/utils/hooks';
 import Loading from '@/components/loading';
@@ -10,6 +10,8 @@ export default () => {
   const {routes} = useAppData();
   const title = (Object.values(routes).find(({path}) => path?.includes(pathname)) as any)?.title ?? '';
   useSetDocTitle(title);
+  const [searchParams, setSearchParams] = useSearchParams();
+  console.log(searchParams.get('theme'));
 
   const [messageApi, contextHolder] = message.useMessage();
   const {setMessageApi} = useModel('messageApi');
@@ -33,7 +35,7 @@ export default () => {
         <Loading
           spinning={loading}
           size="large"
-          className="!h-screen !max-h-screen bg-white"
+          className="!h-screen !max-h-screen"
         >
           {contextHolder}
           <Outlet />
