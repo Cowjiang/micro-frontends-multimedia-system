@@ -24,7 +24,15 @@ export default function Page() {
 
   // 子应用切换登录/注册
   const handleLoginFormTypeChange = (loginFormType: number) => {
-    navigate(loginFormType === FormType.REGISTER ? '/register' : '/login', {replace: true});
+    navigate(
+      loginFormType === FormType.REGISTER ? '/register' : '/login',
+      {
+        state: {
+          from: (state as LoginPageState)?.from ?? '/index'
+        },
+        replace: true
+      }
+    );
   };
 
   useEffect(() => {
@@ -37,12 +45,16 @@ export default function Page() {
     return () => {
       bus.$off('loginFormTypeChange', handleLoginFormTypeChange);
       bus.$off('loginSuccess', handleLoginSuccess);
-      destroyApp('vite');
+      // destroyApp('vite');
     };
   }, []);
 
   useEffect(() => {
-    bus.$emit('loginFormTypeChange', pathname === '/register' ? 1 : 0);
+    bus.$emit('loginFormTypeChange', pathname === '/register' ? FormType.REGISTER : FormType.LOGIN);
+    if (!(state as LoginPageState)?.from && pathname === '/register') {
+      handleLoginFormTypeChange(FormType.LOGIN);
+      location.reload();
+    }
   }, [pathname]);
 
   const {setLoading} = useModel('global');
@@ -55,7 +67,7 @@ export default function Page() {
       width="100vw"
       height="100vh"
       url={`http://localhost:3000${pathname}`}
-      alive={true}
+      // alive={true}
       sync={false}
       beforeLoad={() => {
         NProgress.start();
@@ -79,7 +91,7 @@ export default function Page() {
         });
       }}
     />
-  ), [pathname]);
+  ), []);
 
   return (
     <div>

@@ -28,9 +28,6 @@ export default () => {
   return (
     <ConfigProvider
       theme={{
-        token: {
-          // colorPrimary: '#00b96b'
-        },
         algorithm: darkTheme ? theme.darkAlgorithm : theme.defaultAlgorithm
       }}
     >

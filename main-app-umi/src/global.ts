@@ -3,6 +3,9 @@
 // eruda.init();
 
 import WujieReact from 'wujie-react';
+import { theme } from 'antd';
+import { SeedToken } from 'antd/es/theme/interface';
+import { PRIMARY_COLOR } from '@/constants';
 
 const {setupApp, preloadApp, bus} = WujieReact;
 
@@ -17,15 +20,52 @@ const lifecycles = {
   loadError: (url: string, e: Error) => console.log('[生命周期]', `${url} 加载失败`, e)
 };
 
-setupApp({
-  name: 'vite',
-  url: 'http://localhost:3000/',
-  exec: true,
-  ...lifecycles
-});
+export const setupViteApp = () => {
+  const {defaultAlgorithm, darkAlgorithm, defaultSeed} = theme;
+  const token: SeedToken = Object.assign(defaultSeed, {
+    colorPrimary: PRIMARY_COLOR
+  });
+  const themePack = {
+    light: defaultAlgorithm(token),
+    dark: darkAlgorithm(token)
+  };
 
-// preloadApp({
-//   name: 'vite',
-//   url: 'http://localhost:3000'
-// });
+  setupApp({
+    name: 'vite',
+    url: 'http://localhost:3000/',
+    exec: true,
+    ...lifecycles,
+    props: {
+      vuetifyTheme: {
+        light: {
+          colors: {
+            primary: themePack.light.colorPrimary,
+            success: themePack.light.colorSuccess,
+            warning: themePack.light.colorWarning,
+            error: themePack.light.colorError,
+            info: themePack.light.colorInfo,
+            background: themePack.light.colorBgContainer,
+            'on-primary': '#fff'
+          }
+        },
+        dark: {
+          colors: {
+            primary: themePack.dark.colorPrimary,
+            success: themePack.dark.colorSuccess,
+            warning: themePack.dark.colorWarning,
+            error: themePack.dark.colorError,
+            info: themePack.dark.colorInfo,
+            background: themePack.dark.colorBgContainer,
+            'on-primary': '#fff'
+          }
+        }
+      }
+    }
+  });
 
+  // preloadApp({
+  //   name: 'vite',
+  //   url: 'http://localhost:3000'
+  // });
+};
+setupViteApp();

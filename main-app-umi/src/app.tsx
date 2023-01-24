@@ -1,5 +1,6 @@
 // 运行时配置
 import React, { ReactElement } from 'react';
+import { ConfigProvider } from 'antd';
 import { StyleProvider, legacyLogicalPropertiesTransformer } from '@ant-design/cssinjs';
 import dayjs from 'dayjs';
 import isoWeekPlugin from 'dayjs/plugin/isoWeek';
@@ -7,6 +8,7 @@ import weekOfYearPlugin from 'dayjs/plugin/weekOfYear';
 import isoWeeksInYearPlugin from 'dayjs/plugin/isoWeeksInYear';
 import isLeapYearPlugin from 'dayjs/plugin/isLeapYear';
 import { requestConfig } from '@/services';
+import { PRIMARY_COLOR } from '@/constants';
 
 dayjs.extend(isoWeekPlugin);
 dayjs.extend(isoWeeksInYearPlugin);
@@ -20,12 +22,20 @@ export async function getInitialState(): Promise<{ loading: boolean }> {
 export function rootContainer(container: ReactElement): React.FunctionComponentElement<any> {
   return (
     () => (
-      <StyleProvider
-        hashPriority="high"
-        transformers={[legacyLogicalPropertiesTransformer]}
+      <ConfigProvider
+        theme={{
+          token: {
+            colorPrimary: PRIMARY_COLOR
+          }
+        }}
       >
-        {container}
-      </StyleProvider>
+        <StyleProvider
+          hashPriority="high"
+          transformers={[legacyLogicalPropertiesTransformer]}
+        >
+          {container}
+        </StyleProvider>
+      </ConfigProvider>
     )
   )();
 }
