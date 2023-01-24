@@ -1,21 +1,15 @@
 import React, { useEffect, useMemo } from 'react';
-import { Outlet, useAppData, useLocation, useModel, useSearchParams } from '@@/exports';
+import { Outlet, useModel } from '@@/exports';
 import { ConfigProvider, Layout, message, theme } from 'antd';
-import { useSetDocTitle } from '@/utils/hooks';
 import Loading from '@/components/loading';
 
 export default () => {
   const {loading} = useModel('global');
-  const {pathname} = useLocation();
-  const {routes} = useAppData();
-  const title = (Object.values(routes).find(({path}) => path?.includes(pathname)) as any)?.title ?? '';
-  useSetDocTitle(title);
 
   const [messageApi, contextHolder] = message.useMessage();
   const {setMessageApi} = useModel('messageApi');
   useEffect(() => {
     setMessageApi(messageApi);
-    // message.success('成功')
   }, []);
 
   const {darkTheme} = useModel('theme');

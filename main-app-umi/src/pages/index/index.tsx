@@ -7,7 +7,7 @@ const IndexPage: React.FC = () => {
   const gotoLogin = () => {
     navigate('/login', {
       state: {
-        from: '/indexA'
+        from: '/index'
       }
     });
   };
@@ -34,12 +34,6 @@ const IndexPage: React.FC = () => {
           onClick={() => gotoLogin()}
         >
           跳转登录页
-        </Button>
-        <Button
-          type="primary"
-          onClick={() => navigate('/register')}
-        >
-          跳转注册页
         </Button>
         <Button
           onClick={() => showMessage()}

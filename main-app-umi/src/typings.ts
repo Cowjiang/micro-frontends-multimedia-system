@@ -1,3 +1,4 @@
+import React from 'react';
 import WuJie from 'wujie/esm/sandbox';
 import { EventBus } from 'wujie/esm/event';
 
@@ -26,5 +27,13 @@ declare global {
       props?: { [key: string]: any };
       location?: Object;
     };
+  }
+
+  interface RouteObject {
+    caseSensitive?: boolean;
+    children?: RouteObject[];
+    element?: React.ReactNode;
+    index?: boolean;
+    path?: string;
   }
 }

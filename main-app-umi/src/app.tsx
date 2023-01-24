@@ -1,5 +1,6 @@
 // 运行时配置
-import React, { ReactElement } from 'react';
+import React from 'react';
+import { matchRoutes, RuntimeConfig } from '@@/exports';
 import { ConfigProvider } from 'antd';
 import { StyleProvider, legacyLogicalPropertiesTransformer } from '@ant-design/cssinjs';
 import dayjs from 'dayjs';
@@ -15,11 +16,11 @@ dayjs.extend(isoWeeksInYearPlugin);
 dayjs.extend(isLeapYearPlugin);
 dayjs.extend(weekOfYearPlugin);
 
-export async function getInitialState(): Promise<{ loading: boolean }> {
+export const getInitialState: RuntimeConfig['getInitialState'] = async () => {
   return {loading: false};
-}
+};
 
-export function rootContainer(container: ReactElement): React.FunctionComponentElement<any> {
+export const rootContainer: RuntimeConfig['rootContainer'] = (container) => {
   return (
     () => (
       <ConfigProvider
@@ -38,7 +39,7 @@ export function rootContainer(container: ReactElement): React.FunctionComponentE
       </ConfigProvider>
     )
   )();
-}
+};
 
 // export const layout = () => {
 //   return {
@@ -49,4 +50,12 @@ export function rootContainer(container: ReactElement): React.FunctionComponentE
 //   };
 // };
 
-export const request = requestConfig;
+export const onRouteChange: RuntimeConfig['onRouteChange'] = ({clientRoutes, location}) => {
+  type RouteObj = RouteObject & { title?: string }
+  const route = matchRoutes(clientRoutes, location.pathname)?.pop()?.route as RouteObj;
+  if (route) {
+    document.title = route.title ?? '';
+  }
+};
+
+export const request: RuntimeConfig['request'] = requestConfig;
