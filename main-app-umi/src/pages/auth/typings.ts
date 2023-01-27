@@ -1,4 +1,4 @@
-export interface LoginPageState {
+export interface AuthPageState {
   from?: string;
 }
 

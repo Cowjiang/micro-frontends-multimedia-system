@@ -9,25 +9,30 @@ export default defineConfig({
   proxy: {},
   routes: [
     {
-      path: '/index',
-      component: './index',
-      title: '首页'
+      path: '/*',
+      redirect: '/index'
     },
     {
       path: '/',
       redirect: '/index'
     },
     {
-      path: '',
-      component: '@/pages/login/index',
+      path: '/index',
+      component: './index',
+      title: '首页'
+    },
+    {
+      path: '/auth',
+      component: '@/pages/auth/index',
       routes: [
-        {path: '/login', component: '@/pages/login/index', title: '账户登录'},
-        {path: '/register', component: '@/pages/login/index', title: '新用户注册'}
+        {path: '/auth/login', component: '@/pages/auth/index', title: '账户登录'},
+        {path: '/auth/register', component: '@/pages/auth/index', title: '新用户注册'}
       ]
     },
     {
-      path: '/*',
-      redirect: '/index'
+      path: '/simulatorTest',
+      component: '@/pages/simulatorTest/index',
+      title: 'H5模拟器测试'
     }
   ],
   npmClient: 'pnpm',

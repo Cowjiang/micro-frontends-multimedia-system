@@ -5,7 +5,7 @@ import { useModel, useNavigate } from '@@/exports';
 const IndexPage: React.FC = () => {
   const navigate = useNavigate();
   const gotoLogin = () => {
-    navigate('/login', {
+    navigate('/auth/login', {
       state: {
         from: '/index'
       }
@@ -39,6 +39,12 @@ const IndexPage: React.FC = () => {
           onClick={() => showMessage()}
         >
           全局消息提醒
+        </Button>
+        <Button
+          type="primary"
+          onClick={() => navigate('/simulatorTest')}
+        >
+          移动端H5模拟测试
         </Button>
         <Switch
           checkedChildren="暗黑"

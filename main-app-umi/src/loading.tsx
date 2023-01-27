@@ -10,7 +10,7 @@ export default function PageLoading() {
   useEffect(() => {
     NProgress.start();
     return () => {
-      if (!['login', 'register'].filter(v => pathname.includes(v)).length) {
+      if (!['auth'].filter(v => pathname.includes(v)).length) {
         NProgress.done();
       }
     };
