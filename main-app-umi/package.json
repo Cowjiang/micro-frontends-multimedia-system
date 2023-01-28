@@ -21,7 +21,8 @@
     "eruda": "^2.10.0",
     "nprogress": "^0.2.0",
     "wujie": "^1.0.5",
-    "wujie-react": "^1.0.5"
+    "wujie-react": "^1.0.5",
+    "@flaticon/flaticon-uicons": "2.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.0",
