@@ -3,9 +3,7 @@
 // eruda.init();
 
 import WujieReact from 'wujie-react';
-import { theme } from 'antd';
-import { SeedToken } from 'antd/es/theme/interface';
-import { PRIMARY_COLOR } from '@/constants';
+import { vuetifyConfig } from '@/config/vuetify';
 
 const {setupApp, preloadApp, bus} = WujieReact;
 
@@ -21,45 +19,13 @@ const lifecycles = {
 };
 
 export const setupViteApp = () => {
-  const {defaultAlgorithm, darkAlgorithm, defaultSeed} = theme;
-  const token: SeedToken = Object.assign(defaultSeed, {
-    colorPrimary: PRIMARY_COLOR
-  });
-  const themePack = {
-    light: defaultAlgorithm(token),
-    dark: darkAlgorithm(token)
-  };
-
   setupApp({
     name: 'vite',
     url: 'http://localhost:3000/',
     exec: true,
     ...lifecycles,
     props: {
-      vuetifyTheme: {
-        light: {
-          colors: {
-            primary: themePack.light.colorPrimary,
-            success: themePack.light.colorSuccess,
-            warning: themePack.light.colorWarning,
-            error: themePack.light.colorError,
-            info: themePack.light.colorInfo,
-            background: themePack.light.colorBgContainer,
-            'on-primary': '#fff'
-          }
-        },
-        dark: {
-          colors: {
-            primary: themePack.dark.colorPrimary,
-            success: themePack.dark.colorSuccess,
-            warning: themePack.dark.colorWarning,
-            error: themePack.dark.colorError,
-            info: themePack.dark.colorInfo,
-            background: themePack.dark.colorBgContainer,
-            'on-primary': '#fff'
-          }
-        }
-      }
+      ...vuetifyConfig
     }
   });
 

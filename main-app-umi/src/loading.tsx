@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import NProgress from 'nprogress';
-import 'nprogress/nprogress.css';
 import '@/loading.less';
 import { useLocation } from '@@/exports';
 

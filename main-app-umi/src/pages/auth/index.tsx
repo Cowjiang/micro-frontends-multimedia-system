@@ -4,6 +4,7 @@ import { useLocation, useModel, useNavigate } from '@@/exports';
 import NProgress from 'nprogress';
 import { FormType, AuthPageState } from '@/pages/auth/typings';
 import { Modal } from 'antd';
+import { vuetifyConfig } from '@/config/vuetify';
 
 const AuthPage: React.FC = () => {
   const navigate = useNavigate();
@@ -42,7 +43,6 @@ const AuthPage: React.FC = () => {
     }
     bus.$on('loginSuccess', handleLoginSuccess);
     bus.$on('loginFormTypeChange', handleLoginFormTypeChange);
-    setRefreshTrigger(!refreshTrigger);
     return () => {
       bus.$off('loginFormTypeChange', handleLoginFormTypeChange);
       bus.$off('loginSuccess', handleLoginSuccess);
@@ -62,7 +62,6 @@ const AuthPage: React.FC = () => {
   const {messageApi} = useModel('messageApi');
   const [modal, contextHolder] = Modal.useModal();
 
-  const [refreshTrigger, setRefreshTrigger] = useState(false);
   const wujieInstance = useMemo(() => {
     return (
       <WujieReact
@@ -71,6 +70,9 @@ const AuthPage: React.FC = () => {
         height="100vh"
         url={`http://localhost:3000${pathname.replaceAll('/auth', '')}`}
         // alive={true}
+        props={{
+          ...vuetifyConfig
+        }}
         beforeLoad={() => {
           NProgress.start();
           setLoading(true);
@@ -94,7 +96,7 @@ const AuthPage: React.FC = () => {
         }}
       />
     );
-  }, [refreshTrigger]);
+  }, []);
 
   return (
     <div>
