@@ -5,7 +5,7 @@ import { useModel, useNavigate } from '@@/exports';
 const IndexPage: React.FC = () => {
   const navigate = useNavigate();
   const gotoLogin = () => {
-    navigate('/auth/login', {
+    navigate('/Auth/login', {
       state: {
         from: '/index'
       }
@@ -42,7 +42,7 @@ const IndexPage: React.FC = () => {
         </Button>
         <Button
           type="primary"
-          onClick={() => navigate('/simulatorTest')}
+          onClick={() => navigate('/test/h5-simulator')}
         >
           移动端H5模拟测试
         </Button>

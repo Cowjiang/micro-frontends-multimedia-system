@@ -4,7 +4,7 @@ import NProgress from 'nprogress';
 import { useModel, useNavigate } from '@@/exports';
 import { Modal } from 'antd';
 
-const SimulatorTestPage: React.FC = () => {
+const H5SimulatorPage: React.FC = () => {
   const {setLoading} = useModel('global');
   const [modal, contextHolder] = Modal.useModal();
   const navigate = useNavigate();
@@ -54,4 +54,4 @@ const SimulatorTestPage: React.FC = () => {
   );
 };
 
-export default SimulatorTestPage;
+export default H5SimulatorPage;

@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import WujieReact from 'wujie-react';
 import { useLocation, useModel, useNavigate } from '@@/exports';
 import NProgress from 'nprogress';
-import { FormType, AuthPageState } from '@/pages/auth/typings';
+import { FormType, AuthPageState } from '@/pages/Auth/typings';
 import { Modal } from 'antd';
 import { vuetifyConfig } from '@/config/vuetify';
 

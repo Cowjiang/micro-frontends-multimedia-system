@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { Outlet, useModel } from '@@/exports';
 import { ConfigProvider, Layout, message, theme } from 'antd';
-import Loading from '@/components/loading';
+import Loading from '@/components/Loading';
 
 export default () => {
   const {loading} = useModel('global');
