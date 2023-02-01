@@ -13,6 +13,8 @@
     "@ant-design/cssinjs": "^1.5.6",
     "@ant-design/icons": "^4.7.0",
     "@ant-design/pro-components": "^2.0.1",
+    "@flaticon/flaticon-uicons": "^2.0.0",
+    "@tinymce/tinymce-react": "^4.3.0",
     "@types/nprogress": "^0.2.0",
     "@umijs/max": "^4.0.34",
     "ahooks": "^3.7.2",
@@ -21,8 +23,7 @@
     "eruda": "^2.10.0",
     "nprogress": "^0.2.0",
     "wujie": "^1.0.5",
-    "wujie-react": "^1.0.5",
-    "@flaticon/flaticon-uicons": "2.0.0"
+    "wujie-react": "^1.0.5"
   },
   "devDependencies": {
     "@types/react": "^18.0.0",

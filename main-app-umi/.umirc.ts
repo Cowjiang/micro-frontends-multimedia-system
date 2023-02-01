@@ -7,6 +7,7 @@ export default defineConfig({
   initialState: {},
   request: {},
   proxy: {},
+  exportStatic: {},
   routes: [
     {
       path: '/*',

@@ -46,6 +46,12 @@ const IndexPage: React.FC = () => {
         >
           移动端H5模拟测试
         </Button>
+        <Button
+          type="primary"
+          onClick={() => navigate('/test/rich-editor')}
+        >
+          富文本测试
+        </Button>
         <Switch
           checkedChildren="暗黑"
           unCheckedChildren="浅色"
