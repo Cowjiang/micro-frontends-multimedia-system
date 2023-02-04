@@ -5,6 +5,7 @@ import NProgress from 'nprogress';
 import { FormType, AuthPageState } from '@/pages/Auth/typings';
 import { Modal } from 'antd';
 import { vuetifyConfig } from '@/config/vuetify';
+import { loginByAccount } from '@/services/auth';
 
 const AuthPage: React.FC = () => {
   const navigate = useNavigate();
@@ -17,10 +18,15 @@ const AuthPage: React.FC = () => {
     navigate(redirectPath, {replace: true});
   };
 
-  // 子应用登陆成功
-  const handleLoginSuccess = (res: any) => {
-    console.log(res);
-    redirectToPrePage();
+  // 子应用登陆行为
+  const handleLoginSubmit = async ({account, password}: { [key: string]: string | undefined }) => {
+    const {success, message, code} = await loginByAccount({
+      username: account ?? '',
+      password: password ?? ''
+    });
+    const busRes = success ? {message: '登陆成功', type: 'success'} : {message: '账号或密码错误', type: 'warning'};
+    bus.$emit('loginResponse', busRes);
+    // redirectToPrePage();
   };
 
   // 子应用切换登录/注册
@@ -41,11 +47,11 @@ const AuthPage: React.FC = () => {
       // 已登录验证
       redirectToPrePage();
     }
-    bus.$on('loginSuccess', handleLoginSuccess);
+    bus.$on('loginSubmit', handleLoginSubmit);
     bus.$on('loginFormTypeChange', handleLoginFormTypeChange);
     return () => {
       bus.$off('loginFormTypeChange', handleLoginFormTypeChange);
-      bus.$off('loginSuccess', handleLoginSuccess);
+      bus.$off('loginSubmit', handleLoginSubmit);
       // destroyApp('vite');
     };
   }, []);

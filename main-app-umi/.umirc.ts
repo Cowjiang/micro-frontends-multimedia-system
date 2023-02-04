@@ -6,7 +6,15 @@ export default defineConfig({
   model: {},
   initialState: {},
   request: {},
-  proxy: {},
+  proxy: {
+    '/api': {
+      target: 'http://localhost:8887/service/',
+      changeOrigin: true,
+      pathRewrite: {
+        '^/api': ''
+      }
+    },
+  },
   exportStatic: {},
   routes: [
     {

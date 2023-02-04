@@ -21,7 +21,7 @@ const lifecycles = {
 export const setupViteApp = () => {
   setupApp({
     name: 'vite',
-    url: 'http://localhost:3000/',
+    url: 'http://localhost:3000/login',
     exec: true,
     ...lifecycles,
     props: {

@@ -22,10 +22,12 @@
     "dayjs": "^1.11.7",
     "eruda": "^2.10.0",
     "nprogress": "^0.2.0",
+    "qs": "^6.11.0",
     "wujie": "^1.0.5",
     "wujie-react": "^1.0.5"
   },
   "devDependencies": {
+    "@types/qs": "^6.9.7",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "lint-staged": "^13.0.3",

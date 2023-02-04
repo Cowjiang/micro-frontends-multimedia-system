@@ -15,16 +15,26 @@
     >
       <v-snackbar
         v-model="alertInfo.show"
-        :color="alertInfo.color"
+        color="transparent"
         rounded="lg"
-        location="top"
-        app
+        variant="flat"
+        location="top center"
         position="absolute"
+        attach
+        width="unset"
         max-width="unset"
         min-height="unset"
-        :timeout="2000"
+        content-class="my-1"
+        :timeout="9999"
       >
-        {{ alertInfo.text }}
+        <v-alert
+          v-model="alertInfo.show"
+          :type="alertInfo.type"
+          density="compact"
+          rounded="lg"
+        >
+          {{ alertInfo.text }}
+        </v-alert>
       </v-snackbar>
       <div class="login-popup-container rounded-xl overflow-hidden">
         <div class="left-content" :style="props?.bgStyle ?? ''">
@@ -260,7 +270,7 @@
 
 <script lang="ts" setup>
   import axios from 'axios';
-  import { FormType } from '@/views/login/components/typings';
+  import { AlertType, FormType } from '@/views/login/components/typings';
   import * as CSS from 'csstype';
 
   interface LoginPopupProps {
@@ -317,10 +327,14 @@
   let registerCaptchaResendTimer: NodeJS.Timer | undefined = undefined; //注册表单手机验证码发送计时器
   const registerCaptchaResendTimeLeft = ref(0); //注册表单手机验证码重发倒计时（秒）
   const accountOrPasswordError = ref(false); //登陆时回报账号或密码错误状态
-  const alertInfo = reactive({
+  const alertInfo = reactive<{
+    show: boolean,
+    text: string,
+    type: AlertType
+  }>({
     show: false,
     text: '',
-    color: ''
+    type: 'info'
   }); //消息提示框的信息
   const rules = {
     required: (value: any) => !!value || '不能为空',
@@ -375,29 +389,41 @@
       loginForm.value?.validate().then(async (res: any) => {
         if (res.valid) {
           loginBtnLoading.value = true;
-          window?.$wujie?.bus.$emit('loginSuccess', loginFormValue);
-          const res = await loginApi({
-            username: loginFormValue.account,
-            password: loginFormValue.password,
-            cvCode: loginFormValue.captcha
-          });
-          loginBtnLoading.value = false;
-          if (res.success) {
-            await router.replace({path: '/'});
-          } else {
-            if (res.code === 1007) {
-              loginFormValue.captcha = '';
-              refreshLoginCaptcha();
-              alert('验证码输入错误', 'warning');
-            } else if (res.code === 1008) {
-              accountOrPasswordError.value = true;
-              loginFormValue.captcha = '';
-              refreshLoginCaptcha();
-              alert('账号或密码错误', 'warning');
-            } else {
-              alert('网络异常', 'error');
-            }
+          window?.$wujie?.bus.$emit('loginSubmit', loginFormValue);
+          window?.$wujie?.bus.$on(
+            'loginResponse',
+            ({message, type}: {
+              message: string,
+              type: AlertType
+            }) => {
+              loginBtnLoading.value = false;
+              alert(message, type);
+            });
+          if (!window?.$wujie) {
+            alert('主应用未开启', 'warning');
           }
+          // const res = await loginApi({
+          //   username: loginFormValue.account,
+          //   password: loginFormValue.password,
+          //   cvCode: loginFormValue.captcha
+          // });
+          // loginBtnLoading.value = false;
+          // if (res.success) {
+          //   await router.replace({path: '/'});
+          // } else {
+          //   if (res.code === 1007) {
+          //     loginFormValue.captcha = '';
+          //     refreshLoginCaptcha();
+          //     alert('验证码输入错误', 'warning');
+          //   } else if (res.code === 1008) {
+          //     accountOrPasswordError.value = true;
+          //     loginFormValue.captcha = '';
+          //     refreshLoginCaptcha();
+          //     alert('账号或密码错误', 'warning');
+          //   } else {
+          //     alert('网络异常', 'error');
+          //   }
+          // }
         }
       });
     }
@@ -492,10 +518,10 @@
    * @param text 消息内容
    * @param type 消息类型，success/warning/error
    */
-  const alert = (text: string, type: string) => {
+  const alert = (text: string, type: AlertType) => {
     alertInfo.show = true;
     alertInfo.text = text;
-    alertInfo.color = type === 'success' ? 'success' : type === 'warning' ? 'warning' : type === 'error' ? 'error' : '';
+    alertInfo.type = type;
   };
 
   // 登录弹出窗关闭事件
