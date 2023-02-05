@@ -31,7 +31,7 @@ const AuthPage: React.FC = () => {
 
   // 子应用注册提交
   const handleRegisterSubmit = async ({email, password, captcha}: { [key: string]: string | undefined }) => {
-    const {success, message, code} = await authApi.RegisterByEmail({
+    const {success, message, code} = await authApi.registerByEmail({
       key: email ?? '',
       password: password ?? ''
     });

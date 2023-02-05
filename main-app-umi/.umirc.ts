@@ -4,6 +4,7 @@ export default defineConfig({
   locale: {antd: true},
   access: {},
   model: {},
+  dva: {},
   initialState: {},
   request: {},
   proxy: {

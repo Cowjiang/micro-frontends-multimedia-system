@@ -15,7 +15,7 @@ async function loginByAccount(
   });
 }
 
-async function RegisterByEmail(
+async function registerByEmail(
   data: {
     key: string;
     password: string;
@@ -29,7 +29,21 @@ async function RegisterByEmail(
   });
 }
 
+async function refreshToken(
+  data: {
+    refreshToken: string;
+  },
+  options?: { [key: string]: any }
+) {
+  return request<Response>('/api/user/token/refresh', {
+    method: 'PUT',
+    data,
+    ...(options || {})
+  });
+}
+
 export default {
   loginByAccount,
-  RegisterByEmail
+  registerByEmail,
+  refreshToken
 };

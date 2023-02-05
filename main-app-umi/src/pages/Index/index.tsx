@@ -1,9 +1,11 @@
 import React from 'react';
 import { Button, Space, Switch } from 'antd';
-import { useModel, useNavigate } from '@@/exports';
+import { useDispatch, useModel, useNavigate } from '@@/exports';
+import { authApi } from '@/services/api';
 
 const IndexPage: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const gotoLogin = () => {
     navigate('/auth/login', {
       state: {
@@ -21,6 +23,20 @@ const IndexPage: React.FC = () => {
     }).then(() => messageApi.warning('加载警告', 1).then(() => messageApi.error('加载失败')));
   };
 
+  const loginTest = async () => {
+    await authApi.loginByAccount({
+      username: 'cowjiang@163.com',
+      password: 'cow20010114'
+    });
+  };
+
+  const clearCache = () => {
+    localStorage.clear();
+    dispatch({
+      type: 'user/logOut'
+    });
+  };
+
   const {darkTheme, setDarkTheme} = useModel('theme');
   const switchTheme = (checked: boolean) => {
     setDarkTheme(checked);
@@ -28,17 +44,12 @@ const IndexPage: React.FC = () => {
 
   return (
     <div className="w-screen h-screen flex flex-col justify-center items-center">
-      <Space>
+      <Space size={[8, 16]} wrap>
         <Button
           type="primary"
-          onClick={() => gotoLogin()}
+          onClick={gotoLogin}
         >
           跳转登录页
-        </Button>
-        <Button
-          onClick={() => showMessage()}
-        >
-          全局消息提醒
         </Button>
         <Button
           type="primary"
@@ -51,6 +62,12 @@ const IndexPage: React.FC = () => {
           onClick={() => navigate('/test/rich-editor')}
         >
           富文本测试
+        </Button>
+        <Button onClick={loginTest}>
+          登陆测试
+        </Button>
+        <Button onClick={clearCache}>
+          清除缓存
         </Button>
         <Switch
           checkedChildren="暗黑"
