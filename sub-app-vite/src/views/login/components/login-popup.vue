@@ -25,7 +25,7 @@
         max-width="unset"
         min-height="unset"
         content-class="my-1"
-        :timeout="9999"
+        :timeout="2000"
       >
         <v-alert
           v-model="alertInfo.show"
@@ -183,9 +183,9 @@
                     <v-container>
                       <v-row>
                         <v-text-field
-                          label="手机号"
-                          v-model="registerFormValue.phone"
-                          :rules="[rules.required, rules.phone]"
+                          label="电子邮箱"
+                          v-model="registerFormValue.email"
+                          :rules="[rules.required, rules.email]"
                           variant="underlined"
                           color="primary"
                         />
@@ -202,8 +202,8 @@
                         />
                         <v-btn
                           :loading="registerCaptchaSending || !allowSendRegisterCaptcha"
-                          depressed
-                          :disabled="typeof rules.phone(registerFormValue.phone) !== 'boolean' || !allowSendRegisterCaptcha"
+                          flat
+                          :disabled="typeof rules.email(registerFormValue.email) !== 'boolean' || !allowSendRegisterCaptcha"
                           color="primary"
                           @click="sendRegisterCaptcha"
                         >
@@ -272,6 +272,7 @@
   import axios from 'axios';
   import { AlertType, FormType } from '@/views/login/components/typings';
   import * as CSS from 'csstype';
+  import { authApi } from '@/services/api';
 
   interface LoginPopupProps {
     modelValue: boolean; // 控制登陆弹窗显示隐藏
@@ -310,7 +311,7 @@
     captcha: ''
   }); //登陆表单中用户输入的数据
   const registerFormValue = reactive({
-    phone: '',
+    email: '',
     password: '',
     captcha: ''
   }); //注册表单中用户输入的数据
@@ -325,7 +326,7 @@
   const registerCaptchaSending = ref(false); //注册表单手机验证码发送中
 
   let registerCaptchaResendTimer: NodeJS.Timer | undefined = undefined; //注册表单手机验证码发送计时器
-  const registerCaptchaResendTimeLeft = ref(0); //注册表单手机验证码重发倒计时（秒）
+  const registerCaptchaResendTimeLeft = ref(60); //注册表单手机验证码重发倒计时（秒）
   const accountOrPasswordError = ref(false); //登陆时回报账号或密码错误状态
   const alertInfo = reactive<{
     show: boolean,
@@ -346,6 +347,7 @@
     },
     loginCaptcha: (value: string) => /^[a-zA-Z0-9]{4}$/.test(value) || !showLoginCaptchaRow.value || '请正确填写验证码',
     phone: (value: string) => /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/.test(value) || '请填写正确的手机号',
+    email: (value: string) => /^([^<>()[\]\\.,:\s@"]+(\.[^<>()[\]\\.,:\s@"]+)*)|(".+")$/.test(value) || '请填写正确的电子邮箱',
     registerCaptcha: (value: string) => /^[0-9]{6}$/.test(value) || '请正确填写验证码',
     registerPwd: (value: string) => /^[a-zA-Z0-9]{6,18}$/.test(value) || !showRegisterPwdRow.value || '请输入6-18位英文/数字'
   }; //表单验证规则
@@ -389,41 +391,43 @@
       loginForm.value?.validate().then(async (res: any) => {
         if (res.valid) {
           loginBtnLoading.value = true;
-          window?.$wujie?.bus.$emit('loginSubmit', loginFormValue);
-          window?.$wujie?.bus.$on(
-            'loginResponse',
-            ({message, type}: {
-              message: string,
-              type: AlertType
-            }) => {
-              loginBtnLoading.value = false;
-              alert(message, type);
-            });
-          if (!window?.$wujie) {
-            alert('主应用未开启', 'warning');
-          }
-          // const res = await loginApi({
-          //   username: loginFormValue.account,
-          //   password: loginFormValue.password,
-          //   cvCode: loginFormValue.captcha
-          // });
-          // loginBtnLoading.value = false;
-          // if (res.success) {
-          //   await router.replace({path: '/'});
-          // } else {
-          //   if (res.code === 1007) {
-          //     loginFormValue.captcha = '';
-          //     refreshLoginCaptcha();
-          //     alert('验证码输入错误', 'warning');
-          //   } else if (res.code === 1008) {
-          //     accountOrPasswordError.value = true;
-          //     loginFormValue.captcha = '';
-          //     refreshLoginCaptcha();
-          //     alert('账号或密码错误', 'warning');
-          //   } else {
-          //     alert('网络异常', 'error');
-          //   }
-          // }
+          setTimeout(() => {
+            window?.$wujie?.bus.$emit('loginSubmit', loginFormValue);
+            window?.$wujie?.bus.$on(
+              'loginResponse',
+              ({message, type}: {
+                message: string,
+                type: AlertType
+              }) => {
+                loginBtnLoading.value = false;
+                alert(message, type);
+              });
+            if (!window?.$wujie) {
+              alert('主应用未开启', 'warning');
+            }
+            // const res = await loginApi({
+            //   username: loginFormValue.account,
+            //   password: loginFormValue.password,
+            //   cvCode: loginFormValue.captcha
+            // });
+            // loginBtnLoading.value = false;
+            // if (res.success) {
+            //   await router.replace({path: '/'});
+            // } else {
+            //   if (res.code === 1007) {
+            //     loginFormValue.captcha = '';
+            //     refreshLoginCaptcha();
+            //     alert('验证码输入错误', 'warning');
+            //   } else if (res.code === 1008) {
+            //     accountOrPasswordError.value = true;
+            //     loginFormValue.captcha = '';
+            //     refreshLoginCaptcha();
+            //     alert('账号或密码错误', 'warning');
+            //   } else {
+            //     alert('网络异常', 'error');
+            //   }
+            // }
+          }, 500);
         }
       });
     }
@@ -444,19 +448,35 @@
     } else {
       registerForm.value?.validate().then((res: any) => {
         if (res.valid) {
-          const res = registerApi({
-            mobile: registerFormValue.phone,
-            password: registerFormValue.password,
-            code: registerFormValue.captcha
-          });
-          console.log(res);
-          if (res.success) {
-            handleChangeForm(null);
-          } else {
-            if (res.code === 1017) {
-              registerFormValue.captcha = '';
+          registerBtnLoading.value = true;
+          setTimeout(() => {
+            window?.$wujie?.bus.$emit('registerSubmit', registerFormValue);
+            window?.$wujie?.bus.$on(
+              'registerResponse',
+              ({message, type}: {
+                message: string,
+                type: AlertType
+              }) => {
+                registerBtnLoading.value = false;
+                alert(message, type);
+              });
+            if (!window?.$wujie) {
+              alert('主应用未开启', 'warning');
             }
-          }
+            // const res = registerApi({
+            //   mobile: registerFormValue.phone,
+            //   password: registerFormValue.password,
+            //   code: registerFormValue.captcha
+            // });
+            // console.log(res);
+            // if (res.success) {
+            //   handleChangeForm(null);
+            // } else {
+            //   if (res.code === 1017) {
+            //     registerFormValue.captcha = '';
+            //   }
+            // }
+          }, 500);
         }
       });
     }
@@ -494,8 +514,8 @@
     allowSendRegisterCaptcha.value = false;
     registerCaptchaSending.value = true;
     setTimeout(async () => {
-      const res = await axios.get(`/api/sms/send/${registerFormValue.phone}`);
-      if (res.data.success) {
+      const res = await authApi.sendEmailCaptcha({email: registerFormValue.email});
+      if (res.success) {
         registerCaptchaSending.value = false;
         registerCaptchaResendTimer = setInterval(() => {
           if (registerCaptchaResendTimeLeft.value > 0) {

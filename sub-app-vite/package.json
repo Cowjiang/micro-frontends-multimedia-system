@@ -9,11 +9,10 @@
   },
   "dependencies": {
     "@mdi/font": "7.0.96",
-    "@types/axios": "^0.14.0",
     "@types/qs": "^6.9.7",
     "@vueuse/core": "^9.10.0",
     "animate.css": "^4.1.1",
-    "axios": "^1.2.2",
+    "axios": "0.27.2",
     "csstype": "^3.1.1",
     "pinia": "^2.0.23",
     "qs": "^6.11.0",

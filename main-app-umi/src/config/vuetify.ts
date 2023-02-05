@@ -22,7 +22,9 @@ const vuetifyConfig = {
         info: themePack.light.colorInfo,
         background: themePack.light.colorBgContainer,
         'on-primary': '#fff',
-        'on-warning': '#fff'
+        'on-success': '#fff',
+        'on-warning': '#fff',
+        'on-error': '#fff'
       }
     },
     dark: {
@@ -34,7 +36,9 @@ const vuetifyConfig = {
         info: themePack.dark.colorInfo,
         background: themePack.dark.colorBgContainer,
         'on-primary': '#fff',
-        'on-warning': '#fff'
+        'on-success': '#fff',
+        'on-warning': '#fff',
+        'on-error': '#fff'
       }
     }
   }

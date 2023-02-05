@@ -2,7 +2,6 @@ lockfileVersion: 5.4
 
 specifiers:
   '@mdi/font': 7.0.96
-  '@types/axios': ^0.14.0
   '@types/node': ^18.11.9
   '@types/qs': ^6.9.7
   '@types/webfontloader': ^1.6.35
@@ -10,7 +9,7 @@ specifiers:
   '@vue/eslint-config-typescript': ^11.0.0
   '@vueuse/core': ^9.10.0
   animate.css: ^4.1.1
-  axios: ^1.2.2
+  axios: 0.27.2
   csstype: ^3.1.1
   eslint: ^8.22.0
   eslint-plugin-vue: ^9.3.0
@@ -32,11 +31,10 @@ specifiers:
 
 dependencies:
   '@mdi/font': 7.0.96
-  '@types/axios': 0.14.0
   '@types/qs': 6.9.7
   '@vueuse/core': 9.10.0_vue@3.2.45
   animate.css: 4.1.1
-  axios: 1.2.2
+  axios: 0.27.2
   csstype: 3.1.1
   pinia: 2.0.28_prq2uz4lho2pwp6irk4cfkrxwu
   qs: 6.11.0
@@ -182,15 +180,6 @@ packages:
       '@types/estree': 1.0.0
       estree-walker: 2.0.2
       picomatch: 2.3.1
-    dev: false
-
-  /@types/axios/0.14.0:
-    resolution: {integrity: sha1-7CMA++fX3d1+udOr+HmZlkyvzkY=}
-    deprecated: This is a stub types definition for axios (https://github.com/mzabriskie/axios). axios provides its own type definitions, so you don't need @types/axios installed!
-    dependencies:
-      axios: 1.2.2
-    transitivePeerDependencies:
-      - debug
     dev: false
 
   /@types/estree/1.0.0:
@@ -591,12 +580,11 @@ packages:
     resolution: {integrity: sha1-x57Zf380y48robyXkLzDZkdLS3k=}
     dev: false
 
-  /axios/1.2.2:
-    resolution: {integrity: sha512-bz/J4gS2S3I7mpN/YZfGFTqhXTYzRho8Ay38w2otuuDR322KzFIWm/4W2K6gIwvWaws5n+mnb7D1lN9uD+QH6Q==}
+  /axios/0.27.2:
+    resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
     dependencies:
       follow-redirects: 1.15.2
       form-data: 4.0.0
-      proxy-from-env: 1.1.0
     transitivePeerDependencies:
       - debug
     dev: false
@@ -1650,10 +1638,6 @@ packages:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
     dev: true
-
-  /proxy-from-env/1.1.0:
-    resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
-    dev: false
 
   /punycode/2.1.1:
     resolution: {integrity: sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A==}

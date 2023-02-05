@@ -5,7 +5,7 @@ import NProgress from 'nprogress';
 import { FormType, AuthPageState } from '@/pages/Auth/typings';
 import { Modal } from 'antd';
 import { vuetifyConfig } from '@/config/vuetify';
-import { loginByAccount } from '@/services/auth';
+import { authApi } from '@/services/api';
 
 const AuthPage: React.FC = () => {
   const navigate = useNavigate();
@@ -18,15 +18,26 @@ const AuthPage: React.FC = () => {
     navigate(redirectPath, {replace: true});
   };
 
-  // 子应用登陆行为
+  // 子应用登陆提交
   const handleLoginSubmit = async ({account, password}: { [key: string]: string | undefined }) => {
-    const {success, message, code} = await loginByAccount({
+    const {success, message, code} = await authApi.loginByAccount({
       username: account ?? '',
       password: password ?? ''
     });
     const busRes = success ? {message: '登陆成功', type: 'success'} : {message: '账号或密码错误', type: 'warning'};
     bus.$emit('loginResponse', busRes);
-    // redirectToPrePage();
+    success && redirectToPrePage();
+  };
+
+  // 子应用注册提交
+  const handleRegisterSubmit = async ({email, password, captcha}: { [key: string]: string | undefined }) => {
+    const {success, message, code} = await authApi.RegisterByEmail({
+      key: email ?? '',
+      password: password ?? ''
+    });
+    const busRes = success ? {message: '注册成功', type: 'success'} : {message: message, type: 'error'};
+    bus.$emit('registerResponse', busRes);
+    success && handleLoginFormTypeChange(FormType.LOGIN);
   };
 
   // 子应用切换登录/注册
@@ -48,10 +59,12 @@ const AuthPage: React.FC = () => {
       redirectToPrePage();
     }
     bus.$on('loginSubmit', handleLoginSubmit);
+    bus.$on('registerSubmit', handleRegisterSubmit);
     bus.$on('loginFormTypeChange', handleLoginFormTypeChange);
     return () => {
-      bus.$off('loginFormTypeChange', handleLoginFormTypeChange);
       bus.$off('loginSubmit', handleLoginSubmit);
+      bus.$off('registerSubmit', handleRegisterSubmit);
+      bus.$off('loginFormTypeChange', handleLoginFormTypeChange);
       // destroyApp('vite');
     };
   }, []);
