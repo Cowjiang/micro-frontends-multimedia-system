@@ -16,7 +16,7 @@ export default defineConfig({
         target: 'http://localhost:8887/service/',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
-      },
+      }
     }
   },
   plugins: [
@@ -48,5 +48,15 @@ export default defineConfig({
       '.tsx',
       '.vue'
     ]
+  },
+  css: {
+    preprocessorOptions: {
+      // 全局样式引入
+      scss: {
+        additionalData: '@import "@/common/styles/index.scss";',
+        javascriptEnabled: true
+      }
+    }
   }
+
 });

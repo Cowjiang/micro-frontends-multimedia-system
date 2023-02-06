@@ -13,7 +13,7 @@ specifiers:
   csstype: ^3.1.1
   eslint: ^8.22.0
   eslint-plugin-vue: ^9.3.0
-  pinia: ^2.0.23
+  pinia: ^2.0.28
   qs: ^6.11.0
   roboto-fontface: '*'
   sass: ^1.57.1

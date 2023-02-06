@@ -65,7 +65,7 @@ const AuthPage: React.FC = () => {
       bus.$off('loginSubmit', handleLoginSubmit);
       bus.$off('registerSubmit', handleRegisterSubmit);
       bus.$off('loginFormTypeChange', handleLoginFormTypeChange);
-      // destroyApp('vite');
+      // destroyApp('auth');
     };
   }, []);
 
@@ -84,7 +84,7 @@ const AuthPage: React.FC = () => {
   const wujieInstance = useMemo(() => {
     return (
       <WujieReact
-        name="vite"
+        name="auth"
         width="100vw"
         height="100vh"
         url={`http://localhost:3000${pathname.replaceAll('/auth', '')}`}

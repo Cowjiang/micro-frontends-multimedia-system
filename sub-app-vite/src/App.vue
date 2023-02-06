@@ -19,7 +19,5 @@
 </script>
 
 <style lang="scss">
-  @import "@/common/styles/index.scss";
   @import "@/common/styles/fontawesome.css";
-  @include scrollbar-default;
 </style>

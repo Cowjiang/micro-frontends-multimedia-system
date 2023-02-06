@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Space, Switch } from 'antd';
 import { useDispatch, useModel, useNavigate } from '@@/exports';
 import { authApi } from '@/services/api';
+import ChatDialog from '@/components/ChatDialog';
 
 const IndexPage: React.FC = () => {
   const navigate = useNavigate();
@@ -42,6 +43,8 @@ const IndexPage: React.FC = () => {
     setDarkTheme(checked);
   };
 
+  const [chatDialogDisplay, setChatDialogDisplay] = useState(false);
+
   return (
     <div className="w-screen h-screen flex flex-col justify-center items-center">
       <Space size={[8, 16]} wrap>
@@ -63,6 +66,22 @@ const IndexPage: React.FC = () => {
         >
           富文本测试
         </Button>
+        <>
+          <Button
+            type="primary"
+            onClick={() => setChatDialogDisplay(true)}
+          >
+            登陆弹窗测试
+          </Button>
+          <ChatDialog
+            open={chatDialogDisplay}
+            onCancel={() => setChatDialogDisplay(false)}
+          >
+            <div className="w-full h-[75vh] bg-gray-200">
+
+            </div>
+          </ChatDialog>
+        </>
         <Button onClick={loginTest}>
           登陆测试
         </Button>

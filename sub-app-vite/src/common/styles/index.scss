@@ -29,10 +29,39 @@ $content-nav-bg-color: #edeef0;
   }
 }
 
+@mixin scrollbar-hidden {
+  ::-webkit-scrollbar {
+    width: 0 !important;
+  }
+
+  ::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0 !important;
+  }
+}
+
 html {
+  height: 100%;
   overflow-y: auto !important;
 }
 
 body {
   position: relative;
+  height: inherit;
+
+  #app {
+    height: inherit;
+    @include scrollbar-default;
+
+    .v-application {
+      height: inherit;
+
+      .v-application__wrap {
+        min-height: unset;
+        max-height: unset;
+      }
+    }
+  }
 }
+
+

@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import Login from '@/views/login/index.vue';
+import Chat from '@/views/chat/index.vue';
 import Default from '@/layouts/default/Default.vue';
 
 export const routes: RouteRecordRaw[] = [
@@ -25,6 +26,29 @@ export const routes: RouteRecordRaw[] = [
   {
     path: '/register',
     component: Login
+  },
+  {
+    path: '/chat',
+    redirect: '/chat/home'
+  },
+  {
+    path: '/chat/:navItem',
+    name: 'index',
+    component: Chat
+  },
+  {
+    path: '/chat/home/friend',
+    redirect: '/index/home/friend/all'
+  },
+  {
+    path: '/chat/home/friend/:friendType',
+    name: 'friend',
+    component: Chat
+  },
+  {
+    path: '/chat/home/chat/:chatType/:roomId',
+    name: 'chat',
+    component: Chat
   }
 ];
 

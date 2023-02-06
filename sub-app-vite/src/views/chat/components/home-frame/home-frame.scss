@@ -1,0 +1,93 @@
+$primary-color: rgb(var(--v-theme-primary));
+$current-nav-item-index: v-bind(currentNavItemIndex);
+
+@mixin svg-style {
+  right: 0;
+  z-index: 1;
+  path {
+    fill: #ffffff;
+  }
+}
+
+@mixin nav-item-hover {
+  background-color: initial;
+  background-image: linear-gradient(90deg, rgba(102, 104, 107, 0.08), #edeef0);
+  cursor: pointer;
+}
+
+.home-frame-container {
+  user-select: none;
+
+  .home-nav-container {
+    width: $content-nav-width;
+    background: $content-nav-bg-color;
+
+    .nav-top-container {
+      height: 64px;
+
+      ::v-deep(.v-divider) {
+        border-color: #e5e5ea;
+      }
+    }
+
+    .nav-list-container {
+      overflow-y: scroll;
+
+      .my-friends-btn {
+        height: 48px;
+        box-sizing: border-box;
+        border-radius: 24px 0 0 24px;
+
+        .fa-solid {
+          color: $primary-color;
+        }
+
+        .top-svg {
+          bottom: 100%;
+          @include svg-style();
+        }
+
+        .bottom-svg {
+          top: 100%;
+          @include svg-style();
+        }
+      }
+
+      .nav-chat-item {
+        @extend .my-friends-btn;
+        height: 64px;
+        border-radius: 12px 0 0 12px;
+
+        span {
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        &:last-child {
+          margin-bottom: 100px;
+        }
+      }
+
+      .nav-item__focus {
+        background-color: #ffffff;
+      }
+
+      .nav-item__hover {
+        @include nav-item-hover();
+      }
+    }
+
+    .bottom-mask {
+      @include gradient-mask(150px, #edeef0);
+      width: $content-nav-width;
+      z-index: 2;
+      position: absolute;
+      bottom: 8px;
+      border-radius: 0 0 8px 8px;
+    }
+  }
+
+  .home-main-container {
+
+  }
+}
