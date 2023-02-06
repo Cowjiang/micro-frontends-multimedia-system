@@ -4,7 +4,7 @@ import { useLocation, useModel, useNavigate } from '@@/exports';
 import NProgress from 'nprogress';
 import { FormType, AuthPageState } from '@/pages/Auth/typings';
 import { Modal } from 'antd';
-import { vuetifyConfig } from '@/config/vuetify';
+import wujieDefaultProps from '@/config/wujieProps';
 import { authApi } from '@/services/api';
 
 const AuthPage: React.FC = () => {
@@ -90,7 +90,7 @@ const AuthPage: React.FC = () => {
         url={`http://localhost:3000${pathname.replaceAll('/auth', '')}`}
         // alive={true}
         props={{
-          ...vuetifyConfig
+          ...wujieDefaultProps
         }}
         beforeLoad={() => {
           NProgress.start();

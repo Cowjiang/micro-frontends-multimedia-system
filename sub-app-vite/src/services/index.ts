@@ -4,12 +4,11 @@ import { IResponseData } from '@/services/typings';
 
 axios.interceptors.request.use((config) => {
   const {method} = config;
-  // const {accessToken} = storeToRefs(useUserStore())
-
   const headers: AxiosRequestHeaders = config.headers ?? {};
-  // if (!!accessToken.value) {
-  //   headers['etoken'] = accessToken.value
-  // }
+  const accessToken = window.$wujie?.props?.token.accessToken ?? '';
+  if (!!accessToken) {
+    headers['etoken'] = accessToken;
+  }
   if (method === 'get' || method === 'delete') {
     headers['Cache-Control'] = 'no-cache';
     headers['Content-type'] = 'application/x-www-form-urlencoded';
@@ -25,12 +24,24 @@ axios.interceptors.request.use((config) => {
   };
 });
 
-axios.interceptors.response.use((v: AxiosResponse<any>) => {
+axios.interceptors.response.use(async (v: AxiosResponse<any>) => {
   //@ts-ignore
   const responseStatus = v.status || v.statusCode;
-  // if (!v.data.success) {
-  //   return Promise.reject(v)
-  // }
+  if (responseStatus === 200) {
+    // 请求正常
+  } else if (responseStatus === 401) {
+    // 3002 Token过期  3003 Token不合法
+    if ([2001, 3002, 3003].includes(v.data.code)) {
+      await window.$wujie?.props?.token.refreshToken().then(async () => {
+        await axios(v.config).then(res => {
+          v = res;
+        });
+      }).catch(() => {
+        // Token刷新失败
+      });
+      return v;
+    }
+  }
   return v;
 }, error => {
   return error;
