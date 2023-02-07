@@ -20,6 +20,7 @@
   import HomeFrame from '@/views/chat/components/home-frame/home-frame.vue';
   import router from '@/router';
   import { useChatStore } from '@/store/chat';
+  import { chatApi } from '@/services/api';
 
   const {navItemList, currentNavItemIndex} = storeToRefs(useChatStore());
   const route = useRoute();

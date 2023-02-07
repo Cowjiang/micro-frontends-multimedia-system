@@ -2,7 +2,12 @@ import axios, { AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse } from 'a
 import qs from 'qs';
 import { IResponseData } from '@/services/typings';
 
-axios.interceptors.request.use((config) => {
+const instance = axios.create({
+  baseURL: import.meta.env.VITE_BASE_URL
+});
+
+instance.interceptors.request.use((config) => {
+  console.log(config.baseURL);
   const {method} = config;
   const headers: AxiosRequestHeaders = config.headers ?? {};
   const accessToken = window.$wujie?.props?.token.accessToken ?? '';
@@ -24,7 +29,7 @@ axios.interceptors.request.use((config) => {
   };
 });
 
-axios.interceptors.response.use(async (v: AxiosResponse<any>) => {
+instance.interceptors.response.use(async (v: AxiosResponse<any>) => {
   //@ts-ignore
   const responseStatus = v.status || v.statusCode;
   if (responseStatus === 200) {
@@ -57,26 +62,26 @@ const httpPack = {
 const httpNative = {
   get: <P, R>(url: string, param?: P, config?: AxiosRequestConfig): Promise<R> => new Promise<R>((resolve, reject) => {
     const paramStr = qs.stringify(param);
-    axios.get(`${url}?${paramStr}`, config).then((res) => {
+    instance.get(`${url}?${paramStr}`, config).then((res) => {
       !res.data && reject(res);
       res.data.success ? resolve(res.data as R) : reject(res.data as R);
     }).catch(err => reject(err));
   }),
   delete: <P, R>(url: string, param?: P, config?: AxiosRequestConfig): Promise<R> => new Promise<R>((resolve, reject) => {
     const paramStr = qs.stringify(param);
-    axios.delete(`${url}?${paramStr}`, config).then((res) => {
+    instance.delete(`${url}?${paramStr}`, config).then((res) => {
       !res.data && reject(res);
       res.data.success ? resolve(res.data as R) : reject(res.data as R);
     }).catch(err => reject(err));
   }),
   post: <P, R>(url: string, data?: P, config?: AxiosRequestConfig): Promise<R> => new Promise<R>((resolve, reject) => {
-    axios.post(url, data, config).then((res) => {
+    instance.post(url, data, config).then((res) => {
       !res.data && reject(res);
       res.data.success ? resolve(res.data as R) : reject(res.data as R);
     }).catch(err => reject(err));
   }),
   put: <P, R>(url: string, data?: P, config?: AxiosRequestConfig): Promise<R> => new Promise<R>((resolve, reject) => {
-    axios.put(url, data, config).then((res) => {
+    instance.put(url, data, config).then((res) => {
       !res.data && reject(res);
       res.data.success ? resolve(res.data as R) : reject(res.data as R);
     }).catch(err => reject(err));
