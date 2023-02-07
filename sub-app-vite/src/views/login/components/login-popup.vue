@@ -269,9 +269,8 @@
 </template>
 
 <script lang="ts" setup>
-  import axios from 'axios';
   import { AlertType, FormType } from '@/views/login/components/typings';
-  import * as CSS from 'csstype';
+  import type * as CSS from 'csstype';
   import { authApi } from '@/services/api';
 
   interface LoginPopupProps {
