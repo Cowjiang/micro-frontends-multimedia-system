@@ -1,10 +1,23 @@
 import { http } from '@/services';
-import { GetPrivateChatListParams, MessageList } from '@/services/api/modules/chat/typings';
+import {
+  Chat,
+  GetPrivateChatHistoryByUidParams,
+  GetPrivateChatListParams,
+  MessageList,
+  SendPrivateMessageParams
+} from '@/services/api/modules/chat/typings';
 import { ResponsePage } from '@/services/typings';
 
 // 获取私聊列表
-const getPrivateChatList = (params: GetPrivateChatListParams) => http.get<GetPrivateChatListParams, ResponsePage<MessageList>>('/chat/list', params);
+const getPrivateChatList = <T extends GetPrivateChatListParams>(params: T) => http.get<T, ResponsePage<MessageList>>('/chat/list', params);
+
+// 根据uid获取私聊记录
+const getPrivateChatHistoryByUid = <T extends GetPrivateChatHistoryByUidParams>(params: T) => http.get<T, ResponsePage<Chat>>('/chat/user', params);
+
+const sendPrivateMessage = <T extends SendPrivateMessageParams>(data: T) => http.post<T, Chat>('/chat/user', data);
 
 export default {
-  getPrivateChatList
+  getPrivateChatList,
+  getPrivateChatHistoryByUid,
+  sendPrivateMessage
 };

@@ -18,7 +18,7 @@ const ChatDialog: React.FC<ChatDialogProps> = (props) => {
         name="chat"
         width="1000px"
         height="75vh"
-        url={`http://localhost:3000/chat`}
+        url={`http://localhost:3000/chat/home`}
         // alive={true}
         // sync={true}
         props={{

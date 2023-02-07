@@ -29,7 +29,8 @@ export const routes: RouteRecordRaw[] = [
   },
   {
     path: '/chat',
-    redirect: '/chat/home'
+    redirect: '/chat/home',
+    name: 'chat'
   },
   {
     path: '/chat/:navItem',
@@ -46,7 +47,7 @@ export const routes: RouteRecordRaw[] = [
     component: Chat
   },
   {
-    path: '/chat/home/chat/:chatType/:roomId',
+    path: '/chat/home/chat/:chatType/:id',
     name: 'chat',
     component: Chat
   }

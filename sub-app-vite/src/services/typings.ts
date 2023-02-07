@@ -25,11 +25,19 @@ export interface ResponsePage<T> {
 }
 
 /**
- * 分页参数
+ * 基础分页参数
  */
 export interface BasePageParam {
   pageNumber?: number | null;
   pageSize?: number | null;
+}
+
+/**
+ * 根据时间分页参数
+ */
+export interface PageParamByTime {
+  pageSize?: number;
+  time?: number;
 }
 
 export interface OrderItem {

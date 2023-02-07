@@ -20,17 +20,17 @@
   import HomeFrame from '@/views/chat/components/home-frame/home-frame.vue';
   import router from '@/router';
   import { useChatStore } from '@/store/chat';
-  import { chatApi } from '@/services/api';
 
   const {navItemList, currentNavItemIndex} = storeToRefs(useChatStore());
   const route = useRoute();
+  const chatStore = useChatStore();
 
   // 导航栏点击事件
   const handleNavItemClick = ({index, detail}: { index: number, detail: any }) => {
     if (currentNavItemIndex.value !== index) {
-      if (detail.name === 'search') {
+      if (['fullscreen', 'search'].includes(detail.name)) {
         // showSearchPopup.value = true
-      } else {
+      }  else {
         currentNavItemIndex.value = index;
         const navItem = detail.name ?? 'home';
         router.replace({name: 'index', params: {navItem}});
@@ -39,17 +39,11 @@
   };
 
   onMounted(() => {
+    chatStore.getPrivateChatList({})
     navItemList.value = [
       {name: 'home', title: '主页', icon: 'fas fa-house'},
       {name: 'group', title: '我的群聊', icon: 'fas fa-user-friends'},
-      // {
-      //   name: '61be0f1ee7fd6865cbcd74d1',
-      //   chatType: 0,
-      //   title: 'Cowjiang',
-      //   imgUrl: 'https://chat-ice.oss-cn-beijing.aliyuncs.com/chat/9138f18c-1723-4d97-b027-c92c113bd707.jpg'
-      // },
-      // {name: '61be0f1ee7fd6865cbcd74d2', chatType: 1, title: 'Cowjiang的群聊'},
-      {name: 'search', title: '切换全屏', icon: 'fas fa-up-right-and-down-left-from-center'},
+      {name: 'fullscreen', title: '切换全屏', icon: 'fas fa-up-right-and-down-left-from-center'},
       {name: 'search', title: '搜索', icon: 'fas fa-search'},
       {name: 'setting', title: '设置中心', icon: 'fas fa-cog'}
     ];

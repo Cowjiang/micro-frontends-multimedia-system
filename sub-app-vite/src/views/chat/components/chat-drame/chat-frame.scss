@@ -1,0 +1,119 @@
+$primary-color: rgb(var(--v-theme-primary));
+$title-container-height: 60px;
+
+.chat-frame-container {
+  @include scrollbar-default();
+
+  .chat-title-container {
+    height: $title-container-height;
+    border-bottom: 1px solid #eeeeee;
+  }
+
+  .chat-content-container {
+    overflow-y: scroll;
+
+    .message-list-container {
+      //top: -100%;
+
+      .message-container {
+        .datetime-container {
+          margin: 30px 0 15px;
+          font-size: 12px;
+          text-align: center;
+          color: #888;
+        }
+
+        .datetime-container:nth-child(1) {
+          margin-top: 0;
+        }
+
+        .avatar-container {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          overflow: hidden;
+
+          image {
+            width: 100%;
+          }
+        }
+
+        .message-content {
+          width: fit-content;
+          max-width: calc(100% - 140px);
+          height: fit-content;
+          min-height: 30px;
+          padding: 10px;
+          font-size: 15px;
+          word-break: break-all;
+
+          view {
+            pointer-events: none;
+          }
+
+          image {
+            max-width: 35vw;
+          }
+        }
+
+        .avatar-container-left {
+          float: left;
+          margin-left: 20px;
+        }
+
+        .message-content-left {
+          margin-left: 70px;
+          border-radius: 0 10px 10px 20px;
+          background-color: #f1f1f1;
+        }
+
+        .avatar-container-right {
+          float: right;
+          margin-right: 30px;
+        }
+
+        .message-content-right {
+          margin-left: auto;
+          margin-right: 80px;
+          border-radius: 10px 0 20px 10px;
+          background-color: $primary-color;
+          color: #fff;
+        }
+      }
+    }
+  }
+
+  .chat-input-container {
+    min-height: 84px;
+
+    .input-container {
+      .prepend-btn-container, .append-btn-container {
+        input {
+          width: 30px;
+          left: 50%;
+          opacity: 0;
+          cursor: pointer;
+        }
+
+        i {
+          cursor: pointer;
+        }
+      }
+
+      .input {
+        ::v-deep(.v-field__field) {
+          padding-top: 0;
+          margin-top: 4px;
+          word-break: break-all;
+
+          .v-field__input {
+            overflow-y: scroll;
+            padding-top: 8px;
+            mask-image: none;
+            -webkit-mask-image: none;
+          }
+        }
+      }
+    }
+  }
+}

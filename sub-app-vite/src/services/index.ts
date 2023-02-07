@@ -7,7 +7,6 @@ const instance = axios.create({
 });
 
 instance.interceptors.request.use((config) => {
-  console.log(config.baseURL);
   const {method} = config;
   const headers: AxiosRequestHeaders = config.headers ?? {};
   const accessToken = window.$wujie?.props?.token.accessToken ?? '';
