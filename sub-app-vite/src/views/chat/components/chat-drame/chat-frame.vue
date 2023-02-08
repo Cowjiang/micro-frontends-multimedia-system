@@ -156,7 +156,7 @@
             color="primary"
             :placeholder="placeholder"
             :disabled="loadingStatus"
-            @keydown.enter="handleSendMessage" />
+            @keydown.enter="handleEnterEvent" />
         </div>
         <div class="append-btn-container ml-auto flex-shrink-0 text-h6 text-grey-darken-2">
           <input
@@ -177,14 +177,20 @@
   import { IResponseData } from '@/services/typings';
   import { formatTime } from '@/common/formats';
   import { useChatStore } from '@/store/chat';
+  import { MessageList } from '@/services/api/modules/chat/typings';
 
   interface Props {
     chatInfo: ChatInfo;
   }
 
+  interface Emits {
+    (e: 'messageSent', message: MessageList): void;
+  }
+
   const props = withDefaults(defineProps<Props>(), {});
+  const emit = defineEmits<Emits>();
   const {appContext} = getCurrentInstance() ?? {};
-  const message = appContext?.config.globalProperties.$message ?? {}
+  const message = appContext?.config.globalProperties.$message ?? {};
   const chatStore = storeToRefs(useChatStore());
 
   const chatMessageArea = ref<HTMLElement | null>(null);
@@ -284,21 +290,39 @@
     }
   };
 
-  // 消息发送事件
-  const handleSendMessage = (e: KeyboardEvent) => {
+  // 输入框回车事件
+  const handleEnterEvent = (e: KeyboardEvent) => {
     e.preventDefault();
-    if (inputValue.value !== '') {
+    handleSendMessage();
+  };
+
+  // 消息发送事件
+  const handleSendMessage = (isText: boolean = true, imgUrl?: string) => {
+    const content = imgUrl || inputValue.value;
+    if (inputValue.value !== '' || !isText) {
       chatApi.sendPrivateMessage({
         receiverId: props.chatInfo.id,
-        content: inputValue.value,
-        isText: true
+        content,
+        isText
       }).then(res => {
         messageRecords.value.push({
           id: res.data?.id,
           isMe: true,
-          isPhoto: false,
-          content: inputValue.value,
+          isPhoto: !isText,
+          content,
           time: new Date().getTime()
+        });
+        emit('messageSent', {
+          id: props.chatInfo.id,
+          friendId: props.chatInfo.id,
+          friendInfo: {
+            avgPath: props.chatInfo.avatarUrl,
+            username: props.chatInfo.username
+          },
+          unread: 0,
+          content,
+          isText,
+          createdTime: new Date().getTime()
         });
         recordsLength += 1;
         inputValue.value = '';
@@ -321,7 +345,7 @@
 
   // 文件上传
   const uploadFile = (file: FormData, type: 'file' | 'image') => {
-
+    handleSendMessage(false, 'url');
   };
 
   /**

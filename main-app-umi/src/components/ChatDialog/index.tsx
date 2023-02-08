@@ -12,13 +12,6 @@ const ChatDialog: React.FC<ChatDialogProps> = (props) => {
   const {loading, setLoading} = useModel('global');
   const [modal, contextHolder] = Modal.useModal();
 
-  // const {bus} = WujieReact;
-  // const handleMessageEvent = (options: any) => {
-  //   console.log(options);
-  // };
-  // bus.$on('showMessage', handleMessageEvent);
-
-
   const wujieInstance = useMemo(() => {
     return (
       <WujieReact

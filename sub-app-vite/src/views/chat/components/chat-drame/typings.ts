@@ -1,5 +1,6 @@
 export interface ChatInfo {
   id: number;
+  friendId?: number;
   avatarUrl: string;
   username: string;
   remarkName?: string;

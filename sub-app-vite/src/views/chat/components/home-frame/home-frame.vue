@@ -81,9 +81,21 @@
                     {{ formatTime(chat.createdTime) }}
                   </span>
                 </div>
-                <span class="text-sm-body-2 text-grey-darken-2">
-                  {{ chat.isText ? chat.content : '[图片]' }}
-                </span>
+                <div class="d-flex overflow-hidden">
+                  <span class="w-100 mr-2 flex-grow-1 text-sm-body-2 text-grey-darken-2">
+                    {{ chat.isText ? chat.content : '[图片]' }}
+                  </span>
+                  <div class="ml-auto flex-shrink-0 text-caption" v-if="chat.unread">
+                    <v-badge
+                      dot
+                      color="red-darken-3"
+                      :max="99"
+                      inline />
+                    <span class="text-red-darken-3">
+                      {{ chat.unread > 99 ? '99+' : chat.unread }}条
+                    </span>
+                  </div>
+                </div>
               </div>
               <svg
                 v-show="currentNavItemIndex === index"
@@ -119,8 +131,9 @@
       <!--        :chat-info="currentChatInfo"-->
       <!--        @send="handleMessageSent" />-->
       <chat-frame
-        v-if="currentNavItemIndex !== -1"
+        v-if="currentNavItemIndex !== -1 && currentChatInfo?.id"
         :chat-info="currentChatInfo"
+        @message-sent="handlePrivateMessageSent"
       />
     </div>
   </div>
@@ -132,6 +145,7 @@
   import { formatTime } from '@/common/formats';
   import { ChatType } from '@/typings';
   import { ChatInfo } from '@/views/chat/components/chat-drame/typings';
+  import { MessageList } from '@/services/api/modules/chat/typings';
 
   const chatStore = useChatStore();
   const {privateChatList} = storeToRefs(chatStore);
@@ -162,32 +176,27 @@
           id: privateChatList.value[index].id
         }
       });
-      const {friendId, friendInfo, content, createdTime} = privateChatList.value[currentNavItemIndex.value];
+      const {id, friendId, friendInfo, content, createdTime} = privateChatList.value[currentNavItemIndex.value];
       currentChatInfo.value = {
-        id: friendId,
+        id,
+        friendId,
         avatarUrl: friendInfo?.avgPath ?? '',
         username: friendInfo?.username ?? '',
         lastMessage: content,
         time: createdTime
       };
+      privateChatList.value[index].unread = 0;
     }
   };
 
-  /**
-   * 发送消息的回调事件
-   * @param message 消息内容
-   */
-  const handleMessageSent = (message: any) => {
-    privateChatList.value.map(item => {
-      if (item.id === message.roomId) {
-        // @ts-ignore
-        store.chatList.unshift(store.chatList.pop());
-        item.createdTime = Number(new Date());
-        // @ts-ignore
-        item.lastMessage = message.messageType === 'image' ? '[图片]' : message.message;
-        currentNavItemIndex.value = 0;
-      }
-    });
+  // 私聊发送消息的回调事件
+  const handlePrivateMessageSent = (message: MessageList) => {
+    const currentIdx = privateChatList.value.findIndex(chat => chat.id === message.id);
+    if (currentIdx !== -1) {
+      privateChatList.value.splice(currentIdx, 1);
+      privateChatList.value.unshift(message);
+      currentNavItemIndex.value = 0;
+    }
   };
 
   watch(
