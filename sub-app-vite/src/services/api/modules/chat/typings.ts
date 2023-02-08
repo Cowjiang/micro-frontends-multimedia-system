@@ -9,12 +9,24 @@ export interface GetPrivateChatHistoryByUidParams extends PageParamByTime {
 }
 
 interface SendMessageParams {
-  content: string
-  isText: boolean
+  content: string;
+  isText: boolean;
 }
 
 export interface SendPrivateMessageParams extends SendMessageParams {
-  receiverId: number
+  receiverId: number;
+}
+
+export interface GetGroupChatHistoryByGidParams {
+  groupId: number;
+}
+
+export interface SetStickyPrivateChatParams {
+  friendId: number;
+}
+
+export interface SetStickyGroupChatParams {
+  groupId: number;
 }
 
 /**
@@ -111,3 +123,75 @@ export interface Chat {
    */
   userId?: number;
 }
+
+export interface StickyChatVo {
+  friendInfo?: SimpleUserInfo;
+  message?: Chat;
+}
+
+export interface GroupChat {
+  chatGroup?: ChatGroup;
+  chatGroupHistory?: ChatGroupHistory;
+  userInfo?: SimpleUserInfo;
+}
+
+/**
+ * ChatGroup
+ */
+export interface ChatGroup {
+  /**
+   * 创建时间
+   */
+  createTime?: number;
+  /**
+   * 创建者id
+   */
+  creatorId?: number;
+  /**
+   * 群聊名称
+   */
+  groupName?: string;
+  /**
+   * 主键
+   */
+  id?: number;
+}
+
+/**
+ * GroupHistoryListVo
+ */
+export interface GroupHistoryList {
+  message?: ChatGroupHistory;
+  userInfo?: SimpleUserInfo;
+}
+
+/**
+ * ChatGroupHistory
+ */
+export interface ChatGroupHistory {
+  /**
+   * 内容
+   */
+  content?: string;
+  /**
+   * 发送时间
+   */
+  createdTime?: number;
+  /**
+   * 群id
+   */
+  groupId?: number;
+  /**
+   * 主键
+   */
+  id?: number;
+  /**
+   * 发送方id
+   */
+  senderId?: number;
+  /**
+   * 是否为纯文本
+   */
+  type?: string;
+}
+

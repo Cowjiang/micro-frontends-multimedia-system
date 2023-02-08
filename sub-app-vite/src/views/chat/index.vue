@@ -5,11 +5,18 @@
     </div>
     <div class="content-wrapper h-100 flex-grow-1 pt-2 pr-2 pb-2">
       <div class="content-container w-100 h-100 rounded-lg bg-white overflow-hidden">
-<!--        <search-popup v-model="showSearchPopup"/>-->
-        <home-frame v-if="currentNavItemIndex === 0"/>
-<!--        <group-frame v-else-if="currentNavItemIndex === 1"/>-->
-<!--        <setting-frame v-else-if="currentNavItemIndex === navItemList.findIndex(item => item.name === 'setting')"/>-->
-<!--        <top-chat-frame v-else/>-->
+        <!--        <search-popup v-model="showSearchPopup"/>-->
+        <home-frame
+          v-if="currentNavItemIndex === 0"
+          :chat-type="ChatType.PRIVATE"
+        />
+        <home-frame
+          v-else-if="currentNavItemIndex === 1"
+          :chat-type="ChatType.GROUP"
+        />
+        <!--        <group-frame v-else-if="currentNavItemIndex === 1"/>-->
+        <!--        <setting-frame v-else-if="currentNavItemIndex === navItemList.findIndex(item => item.name === 'setting')"/>-->
+        <!--        <top-chat-frame v-else/>-->
       </div>
     </div>
   </div>
@@ -20,6 +27,7 @@
   import HomeFrame from '@/views/chat/components/home-frame/home-frame.vue';
   import router from '@/router';
   import { useChatStore } from '@/store/chat';
+  import { ChatType } from '@/typings';
 
   const {navItemList, currentNavItemIndex} = storeToRefs(useChatStore());
   const route = useRoute();
@@ -30,7 +38,7 @@
     if (currentNavItemIndex.value !== index) {
       if (['fullscreen', 'search'].includes(detail.name)) {
         // showSearchPopup.value = true
-      }  else {
+      } else {
         currentNavItemIndex.value = index;
         const navItem = detail.name ?? 'home';
         router.replace({name: 'index', params: {navItem}});
@@ -39,7 +47,8 @@
   };
 
   onMounted(() => {
-    chatStore.getPrivateChatList({})
+    chatStore.getPrivateChatList({pageSize: 100});
+    chatStore.getGroupChatList();
     navItemList.value = [
       {name: 'home', title: '主页', icon: 'fas fa-house'},
       {name: 'group', title: '我的群聊', icon: 'fas fa-user-friends'},

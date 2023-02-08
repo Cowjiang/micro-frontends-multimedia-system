@@ -4,7 +4,7 @@ import { DateType } from '@/common/formats/typings';
  * 格式化时间（日期为今天时省略日期只显示时间），精确到分钟
  * @param time 时间字符串
  */
-export const formatTime = (time: string): string => {
+export const formatTime = (time: string | number): string => {
   if (!time) return ''
   const messageDate = new Date(time)
   const nowDate = new Date()

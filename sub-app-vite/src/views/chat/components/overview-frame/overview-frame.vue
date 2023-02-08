@@ -2,7 +2,7 @@
   <div class="overview-frame-container w-100 h-100 d-flex flex-column">
     <div class="overview-title-container w-100 px-4 d-flex flex-shrink-0 align-center">
       <div class="flex-grow-0 text-grey-darken-4 text-no-wrap">
-        <span>我的概览览</span>
+        <span>我的概览</span>
       </div>
       <div class="ml-auto d-flex align-center flex-shrink-0">
         <v-btn

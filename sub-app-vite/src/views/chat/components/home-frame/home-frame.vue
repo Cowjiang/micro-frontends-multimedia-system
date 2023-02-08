@@ -22,7 +22,7 @@
             ]"
             v-bind="props"
             @click="handleNavItemClick(-1)">
-            <i class="fa-solid fa-users mr-3"></i>
+            <i class="fa-solid fa-chart-pie mr-3"></i>
             <span>我的概览</span>
             <svg
               v-show="currentNavItemIndex === -1"
@@ -41,12 +41,12 @@
           </div>
         </v-hover>
         <div class="ml-4 mt-7 mb-2 text-body-2 text-grey-darken-4">
-          私信
+          {{ props.chatType === ChatType.PRIVATE ? '私信' : '群聊' }}
         </div>
         <div class="chat-list-container">
           <v-hover
             v-slot="{ isHovering, props }"
-            v-for="(chat, index) in privateChatList"
+            v-for="(chat, index) in chatNavItemList"
             :key="chat.id">
             <div
               class="nav-chat-item d-flex align-center position-relative ml-2 pl-2 py-6"
@@ -61,12 +61,12 @@
                 color="grey-lighten-2"
                 size="default">
                 <v-img
-                  :src="chat.friendInfo?.avgPath"
-                  :alt="chat.friendInfo?.username">
+                  :src="chat.avgPath"
+                  alt="">
                   <template v-slot:placeholder>
                     <div class="w-100 h-100 d-flex justify-center align-center">
                       <span class="text-h6 font-weight-bold text-grey-darken-3">
-                        {{ chat.friendInfo?.username.charAt(0) }}
+                        {{ chat.avgChar }}
                       </span>
                     </div>
                   </template>
@@ -75,15 +75,15 @@
               <div class="ml-2 mr-4 w-100 d-flex flex-column overflow-hidden text-no-wrap">
                 <div class="d-flex overflow-hidden">
                   <span class="w-100 mr-2 flex-grow-1 text-subtitle-2 text-grey-darken-3 font-weight-bold">
-                    {{ chat.friendInfo?.username ?? '' }}
+                    {{ chat.name }}
                   </span>
                   <span class="ml-auto flex-shrink-0 text-caption text-grey-lighten-1">
-                    {{ formatTime(chat.createdTime) }}
+                    {{ chat.createTime }}
                   </span>
                 </div>
                 <div class="d-flex overflow-hidden">
                   <span class="w-100 mr-2 flex-grow-1 text-sm-body-2 text-grey-darken-2">
-                    {{ chat.isText ? chat.content : '[图片]' }}
+                    {{ chat.content }}
                   </span>
                   <div class="ml-auto flex-shrink-0 text-caption" v-if="chat.unread">
                     <v-badge
@@ -114,7 +114,7 @@
               <v-tooltip
                 activator="parent"
                 location="end">
-                {{ chat.friendInfo?.username ?? '' }}
+                {{ chat.name }}
               </v-tooltip>
             </div>
           </v-hover>
@@ -123,9 +123,6 @@
       <div class="bottom-mask"></div>
     </div>
     <div class="home-main-container h-100 flex-grow-1">
-      <!--      <friend-frame-->
-      <!--        v-if="currentNavItemIndex === -1"-->
-      <!--        :friend-type="currentFriendListType" />-->
       <chat-frame
         v-if="currentNavItemIndex !== -1 && currentChatInfo?.id"
         :chat-info="currentChatInfo"
@@ -147,13 +144,42 @@
   import { ChatInfo } from '@/views/chat/components/chat-drame/typings';
   import { MessageList } from '@/services/api/modules/chat/typings';
 
+  interface Props {
+    chatType: ChatType;
+  }
+
+  const props = withDefaults(defineProps<Props>(), {});
   const chatStore = useChatStore();
-  const {privateChatList} = storeToRefs(chatStore);
+  const {privateChatList, groupChatList} = storeToRefs(chatStore);
   const router = useRouter();
   const route = useRoute();
   const currentNavItemIndex = ref(-1); //当前左侧列表导航栏聚焦项的序号
   const currentFriendListType = ref(0); //好友列表的类型
   const currentChatInfo = ref<ChatInfo | {}>({}); //当前聊天信息
+
+  const chatNavItemList = computed(() => {
+    if (props.chatType === ChatType.PRIVATE) {
+      return privateChatList.value.map(chat => ({
+        id: chat.id,
+        avgPath: chat.friendInfo?.avgPath ?? '',
+        avgChar: chat.friendInfo?.username?.charAt(0) ?? '',
+        name: chat.friendInfo?.username ?? '',
+        content: chat.isText ? chat.content : '[图片]',
+        createdTime: formatTime(chat.createdTime ?? ''),
+        unread: chat.unread
+      }));
+    } else {
+      return groupChatList.value.map(chat => ({
+        id: chat.chatGroup?.id,
+        avgPath: '',
+        avgChar: chat.chatGroup?.groupName?.charAt(0) ?? '',
+        name: chat.chatGroup?.groupName ?? '',
+        content: chat.chatGroupHistory?.content,
+        createdTime: formatTime(chat.chatGroupHistory?.createdTime ?? ''),
+        unread: 0
+      }));
+    }
+  });
 
   /**
    * 左侧菜单点击事件

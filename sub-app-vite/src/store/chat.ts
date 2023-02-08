@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { NavItemList } from '@/views/chat/components/nav-bar/typings';
-import { GetPrivateChatListParams, MessageList } from '@/services/api/modules/chat/typings';
+import { GetPrivateChatListParams, GroupChat, MessageList } from '@/services/api/modules/chat/typings';
 import { chatApi } from '@/services/api';
 
 export const useChatStore = defineStore('chat', {
@@ -10,7 +10,9 @@ export const useChatStore = defineStore('chat', {
     // 当前导航栏显示的项目的序号
     currentNavItemIndex: 0,
     // 私聊列表
-    privateChatList: [] as MessageList[]
+    privateChatList: [] as MessageList[],
+    // 群聊列表
+    groupChatList: [] as GroupChat[]
   }),
   getters: {},
   actions: {
@@ -22,10 +24,11 @@ export const useChatStore = defineStore('chat', {
         return Promise.reject(err);
       });
     },
-    //根据roomId获取聊天消息记录
-    // getChatMessageHistory(roomId: string) {
-    //   const messageHistory = this.chatMessageHistory.get(roomId)
-    //   return messageHistory ?? null
-    // },
+    // 获取群聊列表
+    async getGroupChatList() {
+      await chatApi.getGroupChatList().then(res => {
+        this.groupChatList = res.data ?? [];
+      });
+    }
   }
 });
