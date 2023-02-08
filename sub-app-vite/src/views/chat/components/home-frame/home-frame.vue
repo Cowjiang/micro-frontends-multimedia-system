@@ -23,7 +23,7 @@
             v-bind="props"
             @click="handleNavItemClick(-1)">
             <i class="fa-solid fa-users mr-3"></i>
-            <span>我的好友</span>
+            <span>我的概览</span>
             <svg
               v-show="currentNavItemIndex === -1"
               width="16px"
@@ -126,14 +126,13 @@
       <!--      <friend-frame-->
       <!--        v-if="currentNavItemIndex === -1"-->
       <!--        :friend-type="currentFriendListType" />-->
-      <!--      <chat-frame-->
-      <!--        v-else-->
-      <!--        :chat-info="currentChatInfo"-->
-      <!--        @send="handleMessageSent" />-->
       <chat-frame
         v-if="currentNavItemIndex !== -1 && currentChatInfo?.id"
         :chat-info="currentChatInfo"
         @message-sent="handlePrivateMessageSent"
+      />
+      <overview-frame
+        v-else
       />
     </div>
   </div>
@@ -141,6 +140,7 @@
 
 <script lang="ts" setup>
   import ChatFrame from '@/views/chat/components/chat-drame/chat-frame.vue';
+  import OverviewFrame from '@/views/chat/components/overview-frame/overview-frame.vue';
   import { useChatStore } from '@/store/chat';
   import { formatTime } from '@/common/formats';
   import { ChatType } from '@/typings';
@@ -160,6 +160,9 @@
    * @param index 菜单项序号
    */
   const handleNavItemClick = (index: number): void => {
+    if (currentNavItemIndex.value === index) {
+      return;
+    }
     currentNavItemIndex.value = index;
     if (index === -1) {
       router.replace({

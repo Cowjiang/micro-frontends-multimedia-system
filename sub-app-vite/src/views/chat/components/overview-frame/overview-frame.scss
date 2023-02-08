@@ -1,0 +1,15 @@
+$primary-color: rgb(var(--v-theme-primary));
+$title-container-height: 60px;
+
+.overview-frame-container {
+  @include scrollbar-default();
+
+  .overview-title-container {
+    height: $title-container-height;
+    border-bottom: 1px solid #eeeeee;
+  }
+
+  .overview-content-container {
+    overflow-y: scroll;
+  }
+}

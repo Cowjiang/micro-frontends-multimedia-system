@@ -1,6 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse } from 'axios';
 import qs from 'qs';
 import { IResponseData } from '@/services/typings';
+import { useUserStore } from '@/store/user';
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL
@@ -10,8 +11,9 @@ instance.interceptors.request.use((config) => {
   const {method} = config;
   const headers: AxiosRequestHeaders = config.headers ?? {};
   const accessToken = window.$wujie?.props?.token.accessToken ?? '';
-  if (!!accessToken) {
+  if (accessToken) {
     headers['etoken'] = accessToken;
+    useUserStore().getUserInfo();
   }
   if (method === 'get' || method === 'delete') {
     headers['Cache-Control'] = 'no-cache';
