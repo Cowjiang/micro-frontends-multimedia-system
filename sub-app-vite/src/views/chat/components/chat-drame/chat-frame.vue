@@ -4,7 +4,7 @@
       <div class="flex-shrink-0 mr-2 text-h6 text-grey-lighten-1">
         <i class="fa-solid fa-at"></i>
       </div>
-      <div class="flex-grow-1 text-grey-darken-4 text-no-wrap">
+      <div class="flex-grow-0 text-grey-darken-4 text-no-wrap">
         <span>{{ props.chatInfo.username }}</span>
         <span
           v-if="props.chatInfo.remarkName"
@@ -17,8 +17,11 @@
           class="bg-grey-lighten-3 text-grey-darken-2"
           variant="tonal"
           size="x-small"
-          :icon="true">
+          icon>
           <i class="fa-solid fa-search"></i>
+          <v-tooltip activator="parent" location="bottom end" attach>
+            搜索
+          </v-tooltip>
         </v-btn>
         <v-btn
           class="ml-3 bg-grey-lighten-3 text-grey-darken-2"
@@ -26,13 +29,15 @@
           size="x-small"
           :icon="true">
           <i class="fa-solid fa-ellipsis"></i>
+          <v-tooltip activator="parent" location="bottom end" attach>
+            更多
+          </v-tooltip>
           <v-menu activator="parent" location="start" attach>
             <v-list
               class="text-subtitle-2"
               elevation="3"
               rounded="lg"
               density="compact"
-              min-width="120"
               @update:selected="handleChatMenuClick">
               <v-list-item :value="0">
                 置顶聊天
@@ -178,6 +183,8 @@
   }
 
   const props = withDefaults(defineProps<Props>(), {});
+  const {appContext} = getCurrentInstance() ?? {};
+  const message = appContext?.config.globalProperties.$message ?? {}
   const chatStore = storeToRefs(useChatStore());
 
   const chatMessageArea = ref<HTMLElement | null>(null);
@@ -236,9 +243,7 @@
               });
             }
             if (index === (res.data?.records.length ?? 0) - 1) {
-              if (chatMessageArea.value) {
-                chatMessageArea.value.scrollTop = 9999909;
-              }
+              scrollToBottom(chatMessageArea.value);
             }
           });
         }
@@ -248,6 +253,7 @@
         }
       }
     }).catch(err => {
+      message?.error('网络异常');
       console.error(err);
     });
   };
@@ -271,9 +277,7 @@
         if (recordsLength <= pageSize) {
           existMore = false;
         }
-        if (chatMessageArea.value) {
-          chatMessageArea.value.scrollTop = 9999909;
-        }
+        scrollToBottom(chatMessageArea.value);
       } else {
         // messageStore.unreadMessageCount += 1
       }
@@ -298,10 +302,9 @@
         });
         recordsLength += 1;
         inputValue.value = '';
-        if (chatMessageArea.value) {
-          chatMessageArea.value.scrollTop = 9999909;
-        }
+        scrollToBottom(chatMessageArea.value);
       }).catch(e => {
+        message?.error('网络异常');
         console.error(e);
       });
     }
@@ -321,11 +324,28 @@
 
   };
 
+  /**
+   * 聊天更多操作菜单点击事件
+   * @param e 当前点击的菜单项序号数组
+   */
+  const handleChatMenuClick = (e: Array<number>) => {
+    if (e[0] === 0) {
+
+    }
+  };
+
   // 两个时间差是否大于5分钟
   const computeDatetime = (oldTime: number, newTime: number): boolean => {
     return (new Date(newTime).getTime() - new Date(oldTime).getTime()) / 1000 / 60 >= 5; //返回两个时间差是否大于5分钟
   };
 
+  const scrollToBottom = (el: HTMLElement | null) => {
+    nextTick(() => {
+      if (el) {
+        el.scrollTop = el.scrollHeight;
+      }
+    });
+  };
 
   // 重置聊天组件数据
   const reset = () => {

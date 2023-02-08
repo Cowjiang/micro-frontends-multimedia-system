@@ -12,11 +12,18 @@ const ChatDialog: React.FC<ChatDialogProps> = (props) => {
   const {loading, setLoading} = useModel('global');
   const [modal, contextHolder] = Modal.useModal();
 
+  // const {bus} = WujieReact;
+  // const handleMessageEvent = (options: any) => {
+  //   console.log(options);
+  // };
+  // bus.$on('showMessage', handleMessageEvent);
+
+
   const wujieInstance = useMemo(() => {
     return (
       <WujieReact
         name="chat"
-        width="1000px"
+        width="75vw"
         height="75vh"
         url={`http://localhost:3000/chat/home`}
         // alive={true}
@@ -52,9 +59,10 @@ const ChatDialog: React.FC<ChatDialogProps> = (props) => {
   return (
     <Modal
       centered
-      width={1000}
+      width="75vw"
       footer={null}
       wrapClassName="chat-modal"
+      closable={false}
       destroyOnClose={true}
       {...props}
     >
