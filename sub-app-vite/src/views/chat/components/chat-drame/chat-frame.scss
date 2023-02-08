@@ -38,6 +38,10 @@ $title-container-height: 60px;
           }
         }
 
+        .message-username {
+          margin-left: 70px;
+        }
+
         .message-content {
           width: fit-content;
           max-width: calc(100% - 140px);

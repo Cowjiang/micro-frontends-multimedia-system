@@ -2,13 +2,20 @@
   <div class="chat-frame-container w-100 h-100 d-flex flex-column">
     <div class="chat-title-container w-100 px-4 d-flex flex-shrink-0 align-center">
       <div class="flex-shrink-0 mr-2 text-h6 text-grey-lighten-1">
-        <i class="fa-solid fa-at"></i>
+        <i class="fa-solid fa-at" v-if="props.chatInfo.type === ChatType.PRIVATE" />
+        <v-chip
+          class="ma-2"
+          size="x-small"
+          variant="tonal"
+          color="primary"
+          v-else
+        >
+          群聊
+        </v-chip>
       </div>
       <div class="flex-grow-0 text-grey-darken-4 text-no-wrap">
-        <span>{{ props.chatInfo.username }}</span>
-        <span
-          v-if="props.chatInfo.remarkName"
-          class="text-grey-darken-1">
+        <span>{{ props.chatInfo.targetName }}</span>
+        <span v-if="props.chatInfo.remarkName" class="text-grey-darken-1">
           （{{ props.chatInfo.remarkName }}）
         </span>
       </div>
@@ -17,7 +24,8 @@
           class="bg-grey-lighten-3 text-grey-darken-2"
           variant="tonal"
           size="x-small"
-          icon>
+          icon
+        >
           <i class="fa-solid fa-search"></i>
           <v-tooltip activator="parent" location="bottom end" attach>
             搜索
@@ -27,7 +35,8 @@
           class="ml-3 bg-grey-lighten-3 text-grey-darken-2"
           variant="tonal"
           size="x-small"
-          :icon="true">
+          :icon="true"
+        >
           <i class="fa-solid fa-ellipsis"></i>
           <v-tooltip activator="parent" location="bottom end" attach>
             更多
@@ -38,15 +47,16 @@
               elevation="3"
               rounded="lg"
               density="compact"
-              @update:selected="handleChatMenuClick">
+              @update:selected="handleChatMenuClick"
+            >
               <v-list-item :value="0">
-                置顶聊天
+                置顶{{ props.chatInfo.type === ChatType.PRIVATE ? '聊天' : '群聊' }}
               </v-list-item>
               <v-list-item :value="1">
-                聊天信息
+                {{ props.chatInfo.type === ChatType.PRIVATE ? '用户' : '群聊' }}信息
               </v-list-item>
               <v-list-item class="text-red" :value="2">
-                屏蔽该用户
+                屏蔽该{{ props.chatInfo.type === ChatType.PRIVATE ? '用户' : '群聊' }}
               </v-list-item>
             </v-list>
           </v-menu>
@@ -61,17 +71,30 @@
             <v-avatar
               class="flex-shrink-0"
               color="grey-lighten-2"
-              size="80">
+              size="80"
+            >
               <v-img
                 :src="props.chatInfo.avatarUrl"
-                :alt="props.chatInfo.username" />
+                :alt="props.chatInfo.targetName"
+              >
+                <template v-slot:placeholder>
+                  <div class="w-100 h-100 d-flex justify-center align-center">
+                    <span class="text-h4 text-grey-darken-2">
+                      {{ props.chatInfo.targetName.charAt(0) }}
+                    </span>
+                  </div>
+                </template>
+              </v-img>
             </v-avatar>
           </div>
           <span class="mt-4 text-h4 text-grey-darken-4 text-no-wrap">
-            {{ props.chatInfo.username }}
+            {{ props.chatInfo.targetName }}
           </span>
-          <span class="my-2 text-grey-darken-2 text-body-1">
-            这里是你与 @{{ props.chatInfo.username }} 私信记录的开头。
+          <span class="my-2 text-grey-darken-2 text-body-1" v-if="props.chatInfo.type === ChatType.PRIVATE">
+            这里是你与 @{{ props.chatInfo.targetName }} 私信记录的开头。
+          </span>
+          <span class="my-2 text-grey-darken-2 text-body-1" v-else>
+            这里是群聊「{{ props.chatInfo.targetName }}」的聊天记录开头。
           </span>
           <v-divider class="mt-3 mb-6" />
         </div>
@@ -80,36 +103,61 @@
             class="message-container w-100 mb-6"
             v-for="(message, index) in messageRecords"
             :key="message.id"
-            :id="`message${message.messageId}`">
+            :id="`message${message.messageId}`"
+          >
             <!-- 消息发送时间容器 -->
             <div
               class="datetime-container w-100"
-              v-if="computeDatetime(messageRecords[index - 1] === undefined ? 0 : messageRecords[index - 1].time, message.time)">
+              v-if="computeDatetime(messageRecords[index - 1] === undefined ? 0 : messageRecords[index - 1].time, message.time)"
+            >
               {{ formatTime(message.time) }}
             </div>
             <!-- 用户头像容器 -->
             <div
               class="avatar-container"
-              :class="!message.isMe ? 'avatar-container-left' : 'avatar-container-right'">
+              :class="!message.isMe ? 'avatar-container-left' : 'avatar-container-right'"
+            >
               <v-avatar
                 v-if="!message.isMe"
                 color="grey-lighten-2"
               >
-                <v-img :src="`${props.chatInfo.avatarUrl}`"></v-img>
+                <v-img :src="message.userInfo.avatarUrl">
+                  <template v-slot:placeholder>
+                    <div class="w-100 h-100 d-flex justify-center align-center">
+                      <span class="text-subtitle-1 font-weight-bold text-grey-darken-2">
+                        {{ message.userInfo.username.charAt(0) }}
+                      </span>
+                    </div>
+                  </template>
+                </v-img>
               </v-avatar>
               <v-avatar
                 v-else
                 color="grey-lighten-2"
               >
-                <v-img :src="``"></v-img>
+                <v-img :src="userInfo.avatarUrl">
+                  <template v-slot:placeholder>
+                    <div class="w-100 h-100 d-flex justify-center align-center">
+                      <span class="text-subtitle-1 font-weight-bold text-grey-darken-2">
+                        我
+                      </span>
+                    </div>
+                  </template>
+                </v-img>
               </v-avatar>
             </div>
             <!-- 消息内容 -->
             <div
-              v-ripple
+              v-if="!message.isMe && props.chatInfo.type === ChatType.GROUP"
+              class="message-username text-caption text-grey-darken-2"
+            >
+              {{ message.userInfo.username }}
+            </div>
+            <div
               class="message-content"
               :class="!message.isMe ? 'message-content-left' : 'message-content-right'"
               :data-name="`message${index}`"
+              v-ripple
             >
               <div v-if="!message.isPhoto">
                 {{ message.content }}
@@ -127,7 +175,7 @@
                     <v-progress-circular
                       color="grey-lighten-4"
                       indeterminate
-                    ></v-progress-circular>
+                    />
                   </div>
                 </template>
               </v-img>
@@ -156,15 +204,17 @@
             color="primary"
             :placeholder="placeholder"
             :disabled="loadingStatus"
-            @keydown.enter="handleEnterEvent" />
+            @keydown.enter="handleEnterEvent"
+          />
         </div>
         <div class="append-btn-container ml-auto flex-shrink-0 text-h6 text-grey-darken-2">
           <input
             class="position-relative"
             type="file"
             accept="image/png,image/jpeg,image/jpg"
-            @change="handleFileSelected($event.target.files)">
-          <i class="fa-regular fa-image"></i>
+            @change="handleFileSelected($event.target.files)"
+          />
+          <i class="fa-regular fa-image" />
         </div>
       </div>
     </div>
@@ -172,19 +222,23 @@
 </template>
 
 <script setup lang="ts">
-  import { ChatInfo, Message } from '@/views/chat/components/chat-drame/typings';
+  import { ChatInfo, Message, MessageSentEvent } from '@/views/chat/components/chat-drame/typings';
   import { chatApi } from '@/services/api';
   import { IResponseData } from '@/services/typings';
   import { formatTime } from '@/common/formats';
   import { useChatStore } from '@/store/chat';
-  import { MessageList } from '@/services/api/modules/chat/typings';
+  import { Chat, ChatGroupHistory, GroupChat, MessageList } from '@/services/api/modules/chat/typings';
+  import { ChatType } from '@/typings';
+  import { useUserStore } from '@/store/user';
 
   interface Props {
     chatInfo: ChatInfo;
   }
 
   interface Emits {
-    (e: 'messageSent', message: MessageList): void;
+    (e: 'privateMessageSent', message: MessageList): void;
+
+    (e: 'groupMessageSent', message: GroupChat): void;
   }
 
   const props = withDefaults(defineProps<Props>(), {});
@@ -192,6 +246,7 @@
   const {appContext} = getCurrentInstance() ?? {};
   const message = appContext?.config.globalProperties.$message ?? {};
   const chatStore = storeToRefs(useChatStore());
+  const {userInfo} = storeToRefs(useUserStore());
 
   const chatMessageArea = ref<HTMLElement | null>(null);
   const loadingStatus = ref(true); //数据加载状态
@@ -207,61 +262,99 @@
    * @param time 查询时间戳，为空时则查询第一页
    */
   const getChatHistory = async (time?: number) => {
-    const queryTime = time ?? Date.now();
-    await chatApi.getPrivateChatHistoryByUid({
-      time: queryTime,
-      friendId: props.chatInfo.id,
-      pageSize: pageSize
-    }).then(res => {
-      if (!time) {
+    if (props.chatInfo.type === ChatType.PRIVATE) {
+      // 私聊
+      const queryTime = time ?? Date.now();
+      await chatApi.getPrivateChatHistoryByUid({
+        time: queryTime,
+        friendId: props.chatInfo.targetId,
+        pageSize: pageSize
+      }).then(res => {
+        if (!time) {
+          let recordsTemp: Message[] = [];
+          res.data?.records.map(msg => {
+            recordsTemp.unshift({
+              id: msg.id,
+              content: msg.content,
+              isPhoto: !msg.isText,
+              isMe: msg.senderId === props.chatInfo.targetId,
+              time: msg.createdTime,
+              userInfo: {
+                userId: props.chatInfo.targetId,
+                username: props.chatInfo.targetName,
+                avatarUrl: props.chatInfo.avatarUrl
+              }
+            });
+          });
+          messageRecords.value = [];
+          messageRecords.value = recordsTemp;
+          recordsLength = res.data?.total ?? 0;
+          if (recordsLength <= pageSize) {
+            existMore = false;
+          }
+        } else {
+          // 获取更多记录
+          const firstMsgId = messageRecords.value[0].id; //获取更多记录前的第一条消息的id
+          if (res.data?.records.length !== 0) {
+            res.data?.records.map((msg, index) => {
+              if (msg.id !== firstMsgId) {
+                //防止连接处出现重复
+                messageRecords.value.unshift({
+                  id: msg.id,
+                  content: msg.content,
+                  isPhoto: !msg.isText,
+                  isMe: msg.senderId === props.chatInfo.targetId,
+                  time: msg.createdTime,
+                  userInfo: {
+                    userId: props.chatInfo.targetId,
+                    username: props.chatInfo.targetName,
+                    avatarUrl: props.chatInfo.avatarUrl
+                  }
+                });
+              }
+              if (index === (res.data?.records.length ?? 0) - 1) {
+                scrollToBottom(chatMessageArea.value);
+              }
+            });
+          }
+          recordsLength = res.data?.total ?? 0;
+          if (recordsLength <= pageSize) {
+            existMore = false;
+          }
+        }
+      }).catch(err => {
+        message?.error('网络异常');
+        console.error(err);
+      });
+    } else {
+      await chatApi.getGroupChatHistoryByGid({
+        groupId: props.chatInfo.targetId
+      }).then(res => {
         let recordsTemp: Message[] = [];
-        res.data?.records.forEach((records, index) => {
+        res.data?.map(msg => {
           recordsTemp.unshift({
-            id: records.id,
-            content: records.content,
-            isPhoto: !records.isText,
-            isMe: records.senderId !== props.chatInfo.id,
-            time: records.createdTime
+            id: msg.message?.id,
+            content: msg.message?.content,
+            isPhoto: false,
+            isMe: msg.userInfo?.id !== userInfo.value.id,
+            time: msg.message?.createdTime,
+            userInfo: {
+              userId: msg.userInfo?.id,
+              username: msg.userInfo?.username ?? '',
+              avatarUrl: msg.userInfo?.avgPath ?? ''
+            }
           });
         });
         messageRecords.value = [];
         messageRecords.value = recordsTemp;
-        recordsLength = res.data?.total ?? 0;
-        if (recordsLength <= pageSize) {
-          existMore = false;
-        }
-        setTimeout(() => {
-          loadingStatus.value = false;
-        }, 500);
-      } else {
-        // 获取更多记录
-        const firstMsgId = messageRecords.value[0].id; //获取更多记录前的第一条消息的id
-        if (res.data?.records.length !== 0) {
-          res.data?.records.forEach((records, index) => {
-            if (records.id !== firstMsgId) {
-              //防止连接处出现重复
-              messageRecords.value.unshift({
-                id: records.id,
-                content: records.content,
-                isPhoto: !records.isText,
-                isMe: records.senderId !== props.chatInfo.id,
-                time: records.createdTime
-              });
-            }
-            if (index === (res.data?.records.length ?? 0) - 1) {
-              scrollToBottom(chatMessageArea.value);
-            }
-          });
-        }
-        recordsLength = res.data?.total ?? 0;
-        if (recordsLength <= pageSize) {
-          existMore = false;
-        }
-      }
-    }).catch(err => {
-      message?.error('网络异常');
-      console.error(err);
-    });
+      }).catch(err => {
+        message?.error('网络异常');
+        console.error(err);
+      });
+    }
+    setTimeout(() => {
+      loadingStatus.value = false;
+    }, 500);
   };
 
   /**
@@ -271,13 +364,18 @@
   const receiveNewMessage = (data: IResponseData<any>): void => {
     if (data.code === 120) {
       const newMessage = data.data.messageInfo;
-      if (newMessage.senderId === props.chatInfo.id) {
+      if (newMessage.senderId === props.chatInfo.targetId) {
         messageRecords.value.push({
           id: newMessage.id,
           content: newMessage.content,
           isPhoto: !newMessage.isText,
           isMe: false,
-          time: newMessage.createdTime
+          time: newMessage.createdTime,
+          userInfo: {
+            userId: userInfo.value.id,
+            username: userInfo.value.username,
+            avatarUrl: userInfo.value.avgPath
+          }
         });
         recordsLength += 1;
         if (recordsLength <= pageSize) {
@@ -297,40 +395,70 @@
   };
 
   // 消息发送事件
-  const handleSendMessage = (isText: boolean = true, imgUrl?: string) => {
+  const handleSendMessage = async (isText: boolean = true, imgUrl?: string) => {
     const content = imgUrl || inputValue.value;
     if (inputValue.value !== '' || !isText) {
-      chatApi.sendPrivateMessage({
-        receiverId: props.chatInfo.id,
-        content,
-        isText
-      }).then(res => {
+      try {
+        let res: IResponseData<Chat> | IResponseData<ChatGroupHistory>;
+        if (props.chatInfo.type === ChatType.PRIVATE) {
+          res = await chatApi.sendPrivateMessage({
+            receiverId: props.chatInfo.targetId,
+            content,
+            isText
+          });
+          emit('privateMessageSent', {
+            id: res.data?.id,
+            friendId: props.chatInfo.targetId,
+            friendInfo: {
+              avgPath: props.chatInfo.avatarUrl,
+              username: props.chatInfo.targetName
+            },
+            unread: 0,
+            content,
+            isText,
+            createdTime: new Date().getTime()
+          });
+        } else {
+          res = await chatApi.sendGroupMessage({
+            groupId: props.chatInfo.targetId,
+            content,
+            type: isText ? 'text' : 'image'
+          });
+          emit('groupMessageSent', {
+            chatGroup: {
+              id: props.chatInfo.targetId,
+              groupName: props.chatInfo.targetName
+            },
+            chatGroupHistory: {
+              content: isText ? content : '[图片]',
+              createdTime: new Date().getTime()
+            },
+            userInfo: {
+              id: userInfo.value.id,
+              username: '我',
+              avgPath: userInfo.value.avgPath
+            }
+          });
+        }
         messageRecords.value.push({
           id: res.data?.id,
           isMe: true,
           isPhoto: !isText,
           content,
-          time: new Date().getTime()
-        });
-        emit('messageSent', {
-          id: props.chatInfo.id,
-          friendId: props.chatInfo.id,
-          friendInfo: {
-            avgPath: props.chatInfo.avatarUrl,
-            username: props.chatInfo.username
-          },
-          unread: 0,
-          content,
-          isText,
-          createdTime: new Date().getTime()
+          time: new Date().getTime(),
+          userInfo: {
+            userId: userInfo.value.id,
+            username: userInfo.value.username,
+            avatarUrl: userInfo.value.avgPath
+          }
         });
         recordsLength += 1;
         inputValue.value = '';
         scrollToBottom(chatMessageArea.value);
-      }).catch(e => {
+      } catch (e) {
         message?.error('网络异常');
         console.error(e);
-      });
+      }
     }
   };
 
@@ -363,6 +491,7 @@
     return (new Date(newTime).getTime() - new Date(oldTime).getTime()) / 1000 / 60 >= 5; //返回两个时间差是否大于5分钟
   };
 
+  // 滚动到底部
   const scrollToBottom = (el: HTMLElement | null) => {
     nextTick(() => {
       if (el) {
@@ -387,27 +516,16 @@
       () => props.chatInfo,
       () => {
         reset();
-        placeholder.value = `给 @${props.chatInfo.username} 发消息`;
-        // const messageHistory = chatStore.getChatMessageHistory(props.chatInfo.id);
-        // if (messageHistory) {
-        //   //如果store中存在缓存
-        //   chatMessageHistory.value = messageHistory.messageList;
-        //   pageNumber.value = messageHistory.pageNumber;
-        // }
+        placeholder.value =
+          props.chatInfo.type === ChatType.PRIVATE
+            ? `给 @${props.chatInfo.targetName} 发消息`
+            : `在群聊「${props.chatInfo.targetName}」发消息`;
         Promise.all([getChatHistory()]).then(() => {
           loadingStatus.value = false;
-          if (chatMessageArea.value) {
-            setTimeout(() => {
-              if (chatMessageArea.value) {
-                chatMessageArea.value.scrollTop = 9999909;
-              }
-            }, 300);
-          }
+          scrollToBottom(chatMessageArea.value);
         });
       },
-      {
-        immediate: true
-      }
+      {immediate: true}
     );
   });
 </script>

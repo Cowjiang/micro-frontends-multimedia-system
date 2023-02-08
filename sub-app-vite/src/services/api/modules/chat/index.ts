@@ -7,7 +7,7 @@ import {
   GroupChat,
   GroupHistoryList,
   MessageList,
-  StickyChatVo, SetStickyPrivateChatParams, SetStickyGroupChatParams
+  StickyChatVo, SetStickyPrivateChatParams, SetStickyGroupChatParams, SendGroupMessageParams, ChatGroupHistory
 } from '@/services/api/modules/chat/typings';
 import { IResponseData, ResponsePage } from '@/services/typings';
 
@@ -20,14 +20,17 @@ const getPrivateChatList = <T extends GetPrivateChatListParams>(params: T) => ht
 // 根据uid获取私聊记录
 const getPrivateChatHistoryByUid = <T extends GetPrivateChatHistoryByUidParams>(params: T) => http.get<T, ResponsePage<Chat>>('/chat/user', params);
 
-// 发送私信
+// 发送私聊消息
 const sendPrivateMessage = <T extends SendPrivateMessageParams>(data: T) => http.post<T, Chat>('/chat/user', data);
 
 // 获取我的群聊列表
 const getGroupChatList = () => http.get<void, GroupChat[]>('/chat/group');
 
 // 根据GroupId获取群聊记录
-const getGroupChatHistoryByGid = <T extends GetGroupChatHistoryByGidParams>({groupId}: T) => http.get<T, GroupHistoryList>(`/chat/group/${groupId}/history`);
+const getGroupChatHistoryByGid = <T extends GetGroupChatHistoryByGidParams>({groupId}: T) => http.get<T, GroupHistoryList[]>(`/chat/group/${groupId}/history`);
+
+// 发送群聊消息
+const sendGroupMessage = <T extends SendGroupMessageParams>(data: T) => http.post<T, ChatGroupHistory>(`/chat/group/${data.groupId}/send`, data);
 
 // 获取置顶私聊列表
 const getStickyPrivateChatList = () => http.get<void, StickyChatVo[]>('/chat/chat/sticky');
@@ -48,6 +51,7 @@ export default {
   sendPrivateMessage,
   getGroupChatList,
   getGroupChatHistoryByGid,
+  sendGroupMessage,
   getStickyPrivateChatList,
   getStickyGroupChatList,
   setStickyPrivateChat,

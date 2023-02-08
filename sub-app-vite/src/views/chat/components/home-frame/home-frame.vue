@@ -41,7 +41,7 @@
           </div>
         </v-hover>
         <div class="ml-4 mt-7 mb-2 text-body-2 text-grey-darken-4">
-          {{ props.chatType === ChatType.PRIVATE ? '私信' : '群聊' }}
+          我的{{ props.chatType === ChatType.PRIVATE ? '私信' : '群聊' }}
         </div>
         <div class="chat-list-container">
           <v-hover
@@ -65,7 +65,7 @@
                   alt="">
                   <template v-slot:placeholder>
                     <div class="w-100 h-100 d-flex justify-center align-center">
-                      <span class="text-h6 font-weight-bold text-grey-darken-3">
+                      <span class="text-h6 font-weight-bold text-grey-darken-2">
                         {{ chat.avgChar }}
                       </span>
                     </div>
@@ -126,7 +126,8 @@
       <chat-frame
         v-if="currentNavItemIndex !== -1 && currentChatInfo?.id"
         :chat-info="currentChatInfo"
-        @message-sent="handlePrivateMessageSent"
+        @private-message-sent="handlePrivateMessageSent"
+        @group-message-sent="handleGroupMessageSent"
       />
       <overview-frame
         v-else
@@ -141,8 +142,8 @@
   import { useChatStore } from '@/store/chat';
   import { formatTime } from '@/common/formats';
   import { ChatType } from '@/typings';
-  import { ChatInfo } from '@/views/chat/components/chat-drame/typings';
-  import { MessageList } from '@/services/api/modules/chat/typings';
+  import { ChatInfo, MessageSentEvent } from '@/views/chat/components/chat-drame/typings';
+  import { GroupChat, MessageList } from '@/services/api/modules/chat/typings';
 
   interface Props {
     chatType: ChatType;
@@ -154,7 +155,6 @@
   const router = useRouter();
   const route = useRoute();
   const currentNavItemIndex = ref(-1); //当前左侧列表导航栏聚焦项的序号
-  const currentFriendListType = ref(0); //好友列表的类型
   const currentChatInfo = ref<ChatInfo | {}>({}); //当前聊天信息
 
   const chatNavItemList = computed(() => {
@@ -174,7 +174,7 @@
         avgPath: '',
         avgChar: chat.chatGroup?.groupName?.charAt(0) ?? '',
         name: chat.chatGroup?.groupName ?? '',
-        content: chat.chatGroupHistory?.content,
+        content: `${chat.userInfo?.username}：${chat.chatGroupHistory?.content}`,
         createdTime: formatTime(chat.chatGroupHistory?.createdTime ?? ''),
         unread: 0
       }));
@@ -191,36 +191,47 @@
     }
     currentNavItemIndex.value = index;
     if (index === -1) {
-      router.replace({
-        name: 'friend',
-        params: {
-          friendType: 'all'
-        }
-      });
+      router.replace('/chat/home');
     } else {
-      router.replace({
-        name: 'chat',
-        params: {
-          chatType: ChatType.PRIVATE,
-          id: privateChatList.value[index].id
-        }
-      });
-      const {id, friendId, friendInfo, content, createdTime} = privateChatList.value[currentNavItemIndex.value];
-      currentChatInfo.value = {
-        id,
-        friendId,
-        avatarUrl: friendInfo?.avgPath ?? '',
-        username: friendInfo?.username ?? '',
-        lastMessage: content,
-        time: createdTime
-      };
-      privateChatList.value[index].unread = 0;
+      if (props.chatType === ChatType.PRIVATE) {
+        router.replace({
+          name: 'chat',
+          params: {
+            chatType: ChatType.PRIVATE,
+            id: privateChatList.value[index].id
+          }
+        });
+        const {id, friendId, friendInfo} = privateChatList.value[currentNavItemIndex.value];
+        currentChatInfo.value = {
+          id,
+          targetId: friendId,
+          avatarUrl: friendInfo?.avgPath ?? '',
+          targetName: friendInfo?.username ?? '',
+          type: ChatType.PRIVATE
+        };
+        privateChatList.value[index].unread = 0;
+      } else {
+        router.replace({
+          name: 'chat',
+          params: {
+            chatType: ChatType.GROUP,
+            id: groupChatList.value[currentNavItemIndex.value].chatGroup?.id
+          }
+        });
+        const {chatGroup} = groupChatList.value[currentNavItemIndex.value];
+        currentChatInfo.value = {
+          id: chatGroup?.id,
+          targetId: chatGroup?.id,
+          targetName: chatGroup?.groupName ?? '',
+          type: ChatType.GROUP
+        };
+      }
     }
   };
 
   // 私聊发送消息的回调事件
   const handlePrivateMessageSent = (message: MessageList) => {
-    const currentIdx = privateChatList.value.findIndex(chat => chat.id === message.id);
+    const currentIdx = privateChatList.value.findIndex(chat => chat.friendId === message.friendId);
     if (currentIdx !== -1) {
       privateChatList.value.splice(currentIdx, 1);
       privateChatList.value.unshift(message);
@@ -228,41 +239,60 @@
     }
   };
 
-  watch(
-    () => route.params,
-    ({id, friendType}) => {
-      if (id) {
-        const chatIndex = privateChatList.value.findIndex(chat => String(chat.id) === id);
-        if (chatIndex !== -1) {
-          currentNavItemIndex.value = chatIndex;
-        } else {
-          router.replace('/chat/home');
-        }
-      } else if (friendType) {
-        const index = ['all', 'online', 'request', 'block'].findIndex(v => v === friendType);
-        currentFriendListType.value = (index === -1 ? 0 : index);
-      }
-    },
-    {immediate: true}
-  );
+  // 群聊发送消息的回调事件
+  const handleGroupMessageSent = (message: GroupChat) => {
+    const currentIdx = groupChatList.value.findIndex(({chatGroup}) => chatGroup?.id === message.chatGroup?.id);
+    if (currentIdx !== -1) {
+      groupChatList.value.splice(currentIdx, 1);
+      groupChatList.value.unshift(message);
+      currentNavItemIndex.value = 0;
+    }
+  };
+
+  // watch(
+  //   () => route.params,
+  //   ({id, chatType}) => {
+  //     if (id) {
+  //       if (chatType === ChatType.PRIVATE) {
+  //         console.log(id, privateChatList.value);
+  //         const chatIndex = privateChatList.value.findIndex(chat => String(chat.id) === id);
+  //         if (chatIndex !== -1) {
+  //           currentNavItemIndex.value = chatIndex;
+  //           return;
+  //         }
+  //       } else {
+  //         const chatIndex = groupChatList.value.findIndex(chat => String(chat.chatGroup?.id) === id);
+  //         if (chatIndex !== -1) {
+  //           currentNavItemIndex.value = chatIndex;
+  //           return;
+  //         }
+  //       }
+  //       router.replace('/chat/home');
+  //     }
+  //   },
+  //   {immediate: true}
+  // );
 
   onMounted(() => {
-    if (route.params.id) {
-      const chatListWatcher = watch(
-        () => privateChatList.value,
+    const {id, chatType} = route.params;
+    if (id) {
+      watch(
+        () => [privateChatList.value, groupChatList.value],
         () => {
-          const chatIndex = privateChatList.value.findIndex(chat => String(chat.id) === route.params.id);
-          if (chatIndex !== -1) {
-            currentNavItemIndex.value = chatIndex;
+          if (chatType === ChatType.PRIVATE) {
+            const chatIndex = privateChatList.value.findIndex(chat => String(chat.id) === route.params.id);
+            if (chatIndex !== -1) {
+              currentNavItemIndex.value = chatIndex;
+              return;
+            }
           } else {
-            router.replace({
-              name: 'friend',
-              params: {
-                friendType: 'all'
-              }
-            });
+            const chatIndex = groupChatList.value.findIndex(chat => String(chat.chatGroup?.id) === id);
+            if (chatIndex !== -1) {
+              currentNavItemIndex.value = chatIndex;
+              return;
+            }
           }
-          chatListWatcher();
+          router.replace('/chat/home');
         }
       );
     }

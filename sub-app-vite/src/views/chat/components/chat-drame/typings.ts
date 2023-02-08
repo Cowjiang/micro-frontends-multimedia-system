@@ -1,11 +1,12 @@
+import { ChatType } from '@/typings';
+
 export interface ChatInfo {
   id: number;
-  friendId?: number;
+  targetId: number;
   avatarUrl: string;
-  username: string;
+  targetName: string;
   remarkName?: string;
-  lastMessage: string;
-  time: number;
+  type: ChatType;
 }
 
 export interface ChatFrameProps {
@@ -19,4 +20,23 @@ export interface Message {
   isPhoto?: boolean;
   isMe?: boolean;
   time?: number;
+  userInfo: {
+    username?: string,
+    userId?: number,
+    avatarUrl?: string
+  };
+}
+
+export interface MessageSentEvent {
+  id?: number;
+  receiverInfo: {
+    id?: number
+    avgPath?: string
+    name?: string
+  };
+  unread: number;
+  content: string;
+  isText: boolean;
+  createdTime: number;
+  chatType: ChatType;
 }

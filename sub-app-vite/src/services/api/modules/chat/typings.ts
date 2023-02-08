@@ -10,11 +10,16 @@ export interface GetPrivateChatHistoryByUidParams extends PageParamByTime {
 
 interface SendMessageParams {
   content: string;
-  isText: boolean;
+  isText?: boolean;
+  type?: string;
 }
 
 export interface SendPrivateMessageParams extends SendMessageParams {
   receiverId: number;
+}
+
+export interface SendGroupMessageParams extends SendMessageParams {
+  groupId: number;
 }
 
 export interface GetGroupChatHistoryByGidParams {
