@@ -1,5 +1,4 @@
-import ClientSocketIO from 'socket.io-client';
-import { authApi } from '@/services/api';
+import { io } from 'socket.io-client';
 import { useAppStore } from '@/store/app';
 
 export const wsBaseUrl = 'ws://localhost:8887/service/websocket';
@@ -11,23 +10,14 @@ export const connectSocket = async () => {
     return new Promise<string>(async (resolve, reject) => {
       console.log('[Socket]', '开始连接');
       store.socketStatus = 0;
-      authApi.getSocketToken().then(res => {
-        if (res.code === 3002) {
-          store.socketStatus = -1;
-          reject('未登录');
-        } else {
-          store.$socket = ClientSocketIO(`${wsBaseUrl}/${res.data}`, {
-            transports: ['websocket']
-          });
-          store.$socket.on('connect', () => {
-            console.log('[Socket]', '已连接');
-          });
-        }
-      }).catch(err => {
-        store.socketStatus = -1;
-        reject(err);
+      store.$socket = io(`${wsBaseUrl}/${sessionStorage.getItem('ACCESS_TOKEN')}`, {
+        transports: ['websocket']
       });
-      store.$socket.on('message', (data: any) => {
+      store.$socket?.on('connect', () => {
+        console.log('[Socket]', '已连接');
+        resolve('已连接');
+      });
+      store.$socket?.on('message', (data: any) => {
         console.log('[Socket]: ', data);
       });
     });
@@ -43,7 +33,7 @@ export const closeSocket = (): Promise<any> => {
   return new Promise<any>((resolve, reject) => {
     const store = useAppStore();
     store.$socket.on('disconnect', (data: any) => {
-      console.log('[Socket]','已断开',data);
+      console.log('[Socket]', '已断开', data);
       resolve(data);
     });
     store.$socket.disconnect();

@@ -104,7 +104,7 @@
             </v-col>
             <empty v-if="!stickyPrivateChatList.length" />
           </v-row>
-          <span class="mt-8 mb-2 text-subtitle-1 text-grey-darken-3 font-weight-bold">置顶群聊</span>
+          <span class="mt-10 mb-2 text-subtitle-1 text-grey-darken-3 font-weight-bold">置顶群聊</span>
           <v-row class="mb-8">
             <v-col
               v-for="groupChat in stickyGroupChatList"

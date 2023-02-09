@@ -82,8 +82,11 @@
                   </span>
                 </div>
                 <div class="d-flex overflow-hidden">
-                  <span class="w-100 mr-2 flex-grow-1 text-sm-body-2 text-grey-darken-2">
-                    {{ chat.content }}
+                  <span
+                    class="w-100 mr-2 flex-grow-1 text-sm-body-2 text-grey-darken-2"
+                    style="min-height: 1rem"
+                  >
+                    {{ chat?.content ?? '' }}
                   </span>
                   <div class="ml-auto flex-shrink-0 text-caption" v-if="chat.unread">
                     <v-badge
@@ -140,9 +143,10 @@
   import ChatFrame from '@/views/chat/components/chat-drame/chat-frame.vue';
   import OverviewFrame from '@/views/chat/components/overview-frame/overview-frame.vue';
   import { useChatStore } from '@/store/chat';
+  import { useUserStore } from '@/store/user';
   import { formatTime } from '@/common/formats';
   import { ChatType } from '@/typings';
-  import { ChatInfo, MessageSentEvent } from '@/views/chat/components/chat-drame/typings';
+  import { ChatInfo } from '@/views/chat/components/chat-drame/typings';
   import { GroupChat, MessageList } from '@/services/api/modules/chat/typings';
 
   interface Props {
@@ -151,6 +155,7 @@
 
   const props = withDefaults(defineProps<Props>(), {});
   const chatStore = useChatStore();
+  const {userInfo} = storeToRefs(useUserStore());
   const {privateChatList, groupChatList} = storeToRefs(chatStore);
   const router = useRouter();
   const route = useRoute();
@@ -174,7 +179,11 @@
         avgPath: '',
         avgChar: chat.chatGroup?.groupName?.charAt(0) ?? '',
         name: chat.chatGroup?.groupName ?? '',
-        content: `${chat.userInfo?.username}：${chat.chatGroupHistory?.content}`,
+        content:
+          chat.chatGroupHistory?.content
+            ? `${chat.userInfo?.userId === userInfo.value.userId
+              ? '我'
+              : chat.userInfo?.username}：${chat.chatGroupHistory?.content}` : '',
         createdTime: formatTime(chat.chatGroupHistory?.createdTime ?? ''),
         unread: 0
       }));

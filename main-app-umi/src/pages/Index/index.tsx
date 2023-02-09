@@ -71,7 +71,7 @@ const IndexPage: React.FC = () => {
             type="primary"
             onClick={() => setChatDialogDisplay(true)}
           >
-            登陆弹窗测试
+            聊天弹窗测试
           </Button>
           <ChatDialog
             open={chatDialogDisplay}

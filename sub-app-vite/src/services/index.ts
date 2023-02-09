@@ -2,6 +2,8 @@ import axios, { AxiosError, AxiosRequestConfig, AxiosRequestHeaders, AxiosRespon
 import qs from 'qs';
 import { IResponseData } from '@/services/typings';
 import { useUserStore } from '@/store/user';
+import { useAppStore } from '@/store/app';
+import { connectSocket } from '@/services/socket';
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL
@@ -35,6 +37,10 @@ instance.interceptors.response.use(async (v: AxiosResponse) => {
   if (responseStatus === 200) {
     // 请求正常
     useUserStore().getUserInfo();
+    if (useAppStore().socketStatus !== 1 && useUserStore().userInfo.userId) {
+      // connectSocket().then(() => {
+      // })
+    }
   }
   return v;
 }, async (error: AxiosError | any) => {
@@ -43,11 +49,13 @@ instance.interceptors.response.use(async (v: AxiosResponse) => {
   if (responseStatus === 401) {
     // 2001：Token不存在，3002：Token过期，3003：Token不合法
     if ([2001, 3002, 3003].includes(v.data.code)) {
-      await window.$wujie?.props?.token.refreshToken();
-      const config = error.config;
-      config.headers['etoken'] = sessionStorage.getItem('ACCESS_TOKEN') ?? '';
-      console.log('[HTTP]', '重试请求');
-      return instance(config);
+      if (window.$wujie) {
+        await window.$wujie?.props?.token.refreshToken();
+        const config = error.config;
+        config.headers['etoken'] = sessionStorage.getItem('ACCESS_TOKEN') ?? '';
+        console.log('[HTTP]', '重试请求');
+        return instance(config);
+      }
     }
   }
   return Promise.reject(error);

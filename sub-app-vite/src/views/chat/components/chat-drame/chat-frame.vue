@@ -335,10 +335,10 @@
             id: msg.message?.id,
             content: msg.message?.content,
             isPhoto: false,
-            isMe: msg.userInfo?.id !== userInfo.value.id,
+            isMe: msg.userInfo?.userId === userInfo.value.userId,
             time: msg.message?.createdTime,
             userInfo: {
-              userId: msg.userInfo?.id,
+              userId: msg.userInfo?.userId,
               username: msg.userInfo?.username ?? '',
               avatarUrl: msg.userInfo?.avgPath ?? ''
             }

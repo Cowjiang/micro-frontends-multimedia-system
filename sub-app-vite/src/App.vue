@@ -16,6 +16,7 @@
   import { AlertType } from '@/views/login/components/typings';
   import Message from '@/components/message/message.vue';
   import { useUserStore } from '@/store/user';
+  import { connectSocket } from '@/services/socket/socket';
 
   window.$wujie?.bus.$on('vite-router-change', (path: string) => router.push(path));
 
@@ -52,6 +53,9 @@
   onMounted(() => {
     // window.$wujie?.bus.$on('vite-router-change', (path: string) => router.push(path));
     useUserStore().getUserInfo();
+
+    // connectSocket().then(() => {
+    // })
   });
 </script>
 
