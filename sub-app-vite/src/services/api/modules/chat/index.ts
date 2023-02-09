@@ -4,12 +4,17 @@ import {
   GetPrivateChatHistoryByUidParams,
   GetPrivateChatListParams,
   SendPrivateMessageParams,
+  SetStickyPrivateChatParams,
+  SetStickyGroupChatParams,
+  SendGroupMessageParams,
+  StickyChat,
+  StickyGroupChat,
   GroupChat,
   GroupHistoryList,
   MessageList,
-  StickyChatVo, SetStickyPrivateChatParams, SetStickyGroupChatParams, SendGroupMessageParams, ChatGroupHistory
+  ChatGroupHistory
 } from '@/services/api/modules/chat/typings';
-import { IResponseData, ResponsePage } from '@/services/typings';
+import { ResponsePage } from '@/services/typings';
 
 // 获取消息未读数
 const getUnreadCount = () => http.get<void, number>('/chat/list/count/unread');
@@ -33,16 +38,16 @@ const getGroupChatHistoryByGid = <T extends GetGroupChatHistoryByGidParams>({gro
 const sendGroupMessage = <T extends SendGroupMessageParams>(data: T) => http.post<T, ChatGroupHistory>(`/chat/group/${data.groupId}/send`, data);
 
 // 获取置顶私聊列表
-const getStickyPrivateChatList = () => http.get<void, StickyChatVo[]>('/chat/chat/sticky');
+const getStickyPrivateChatList = () => http.get<void, StickyChat[]>('/chat/chat/sticky');
 
 // 获取置顶群聊列表
-const getStickyGroupChatList = () => http.get<void, GroupChat[]>('/chat/group/sticky');
+const getStickyGroupChatList = () => http.get<void, StickyGroupChat[]>('/chat/group/sticky');
 
 // 置顶私聊
-const setStickyPrivateChat = <T extends SetStickyPrivateChatParams>({friendId}: T) => http.post<T, IResponseData<null>>(`/chat/friend/${friendId}/sticky`);
+const setStickyPrivateChat = <T extends SetStickyPrivateChatParams>({friendId}: T) => http.post<T, null>(`/chat/friend/${friendId}/sticky`);
 
 // 置顶群聊
-const setStickyGroupChat = <T extends SetStickyGroupChatParams>({groupId}: T) => http.post<T, IResponseData<null>>(`/chat/group/${groupId}/sticky`);
+const setStickyGroupChat = <T extends SetStickyGroupChatParams>({groupId}: T) => http.post<T, null>(`/chat/group/${groupId}/sticky`);
 
 export default {
   getUnreadCount,

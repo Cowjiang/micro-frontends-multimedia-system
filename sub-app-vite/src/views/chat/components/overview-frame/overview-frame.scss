@@ -11,5 +11,9 @@ $title-container-height: 60px;
 
   .overview-content-container {
     overflow-y: scroll;
+
+    .placeholder {
+      height: 50px;
+    }
   }
 }

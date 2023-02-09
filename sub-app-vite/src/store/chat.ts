@@ -28,6 +28,8 @@ export const useChatStore = defineStore('chat', {
     async getGroupChatList() {
       await chatApi.getGroupChatList().then(res => {
         this.groupChatList = res.data ?? [];
+      }).catch(err => {
+        return Promise.reject(err);
       });
     }
   }

@@ -129,9 +129,15 @@ export interface Chat {
   userId?: number;
 }
 
-export interface StickyChatVo {
+export interface StickyChat {
   friendInfo?: SimpleUserInfo;
   message?: Chat;
+}
+
+export interface StickyGroupChat {
+  chatGroup?: ChatGroup;
+  message?: ChatGroupHistory;
+  userInfo?: SimpleUserInfo;
 }
 
 export interface GroupChat {

@@ -64,7 +64,6 @@
       </div>
     </div>
     <div ref="chatMessageArea" class="chat-content-container w-100 h-100 flex-grow-1">
-      <!--      <loading v-model="loadingStatus" position="relative" leaveDuration="0.1s" />-->
       <div class="message-list-container w-100 h-0 position-relative">
         <div class="chat-header d-flex flex-column pa-6">
           <div class="w-100">
@@ -222,7 +221,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ChatInfo, Message, MessageSentEvent } from '@/views/chat/components/chat-drame/typings';
+  import { ChatInfo, Message } from '@/views/chat/components/chat-drame/typings';
   import { chatApi } from '@/services/api';
   import { IResponseData } from '@/services/typings';
   import { formatTime } from '@/common/formats';
@@ -480,9 +479,24 @@
    * 聊天更多操作菜单点击事件
    * @param e 当前点击的菜单项序号数组
    */
-  const handleChatMenuClick = (e: Array<number>) => {
+  const handleChatMenuClick = async (e: Array<number>) => {
     if (e[0] === 0) {
-
+      // 置顶
+      try {
+        if (props.chatInfo.type === ChatType.PRIVATE) {
+          await chatApi.setStickyPrivateChat({
+            friendId: props.chatInfo.targetId
+          });
+        } else {
+          await chatApi.setStickyGroupChat({
+            groupId: props.chatInfo.targetId
+          });
+        }
+        message.success('设置成功', true);
+      } catch (e) {
+        console.error(e);
+        message.error('操作失败', true);
+      }
     }
   };
 

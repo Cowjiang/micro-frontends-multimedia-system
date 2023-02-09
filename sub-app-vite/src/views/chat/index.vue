@@ -19,12 +19,31 @@
         <!--        <top-chat-frame v-else/>-->
       </div>
     </div>
+    <loading
+      v-model="loadingStatus"
+      enterDuration="0s"
+      z-index="2300"
+    />
+    <v-dialog v-model="loadError" persistent attach>
+      <v-card
+        class="align-self-center"
+        width="400"
+        rounded="lg"
+        title="数据加载失败，请重新加载"
+        subtitle="网络异常，请检查你的网络"
+      >
+        <v-card-actions>
+          <v-btn color="error" :block="true" @click="reloadApp">重新加载</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
   import NavBar from '@/views/chat/components/nav-bar/nav-bar.vue';
   import HomeFrame from '@/views/chat/components/home-frame/home-frame.vue';
+  import Loading from '@/components/loading/loading.vue';
   import router from '@/router';
   import { useChatStore } from '@/store/chat';
   import { ChatType } from '@/typings';
@@ -32,6 +51,21 @@
   const {navItemList, currentNavItemIndex} = storeToRefs(useChatStore());
   const route = useRoute();
   const chatStore = useChatStore();
+  const loadingStatus = ref(true); //数据加载状态
+  const loadError = ref(false); //数据是否加载失败
+
+  const init = () => {
+    Promise.all([
+      chatStore.getPrivateChatList({pageSize: 100}),
+      chatStore.getGroupChatList()
+    ]).then(() => {
+      loadingStatus.value = false;
+    }).catch(err => {
+      console.error(err);
+      loadError.value = true;
+    });
+  };
+  init();
 
   // 导航栏点击事件
   const handleNavItemClick = ({index, detail}: { index: number, detail: any }) => {
@@ -46,9 +80,10 @@
     }
   };
 
+  // 重新加载应用
+  const reloadApp = () => router.go(0);
+
   onMounted(() => {
-    chatStore.getPrivateChatList({pageSize: 100});
-    chatStore.getGroupChatList();
     navItemList.value = [
       {name: 'home', title: '主页', icon: 'fas fa-house'},
       {name: 'group', title: '我的群聊', icon: 'fas fa-user-friends'},

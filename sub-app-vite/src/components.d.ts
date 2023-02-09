@@ -7,6 +7,8 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    Empty: typeof import('./components/empty/empty.vue')['default']
+    Loading: typeof import('./components/loading/loading.vue')['default']
     LoginPopup: typeof import('./views/login/components/login-popup.vue')['LoginPopup']
     Message: typeof import('./components/message/message.vue')['default']
     NavBar: typeof import('./views/chat/components/nav-bar/nav-bar.vue')['NavBar']
