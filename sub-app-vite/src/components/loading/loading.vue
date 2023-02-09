@@ -39,7 +39,7 @@
 
   const props = withDefaults(defineProps<Props>(), {
     loadingText: '正在加载数据，请稍后',
-    position: 'fixed',
+    position: 'absolute',
     enterDuration: '0.5s',
     leaveDuration: '0.5s',
     zIndex: 9999

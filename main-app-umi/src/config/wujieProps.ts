@@ -32,7 +32,6 @@ const refreshToken = async () => {
 const wujieDefaultProps = {
   ...vuetifyConfig,
   token: {
-    accessToken: getDvaApp()._store.getState().user.token.accessToken ?? '',
     refreshToken
   }
 };

@@ -31,20 +31,14 @@ export const requestConfig: RequestConfig = {
     // @ts-ignore
     (v: AxiosResponse<any>) => {
       console.log(v.data);
-      const {dispatch, getState} = getDvaApp()._store;
+      const {dispatch} = getDvaApp()._store;
       // @ts-ignore
       const responseStatus = v.status || v.statusCode;
       if (responseStatus === 200) {
         // 如果存在token信息，刷新状态以及缓存
         if (v.data?.data?.accessToken && v.data?.data?.refreshToken) {
           // 响应数据中存在AccessToken
-          dispatch({
-            type: 'user/setAccessToken',
-            payload: {
-              accessToken: v.data.data.accessToken,
-              expireTime: v.data.data.expireIn
-            }
-          });
+          sessionStorage.setItem('ACCESS_TOKEN', v.data.data.accessToken);
           localStorage.setItem('REFRESH_TOKEN', v.data.data.refreshToken);
           localStorage.setItem('REFRESH_TOKEN_EXPIRE_IN', v.data.data.refreshTokenExpireIn);
         }

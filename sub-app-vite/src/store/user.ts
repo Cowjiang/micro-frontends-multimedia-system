@@ -10,7 +10,7 @@ export const useUserStore = defineStore('user', {
   getters: {},
   actions: {
     getUserInfo() {
-      if (!this.userInfo?.id) {
+      if (!this.userInfo?.id && !this.userInfo?.userId) {
         userApi.getCurrentUserInfo().then(res => {
           this.userInfo = res.data ?? {};
         }).catch(e => {

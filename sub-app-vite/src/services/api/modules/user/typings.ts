@@ -60,6 +60,10 @@ export interface SimpleUserInfo {
    */
   id?: number;
   /**
+   * 用户id
+   */
+  userId?: number;
+  /**
    * 是否被关注
    */
   isConcerned?: boolean;
