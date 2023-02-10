@@ -7,13 +7,14 @@
       <div class="content-container w-100 h-100 rounded-lg bg-white overflow-hidden">
         <!--        <search-popup v-model="showSearchPopup"/>-->
         <home-frame
-          v-if="currentNavItemIndex === 0"
-          :chat-type="ChatType.PRIVATE"
+          :chat-type="chatType"
+          @chat-type-change="handleChatTypeChange"
         />
-        <home-frame
-          v-else-if="currentNavItemIndex === 1"
-          :chat-type="ChatType.GROUP"
-        />
+        <!--        <home-frame-->
+        <!--          v-else-if="currentNavItemIndex === 1"-->
+        <!--          :chat-type="ChatType.GROUP"-->
+        <!--          @chat-type-change="handleChatTypeChange"-->
+        <!--        />-->
         <!--        <group-frame v-else-if="currentNavItemIndex === 1"/>-->
         <!--        <setting-frame v-else-if="currentNavItemIndex === navItemList.findIndex(item => item.name === 'setting')"/>-->
         <!--        <top-chat-frame v-else/>-->
@@ -47,12 +48,15 @@
   import router from '@/router';
   import { useChatStore } from '@/store/chat';
   import { ChatType } from '@/typings';
+  import { computed } from 'vue';
 
   const {navItemList, currentNavItemIndex} = storeToRefs(useChatStore());
   const route = useRoute();
   const chatStore = useChatStore();
   const loadingStatus = ref(true); //数据加载状态
   const loadError = ref(false); //数据是否加载失败
+
+  const chatType = computed(() => currentNavItemIndex.value === 0 ? ChatType.PRIVATE : ChatType.GROUP);
 
   const init = () => {
     Promise.all([
@@ -77,6 +81,14 @@
         const navItem = detail.name ?? 'home';
         router.replace({name: 'index', params: {navItem}});
       }
+    }
+  };
+
+  const handleChatTypeChange = (chatType: ChatType) => {
+    if (chatType === ChatType.PRIVATE) {
+      currentNavItemIndex.value = 0;
+    } else if (chatType === ChatType.GROUP) {
+      currentNavItemIndex.value = 1;
     }
   };
 

@@ -134,6 +134,8 @@
       />
       <overview-frame
         v-else
+        @private-message-click="handlePrivateMessageSent"
+        @group-message-click="handleGroupMessageSent"
       />
     </div>
   </div>
@@ -156,7 +158,7 @@
   const props = withDefaults(defineProps<Props>(), {});
   const chatStore = useChatStore();
   const {userInfo} = storeToRefs(useUserStore());
-  const {privateChatList, groupChatList} = storeToRefs(chatStore);
+  const {privateChatList, groupChatList, currentNavItemIndex: chatTypeIndex} = storeToRefs(chatStore);
   const router = useRouter();
   const route = useRoute();
   const currentNavItemIndex = ref(-1); //当前左侧列表导航栏聚焦项的序号
@@ -203,13 +205,6 @@
       router.replace('/chat/home');
     } else {
       if (props.chatType === ChatType.PRIVATE) {
-        router.replace({
-          name: 'chat',
-          params: {
-            chatType: ChatType.PRIVATE,
-            id: privateChatList.value[index].id
-          }
-        });
         const {id, friendId, friendInfo} = privateChatList.value[currentNavItemIndex.value];
         currentChatInfo.value = {
           id,
@@ -219,14 +214,14 @@
           type: ChatType.PRIVATE
         };
         privateChatList.value[index].unread = 0;
-      } else {
         router.replace({
           name: 'chat',
           params: {
-            chatType: ChatType.GROUP,
-            id: groupChatList.value[currentNavItemIndex.value].chatGroup?.id
+            chatType: ChatType.PRIVATE,
+            id: privateChatList.value[index].friendId
           }
         });
+      } else {
         const {chatGroup} = groupChatList.value[currentNavItemIndex.value];
         currentChatInfo.value = {
           id: chatGroup?.id,
@@ -234,6 +229,13 @@
           targetName: chatGroup?.groupName ?? '',
           type: ChatType.GROUP
         };
+        router.replace({
+          name: 'chat',
+          params: {
+            chatType: ChatType.GROUP,
+            id: groupChatList.value[currentNavItemIndex.value].chatGroup?.id
+          }
+        });
       }
     }
   };
@@ -245,6 +247,8 @@
       privateChatList.value.splice(currentIdx, 1);
       privateChatList.value.unshift(message);
       currentNavItemIndex.value = 0;
+    } else {
+      privateChatList.value.unshift(message);
     }
   };
 
@@ -255,57 +259,47 @@
       groupChatList.value.splice(currentIdx, 1);
       groupChatList.value.unshift(message);
       currentNavItemIndex.value = 0;
+    } else {
+      groupChatList.value.unshift(message);
     }
   };
 
-  // watch(
-  //   () => route.params,
-  //   ({id, chatType}) => {
-  //     if (id) {
-  //       if (chatType === ChatType.PRIVATE) {
-  //         console.log(id, privateChatList.value);
-  //         const chatIndex = privateChatList.value.findIndex(chat => String(chat.id) === id);
-  //         if (chatIndex !== -1) {
-  //           currentNavItemIndex.value = chatIndex;
-  //           return;
-  //         }
-  //       } else {
-  //         const chatIndex = groupChatList.value.findIndex(chat => String(chat.chatGroup?.id) === id);
-  //         if (chatIndex !== -1) {
-  //           currentNavItemIndex.value = chatIndex;
-  //           return;
-  //         }
-  //       }
-  //       router.replace('/chat/home');
-  //     }
-  //   },
-  //   {immediate: true}
-  // );
-
-  onMounted(() => {
-    const {id, chatType} = route.params;
-    if (id) {
-      watch(
-        () => [privateChatList.value, groupChatList.value],
-        () => {
-          if (chatType === ChatType.PRIVATE) {
-            const chatIndex = privateChatList.value.findIndex(chat => String(chat.id) === route.params.id);
-            if (chatIndex !== -1) {
-              currentNavItemIndex.value = chatIndex;
-              return;
-            }
-          } else {
-            const chatIndex = groupChatList.value.findIndex(chat => String(chat.chatGroup?.id) === id);
-            if (chatIndex !== -1) {
-              currentNavItemIndex.value = chatIndex;
-              return;
-            }
-          }
-          router.replace('/chat/home');
-        }
-      );
+  watch(
+    () => props.chatType,
+    (nval, oval) => {
+      if (nval !== oval) {
+        currentNavItemIndex.value = -1;
+      }
     }
-  });
+  );
+
+  watch(
+    () => [privateChatList.value, groupChatList.value, route.params],
+    () => {
+      const {id, chatType} = route.params;
+      if (chatType === ChatType.PRIVATE) {
+        chatTypeIndex.value = 0;
+      } else if (chatType === ChatType.GROUP) {
+        chatTypeIndex.value = 1;
+      }
+      if (id) {
+        if (chatType === ChatType.PRIVATE) {
+          const chatIndex = privateChatList.value.findIndex(chat => String(chat.friendId) === route.params.id);
+          if (chatIndex !== -1) {
+            setTimeout(() => handleNavItemClick(chatIndex), 0);
+            return;
+          }
+        } else {
+          const chatIndex = groupChatList.value.findIndex(chat => String(chat.chatGroup?.id) === id);
+          if (chatIndex !== -1) {
+            setTimeout(() => handleNavItemClick(chatIndex), 0);
+            return;
+          }
+        }
+        router.replace('/chat/home');
+      }
+    }
+  );
 </script>
 
 <style lang="scss" scoped>

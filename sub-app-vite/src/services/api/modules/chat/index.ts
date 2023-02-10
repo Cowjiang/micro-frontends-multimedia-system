@@ -12,7 +12,7 @@ import {
   GroupChat,
   GroupHistoryList,
   MessageList,
-  ChatGroupHistory
+  ChatGroupHistory, GetGroupUserListParams, UserProfile
 } from '@/services/api/modules/chat/typings';
 import { ResponsePage } from '@/services/typings';
 
@@ -37,6 +37,9 @@ const getGroupChatHistoryByGid = <T extends GetGroupChatHistoryByGidParams>({gro
 // 发送群聊消息
 const sendGroupMessage = <T extends SendGroupMessageParams>(data: T) => http.post<T, ChatGroupHistory>(`/chat/group/${data.groupId}/send`, data);
 
+// 获取群聊用户名单
+const getGroupUserList = <T extends GetGroupUserListParams>(params: T) => http.get<void, UserProfile[]>(`/chat/group/${params.groupId}/users`);
+
 // 获取置顶私聊列表
 const getStickyPrivateChatList = () => http.get<void, StickyChat[]>('/chat/chat/sticky');
 
@@ -57,6 +60,7 @@ export default {
   getGroupChatList,
   getGroupChatHistoryByGid,
   sendGroupMessage,
+  getGroupUserList,
   getStickyPrivateChatList,
   getStickyGroupChatList,
   setStickyPrivateChat,

@@ -1,5 +1,48 @@
 <template>
   <div class="chat-frame-container w-100 h-100 d-flex flex-column">
+    <v-navigation-drawer
+      v-model="showInfoDrawer"
+      absolute
+      location="right"
+      rounded
+    >
+      <v-list v-if="props.chatInfo.type === ChatType.GROUP">
+        <v-list-item-subtitle class="mt-6 pl-4">群聊名称</v-list-item-subtitle>
+        <v-list-item>{{ props.chatInfo.targetName }}</v-list-item>
+        <v-list-item-subtitle class="mt-6 mb-2 pl-4">群聊用户</v-list-item-subtitle>
+        <v-list-item
+          v-for="user in groupUserList"
+          :key="user?.userId"
+          @click="handleGroupUserClick(user)"
+        >
+          <div class="d-flex align-center position-relative py-1">
+            <v-avatar
+              class="flex-shrink-0"
+              color="grey-lighten-3"
+              size="default">
+              <v-img
+                :src="user.avgPath"
+                alt="">
+                <template v-slot:placeholder>
+                  <div class="w-100 h-100 d-flex justify-center align-center">
+                    <span class="text-h6 text-grey-darken-2">
+                      {{ user.username?.charAt(0) ?? '' }}
+                    </span>
+                  </div>
+                </template>
+              </v-img>
+            </v-avatar>
+            <div class="ml-2 mr-4 w-100 d-flex flex-column overflow-hidden text-no-wrap">
+              <div class="d-flex overflow-hidden">
+                <span class="w-100 mr-2 flex-grow-1 text-subtitle-1 text-grey-darken-3">
+                  {{ user?.username ?? '' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
     <div class="chat-title-container w-100 px-4 d-flex flex-shrink-0 align-center">
       <div class="flex-shrink-0 mr-2 text-h6 text-grey-lighten-1">
         <i class="fa-solid fa-at" v-if="props.chatInfo.type === ChatType.PRIVATE" />
@@ -119,6 +162,7 @@
               <v-avatar
                 v-if="!message.isMe"
                 color="grey-lighten-2"
+                @click="handleGroupUserClick(message.userInfo)"
               >
                 <v-img :src="message.userInfo.avatarUrl">
                   <template v-slot:placeholder>
@@ -226,9 +270,11 @@
   import { IResponseData } from '@/services/typings';
   import { formatTime } from '@/common/formats';
   import { useChatStore } from '@/store/chat';
-  import { Chat, ChatGroupHistory, GroupChat, MessageList } from '@/services/api/modules/chat/typings';
+  import { Chat, ChatGroupHistory, GroupChat, MessageList, UserProfile } from '@/services/api/modules/chat/typings';
   import { ChatType } from '@/typings';
   import { useUserStore } from '@/store/user';
+  import { SimpleUserInfo } from '@/services/api/modules/user/typings';
+  import router from '@/router';
 
   interface Props {
     chatInfo: ChatInfo;
@@ -256,6 +302,29 @@
   const pageSize: number = 100; //每次请求获取聊天记录的单页数据总数
   let existMore: boolean = true; //是否存在更多历史消息
 
+  const showInfoDrawer = ref(false); //是否显示信息侧边栏
+  const groupUserList = ref<UserProfile[]>([]); //群聊用户名单
+
+  // 初始化
+  const init = () => {
+    reset();
+    placeholder.value =
+      props.chatInfo.type === ChatType.PRIVATE
+        ? `给 @${props.chatInfo.targetName} 发消息`
+        : `在群聊「${props.chatInfo.targetName}」发消息`;
+    Promise.all([getChatHistory()]).then(() => {
+      loadingStatus.value = false;
+      scrollToBottom(chatMessageArea.value);
+    });
+    if (props.chatInfo.type === ChatType.GROUP) {
+      chatApi.getGroupUserList({
+        groupId: props.chatInfo.targetId
+      }).then(res => {
+        groupUserList.value = res?.data ?? [];
+      });
+    }
+  };
+
   /**
    * 获取聊天消息记录
    * @param time 查询时间戳，为空时则查询第一页
@@ -276,7 +345,7 @@
               id: msg.id,
               content: msg.content,
               isPhoto: !msg.isText,
-              isMe: msg.senderId === props.chatInfo.targetId,
+              isMe: msg.senderId !== props.chatInfo.targetId,
               time: msg.createdTime,
               userInfo: {
                 userId: props.chatInfo.targetId,
@@ -497,6 +566,33 @@
         console.error(e);
         message.error('操作失败', true);
       }
+    } else if (e[0] === 1 && props.chatInfo.type === ChatType.GROUP) {
+      showInfoDrawer.value = true;
+    }
+  };
+
+  // 点击群聊用户
+  const handleGroupUserClick = async (userInfo: UserProfile | SimpleUserInfo) => {
+    if (userInfo.userId && props.chatInfo.type === ChatType.GROUP) {
+      emit('privateMessageSent', {
+        id: -1,
+        friendId: userInfo.userId,
+        friendInfo: {
+          avgPath: userInfo?.avgPath ?? '',
+          username: userInfo.username
+        },
+        unread: 0,
+        content: '',
+        isText: true,
+        createdTime: new Date().getTime()
+      });
+      await router.replace({
+        name: 'chat',
+        params: {
+          chatType: ChatType.PRIVATE,
+          id: userInfo.userId
+        }
+      });
     }
   };
 
@@ -529,15 +625,7 @@
     watch(
       () => props.chatInfo,
       () => {
-        reset();
-        placeholder.value =
-          props.chatInfo.type === ChatType.PRIVATE
-            ? `给 @${props.chatInfo.targetName} 发消息`
-            : `在群聊「${props.chatInfo.targetName}」发消息`;
-        Promise.all([getChatHistory()]).then(() => {
-          loadingStatus.value = false;
-          scrollToBottom(chatMessageArea.value);
-        });
+        init();
       },
       {immediate: true}
     );

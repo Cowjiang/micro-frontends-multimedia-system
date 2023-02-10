@@ -26,6 +26,10 @@ export interface GetGroupChatHistoryByGidParams {
   groupId: number;
 }
 
+export interface GetGroupUserListParams {
+  groupId: number;
+}
+
 export interface SetStickyPrivateChatParams {
   friendId: number;
 }
@@ -134,10 +138,7 @@ export interface StickyChat {
   message?: Chat;
 }
 
-export interface StickyGroupChat {
-  chatGroup?: ChatGroup;
-  message?: ChatGroupHistory;
-  userInfo?: SimpleUserInfo;
+export interface StickyGroupChat extends GroupChat {
 }
 
 export interface GroupChat {
@@ -172,7 +173,7 @@ export interface ChatGroup {
  * GroupHistoryList
  */
 export interface GroupHistoryList {
-  message?:  ChatGroupHistory;
+  message?: ChatGroupHistory;
   userInfo?: UserProfile;
 }
 
@@ -224,7 +225,7 @@ export interface UserProfile {
    * 修改时间
    */
   updatedTime?: number;
-  userId?:      number;
+  userId?: number;
   /**
    * 用户名
    */

@@ -33,7 +33,7 @@
               </v-img>
             </v-avatar>
           </div>
-          <span class="mt-4 text-h4 text-grey-darken-4 text-no-wrap">
+          <span class="mt-4 text-h4 text-grey-darken-4 text-truncate" style="max-width: 30vw">
             Hi~ {{ userInfo?.username ?? '' }}
           </span>
           <span class="my-2 text-grey-darken-2 text-body-1">
@@ -61,6 +61,7 @@
                 v-ripple
                 :title="privateChat.friendInfo?.username ?? ''"
                 :subtitle="`${formatTime(privateChat.message?.createdTime)}`"
+                @click="handleChatClick(ChatType.PRIVATE, privateChat)"
               >
                 <template v-slot:prepend>
                   <v-avatar
@@ -123,6 +124,7 @@
                 v-ripple
                 :title="groupChat.chatGroup?.groupName ?? ''"
                 :subtitle="formatTime(groupChat.message?.createdTime)"
+                @click="handleChatClick(ChatType.GROUP, groupChat)"
               >
                 <template v-slot:prepend>
                   <v-avatar
@@ -178,6 +180,10 @@
   import { StickyChat, StickyGroupChat } from '@/services/api/modules/chat/typings';
   import { formatTime } from '@/common/formats';
   import Empty from '@/components/empty/empty.vue';
+  import { ChatType } from '@/typings';
+  import router from '@/router';
+
+  const route = useRoute();
 
   const {appContext} = getCurrentInstance() ?? {};
   const message = appContext?.config.globalProperties.$message ?? {};
@@ -204,6 +210,50 @@
     }
   };
   init();
+
+  interface ChatInfo extends StickyChat, StickyGroupChat {
+  }
+
+  const emit = defineEmits(['privateMessageClick', 'groupMessageClick']);
+  const handleChatClick = (chatType: ChatType, chatInfo: ChatInfo) => {
+    if (chatType === ChatType.PRIVATE) {
+      emit('privateMessageClick', {
+        id: chatInfo.friendInfo?.userId,
+        friendId: chatInfo.friendInfo?.userId,
+        friendInfo: {
+          avgPath: chatInfo.friendInfo?.avgPath ?? '',
+          username: chatInfo.friendInfo?.username ?? ''
+        },
+        unread: 0,
+        content: '',
+        isText: chatInfo.message?.isText,
+        createdTime: chatInfo.message?.createdTime
+      });
+    } else {
+      emit('groupMessageClick', {
+        chatGroup: {
+          id: chatInfo.chatGroup?.id,
+          groupName: chatInfo.chatGroup?.groupName
+        },
+        chatGroupHistory: {
+          content: chatInfo.chatGroupHistory?.content ?? '',
+          createdTime: chatInfo.chatGroupHistory?.createdTime
+        },
+        userInfo: {
+          id: chatInfo.chatGroupHistory?.senderId,
+          username: chatInfo.userInfo?.userId,
+          avgPath: chatInfo.userInfo?.avgPath ?? ''
+        }
+      });
+    }
+    router.replace({
+      name: 'chat',
+      params: {
+        chatType: chatType,
+        id: chatInfo.friendInfo?.userId || chatInfo.chatGroup?.id
+      }
+    });
+  };
 </script>
 
 <style scoped lang="scss">
