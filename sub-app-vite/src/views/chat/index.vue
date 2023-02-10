@@ -1,5 +1,5 @@
 <template>
-  <div class="w-100 h-100 d-flex flex-row">
+  <div class="w-100 h-100 d-flex flex-row" ref="chatPageRef">
     <div class="nav-wrapper h-100 flex-shrink-0 flex-grow-0">
       <nav-bar @update="handleNavItemClick" />
     </div>
@@ -7,6 +7,7 @@
       <div class="content-container w-100 h-100 rounded-lg bg-white overflow-hidden">
         <!--        <search-popup v-model="showSearchPopup"/>-->
         <home-frame
+          v-if="!refreshTrigger"
           :chat-type="chatType"
           @chat-type-change="handleChatTypeChange"
         />
@@ -55,6 +56,7 @@
   const chatStore = useChatStore();
   const loadingStatus = ref(true); //数据加载状态
   const loadError = ref(false); //数据是否加载失败
+  const refreshTrigger = ref(false); //强制刷新组件触发器
 
   const chatType = computed(() => currentNavItemIndex.value === 0 ? ChatType.PRIVATE : ChatType.GROUP);
 
@@ -71,11 +73,22 @@
   };
   init();
 
+  const chatPageRef = ref<HTMLElement | null>(null);
+  const {toggle} = useFullscreen(chatPageRef);
   // 导航栏点击事件
   const handleNavItemClick = ({index, detail}: { index: number, detail: any }) => {
     if (currentNavItemIndex.value !== index) {
-      if (['fullscreen', 'search'].includes(detail.name)) {
+      if (detail.name === 'search') {
         // showSearchPopup.value = true
+      } else if (detail.name === 'fullscreen') {
+        toggle();
+      } else if (detail.name === 'refresh') {
+        loadingStatus.value = true;
+        init();
+        refreshTrigger.value = true;
+        nextTick(() => {
+          refreshTrigger.value = false;
+        })
       } else {
         currentNavItemIndex.value = index;
         const navItem = detail.name ?? 'home';
@@ -101,6 +114,7 @@
       {name: 'group', title: '我的群聊', icon: 'fas fa-user-friends'},
       {name: 'fullscreen', title: '切换全屏', icon: 'fas fa-up-right-and-down-left-from-center'},
       {name: 'search', title: '搜索', icon: 'fas fa-search'},
+      {name: 'refresh', title: '刷新', icon: 'fas fa-rotate'},
       {name: 'setting', title: '设置中心', icon: 'fas fa-cog'}
     ];
     if (route.params.navItem) {
