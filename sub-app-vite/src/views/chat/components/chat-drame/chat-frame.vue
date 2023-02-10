@@ -198,7 +198,10 @@
             </div>
             <div
               class="message-content"
-              :class="!message.isMe ? 'message-content-left' : 'message-content-right'"
+              :class="[
+                !message.isMe ? 'message-content-left' : 'message-content-right',
+                message.isPhoto ? 'pa-0' : 'pa-2'
+              ]"
               :data-name="`message${index}`"
               v-ripple
             >
@@ -206,9 +209,10 @@
                 {{ message.content }}
               </div>
               <v-img
+                class="rounded-lg rounded-te-0"
                 width="10vw"
-                :height="90"
-                contain
+                :height="120"
+                cover
                 v-else
                 :src="message.content"
                 :data-name="`message${index}`"
@@ -252,6 +256,7 @@
         </div>
         <div class="append-btn-container ml-auto flex-shrink-0 text-h6 text-grey-darken-2">
           <input
+            ref="fileInputRef"
             class="position-relative"
             type="file"
             accept="image/png,image/jpeg,image/jpg"
@@ -265,16 +270,17 @@
 </template>
 
 <script setup lang="ts">
-  import { ChatInfo, Message } from '@/views/chat/components/chat-drame/typings';
-  import { chatApi } from '@/services/api';
-  import { IResponseData } from '@/services/typings';
-  import { formatTime } from '@/common/formats';
+  import router from '@/router';
+  import axios from 'axios';
+  import { useUserStore } from '@/store/user';
   import { useChatStore } from '@/store/chat';
+  import { formatTime } from '@/common/formats';
+  import { ChatInfo, Message } from '@/views/chat/components/chat-drame/typings';
+  import { authApi, chatApi } from '@/services/api';
+  import { IResponseData } from '@/services/typings';
   import { Chat, ChatGroupHistory, GroupChat, MessageList, UserProfile } from '@/services/api/modules/chat/typings';
   import { ChatType } from '@/typings';
-  import { useUserStore } from '@/store/user';
   import { SimpleUserInfo } from '@/services/api/modules/user/typings';
-  import router from '@/router';
 
   interface Props {
     chatInfo: ChatInfo;
@@ -297,6 +303,7 @@
   const loadingStatus = ref(true); //数据加载状态
   const inputValue = ref(''); //输入框的值
   const placeholder = ref(''); //输入框的占位文字
+  const fileInputRef = ref<HTMLInputElement>(); //图片输入的值
   const messageRecords = ref<Message[]>([]); //消息记录数组
   let recordsLength: number = 0; //当前获取聊天消息记录的请求回报的消息总数
   const pageSize: number = 100; //每次请求获取聊天记录的单页数据总数
@@ -527,6 +534,9 @@
         message?.error('网络异常');
         console.error(e);
       }
+      if (fileInputRef.value) {
+        fileInputRef.value.value = '';
+      }
     }
   };
 
@@ -535,13 +545,29 @@
     const file = files[0];
     let fileForm = new window.FormData();
     fileForm.append('file', file);
-    fileForm.append('model', 'chat');
     uploadFile(fileForm, 'image');
   };
 
   // 文件上传
-  const uploadFile = (file: FormData, type: 'file' | 'image') => {
-    handleSendMessage(false, 'url');
+  const uploadFile = async (fileFormData: FormData, type: 'file' | 'image') => {
+    try {
+      const {data: signData} = await authApi.getUploadSignature({
+        targetTypeName: 'mfms-chat'
+      });
+      if (signData) {
+        fileFormData.append('key', `${signData.keyPrefix}private/${userInfo.value.userId}/${Date.now()}`);
+        fileFormData.append('token', signData.token);
+        const res = await axios.post(`http://${signData.uploadDomain}`, fileFormData, {
+          headers: {'Content-Type': 'multipart/form-data'}
+        });
+        await handleSendMessage(false, res.data.url);
+      } else {
+        throw new Error('上传签名为空');
+      }
+    } catch (e) {
+      console.error(e);
+      message?.error('文件上传失败');
+    }
   };
 
   /**
