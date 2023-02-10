@@ -8,7 +8,7 @@ async function loginByAccount(
   },
   options?: { [key: string]: any }
 ) {
-  return request<Response>('/api/user/login', {
+  return request<Response>('/user/login', {
     method: 'POST',
     data,
     ...(options || {})
@@ -22,7 +22,7 @@ async function registerByEmail(
   },
   options?: { [key: string]: any }
 ) {
-  return request<Response>('/api/user/register', {
+  return request<Response>('/user/register', {
     method: 'POST',
     data,
     ...(options || {})
@@ -35,7 +35,7 @@ async function refreshToken(
   },
   options?: { [key: string]: any }
 ) {
-  return request<Response>('/api/user/token/refresh', {
+  return request<Response>('/user/token/refresh', {
     method: 'PUT',
     data,
     ...(options || {})

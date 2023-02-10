@@ -3,6 +3,7 @@ import { Button, Space, Switch } from 'antd';
 import { useDispatch, useModel, useNavigate } from '@@/exports';
 import { authApi } from '@/services/api';
 import ChatDialog from '@/components/ChatDialog';
+import { connectSocketTest } from '@/services/socket';
 
 const IndexPage: React.FC = () => {
   const navigate = useNavigate();
@@ -45,6 +46,14 @@ const IndexPage: React.FC = () => {
 
   const [chatDialogDisplay, setChatDialogDisplay] = useState(false);
 
+  const handleSocketTest = () => {
+    connectSocketTest().then(res => {
+      console.log('[Socket测试]', res);
+    }).catch(e => {
+      console.error('[Socket测试错误]', e);
+    });
+  };
+
   return (
     <div className="w-screen h-screen flex flex-col justify-center items-center">
       <Space size={[8, 16]} wrap>
@@ -84,6 +93,9 @@ const IndexPage: React.FC = () => {
         </>
         <Button onClick={loginTest}>
           登陆测试
+        </Button>
+        <Button onClick={handleSocketTest}>
+          Socket测试
         </Button>
         <Button onClick={clearCache}>
           清除缓存

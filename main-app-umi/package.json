@@ -4,6 +4,7 @@
   "scripts": {
     "build": "max build",
     "dev": "max dev",
+    "mock": "cross-env MOCK=true max dev",
     "format": "prettier --cache --write .",
     "postinstall": "max setup",
     "setup": "max setup",
@@ -23,6 +24,7 @@
     "eruda": "^2.10.0",
     "nprogress": "^0.2.0",
     "qs": "^6.11.0",
+    "socket.io-client": "2.5.0",
     "wujie": "^1.0.5",
     "wujie-react": "^1.0.5"
   },
@@ -30,6 +32,8 @@
     "@types/qs": "^6.9.7",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
+    "@types/socket.io-client": "^1.4.36",
+    "cross-env": "^7.0.3",
     "lint-staged": "^13.0.3",
     "prettier": "^2.7.1",
     "prettier-plugin-organize-imports": "^2",

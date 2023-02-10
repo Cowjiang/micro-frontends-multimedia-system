@@ -27,6 +27,8 @@ declare global {
       props?: { [key: string]: any };
       location?: Object;
     };
+
+    SERVICE_BASE_URL: string;
   }
 
   interface RouteObject {

@@ -3,16 +3,18 @@ import qs from 'qs';
 import { message } from 'antd';
 import { getDvaApp, request, history } from '@@/exports';
 
+const {SERVICE_BASE_URL} = process.env;
+
 export const requestConfig: RequestConfig = {
   // timeout: 1000,
   // headers: {'X-Requested-With': 'XMLHttpRequest'},
+  baseURL: SERVICE_BASE_URL,
   requestInterceptors: [
     (url, options) => {
       // console.log(url, options);
       const {method, headers, data} = options;
-      const {getState} = getDvaApp()._store;
-      const {accessToken} = getState().user.token;
-      if (!!accessToken) {
+      const accessToken = sessionStorage.getItem('ACCESS_TOKEN') ?? '';
+      if (accessToken) {
         headers['etoken'] = accessToken;
       }
       if (method === 'get' || method === 'delete') {
@@ -82,9 +84,7 @@ export const requestConfig: RequestConfig = {
   ],
   errorConfig: {
     errorHandler(e: any) {
-      message.error({
-        content: e.data.message
-      });
+      console.error(e);
     }
   }
 };
