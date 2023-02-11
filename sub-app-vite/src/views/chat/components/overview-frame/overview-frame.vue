@@ -208,8 +208,14 @@
     if (resList.find(res => res.status === 'rejected')) {
       message?.error('网络异常');
     }
+    window.$wujie?.bus.$on('newChatMessage', onReceiveChatMessage);
   };
   init();
+
+  // 收到信私信
+  const onReceiveChatMessage = () => {
+    unreadCount.value += 1;
+  };
 
   interface ChatInfo extends StickyChat, StickyGroupChat {
   }
@@ -254,6 +260,10 @@
       }
     });
   };
+
+  onUnmounted(() => {
+    window.$wujie?.bus.$off('newChatMessage', onReceiveChatMessage);
+  });
 </script>
 
 <style scoped lang="scss">

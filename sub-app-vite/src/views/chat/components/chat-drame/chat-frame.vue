@@ -281,6 +281,7 @@
   import { Chat, ChatGroupHistory, GroupChat, MessageList, UserProfile } from '@/services/api/modules/chat/typings';
   import { ChatType } from '@/typings';
   import { SimpleUserInfo } from '@/services/api/modules/user/typings';
+  import { SocketPrivateMessage } from '@/services/socket/typings';
 
   interface Props {
     chatInfo: ChatInfo;
@@ -313,22 +314,47 @@
   const groupUserList = ref<UserProfile[]>([]); //群聊用户名单
 
   // 初始化
-  const init = () => {
+  const init = async () => {
     reset();
     placeholder.value =
       props.chatInfo.type === ChatType.PRIVATE
         ? `给 @${props.chatInfo.targetName} 发消息`
         : `在群聊「${props.chatInfo.targetName}」发消息`;
-    Promise.all([getChatHistory()]).then(() => {
+    await Promise.all([getChatHistory()]).then(() => {
       loadingStatus.value = false;
       scrollToBottom(chatMessageArea.value);
     });
     if (props.chatInfo.type === ChatType.GROUP) {
-      chatApi.getGroupUserList({
+      await chatApi.getGroupUserList({
         groupId: props.chatInfo.targetId
       }).then(res => {
         groupUserList.value = res?.data ?? [];
       });
+    }
+    window.$wujie?.bus.$on('newChatMessage', onReceiveChatMessage);
+  };
+
+  // 收到信私信
+  const onReceiveChatMessage = (data: SocketPrivateMessage) => {
+    const newMessage = data.messageInfo;
+    if (newMessage.senderId === props.chatInfo.targetId) {
+      messageRecords.value.push({
+        id: newMessage.id,
+        content: newMessage.content,
+        isPhoto: !newMessage.isText,
+        isMe: false,
+        time: newMessage.createdTime,
+        userInfo: {
+          username: data.userInfo.username,
+          userId: data.userInfo.userId,
+          avatarUrl: data.userInfo.avgPath
+        }
+      });
+      recordsLength += 1;
+      if (recordsLength <= pageSize) {
+        existMore = false;
+      }
+      scrollToBottom(chatMessageArea.value);
     }
   };
 
@@ -430,37 +456,6 @@
     setTimeout(() => {
       loadingStatus.value = false;
     }, 500);
-  };
-
-  /**
-   * 监听接收到新消息
-   * @param data Socket接收到的新消息
-   */
-  const receiveNewMessage = (data: IResponseData<any>): void => {
-    if (data.code === 120) {
-      const newMessage = data.data.messageInfo;
-      if (newMessage.senderId === props.chatInfo.targetId) {
-        messageRecords.value.push({
-          id: newMessage.id,
-          content: newMessage.content,
-          isPhoto: !newMessage.isText,
-          isMe: false,
-          time: newMessage.createdTime,
-          userInfo: {
-            userId: userInfo.value.id,
-            username: userInfo.value.username,
-            avatarUrl: userInfo.value.avgPath
-          }
-        });
-        recordsLength += 1;
-        if (recordsLength <= pageSize) {
-          existMore = false;
-        }
-        scrollToBottom(chatMessageArea.value);
-      } else {
-        // messageStore.unreadMessageCount += 1
-      }
-    }
   };
 
   // 输入框回车事件
@@ -655,6 +650,10 @@
       },
       {immediate: true}
     );
+  });
+
+  onUnmounted(() => {
+    window.$wujie?.bus.$off('newChatMessage', onReceiveChatMessage);
   });
 </script>
 

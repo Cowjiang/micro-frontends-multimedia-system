@@ -22,7 +22,7 @@ const ChatDialog: React.FC<ChatDialogProps> = (props) => {
       socket?.on('message', (data: any) => {
         const {type, message} = handleSocketMessage(data);
         if (type === SocketMessageType.CHAT) {
-          bus.$emit('chatMessage', message);
+          bus.$emit('newChatMessage', message);
         }
       });
     }

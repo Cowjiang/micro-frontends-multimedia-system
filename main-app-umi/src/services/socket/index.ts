@@ -13,7 +13,7 @@ export const connectSocket = () => {
         transports: ['websocket']
       });
       window.$socket.on('message', (data: any) => {
-        console.log('[Socket]消息: ', data);
+        console.log('[Socket]', '新消息 ');
         if (data) {
           handleSocketMessage(data);
         }

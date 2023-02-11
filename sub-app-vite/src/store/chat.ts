@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { NavItemList } from '@/views/chat/components/nav-bar/typings';
 import { GetPrivateChatListParams, GroupChat, MessageList } from '@/services/api/modules/chat/typings';
 import { chatApi } from '@/services/api';
+import { SocketPrivateMessage } from '@/services/socket/typings';
 
 export const useChatStore = defineStore('chat', {
   state: () => ({
@@ -31,6 +32,30 @@ export const useChatStore = defineStore('chat', {
       }).catch(err => {
         return Promise.reject(err);
       });
+    },
+    // 收到新私信
+    receivePrivateChatMessage(message: SocketPrivateMessage) {
+      const newMessage = message.messageInfo;
+      const findIndex = this.privateChatList.findIndex(message => message.friendId === newMessage.friendId);
+      if (findIndex !== -1) {
+        // 消息列表中存在的消息
+        const messageTemp = this.privateChatList[findIndex];
+        this.privateChatList.splice(findIndex, 1);
+        this.privateChatList.unshift({
+          ...newMessage,
+          friendId: messageTemp.friendId,
+          friendInfo: messageTemp.friendInfo,
+          senderId: messageTemp.senderId,
+          unread: (messageTemp.unread ?? 0) + 1 || 1
+        });
+      } else {
+        // 消息列表中不存在的消息
+        this.privateChatList.unshift({
+          ...newMessage,
+          friendInfo: message.userInfo,
+          unread: 1
+        });
+      }
     }
   }
 });

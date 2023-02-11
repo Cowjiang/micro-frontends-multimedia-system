@@ -50,6 +50,7 @@
   import { useChatStore } from '@/store/chat';
   import { ChatType } from '@/typings';
   import { computed } from 'vue';
+  import { SocketPrivateMessage } from '@/services/socket/typings';
 
   const {navItemList, currentNavItemIndex} = storeToRefs(useChatStore());
   const route = useRoute();
@@ -60,8 +61,8 @@
 
   const chatType = computed(() => currentNavItemIndex.value === 0 ? ChatType.PRIVATE : ChatType.GROUP);
 
-  const init = () => {
-    Promise.all([
+  const init = async () => {
+    await Promise.all([
       chatStore.getPrivateChatList({pageSize: 100}),
       chatStore.getGroupChatList()
     ]).then(() => {
@@ -70,8 +71,14 @@
       console.error(err);
       loadError.value = true;
     });
+    window.$wujie?.bus.$on('newChatMessage', onReceiveChatMessage);
   };
   init();
+
+  // 接收新聊天消息
+  const onReceiveChatMessage = (data: SocketPrivateMessage) => {
+    chatStore.receivePrivateChatMessage(data);
+  };
 
   const chatPageRef = ref<HTMLElement | null>(null);
   const {toggle} = useFullscreen(chatPageRef);
@@ -88,7 +95,7 @@
         refreshTrigger.value = true;
         nextTick(() => {
           refreshTrigger.value = false;
-        })
+        });
       } else {
         currentNavItemIndex.value = index;
         const navItem = detail.name ?? 'home';
@@ -129,6 +136,10 @@
         });
       }
     }
+  });
+
+  onUnmounted(() => {
+
   });
 </script>
 
