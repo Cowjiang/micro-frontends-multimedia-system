@@ -1,6 +1,7 @@
 import io from 'socket.io-client';
 import { IResponseData } from '@/services/typings';
 import { SocketMessage, SocketMessageType } from '@/services/socket/typings';
+import { ChatType } from '@/components/ChatDialog/typings';
 
 export const wsBaseUrl = 'http://localhost:8888';
 
@@ -58,11 +59,14 @@ export const handleSocketMessage = (messageString: string): SocketMessage => {
   if (!message?.data) {
     return {type: SocketMessageType.IGNORE, message: null};
   }
-  if (message.code === 120) {
+  if (message.code === 120 || message.code === 121) {
     // 聊天消息
     return {
       type: SocketMessageType.CHAT,
-      message: message.data
+      message: {
+        chatType: message.code === 120 ? ChatType.PRIVATE : ChatType.GROUP,
+        message: message.data
+      }
     };
   } else {
     return {type: SocketMessageType.IGNORE, message: message.data};

@@ -5,6 +5,7 @@
       absolute
       location="right"
       rounded
+      temporary
     >
       <v-list v-if="props.chatInfo.type === ChatType.GROUP">
         <v-list-item-subtitle class="mt-6 pl-4">群聊名称</v-list-item-subtitle>
@@ -281,7 +282,7 @@
   import { Chat, ChatGroupHistory, GroupChat, MessageList, UserProfile } from '@/services/api/modules/chat/typings';
   import { ChatType } from '@/typings';
   import { SimpleUserInfo } from '@/services/api/modules/user/typings';
-  import { SocketPrivateMessage } from '@/services/socket/typings';
+  import { SocketChatMessage, SocketGroupChatMessage, SocketPrivateChatMessage } from '@/services/socket/typings';
 
   interface Props {
     chatInfo: ChatInfo;
@@ -334,10 +335,15 @@
     window.$wujie?.bus.$on('newChatMessage', onReceiveChatMessage);
   };
 
-  // 收到信私信
-  const onReceiveChatMessage = (data: SocketPrivateMessage) => {
-    const newMessage = data.messageInfo;
-    if (newMessage.senderId === props.chatInfo.targetId) {
+  // 收到Socket消息
+  const onReceiveChatMessage = (data: SocketChatMessage) => {
+    const message = data.message;
+    if (data.chatType === ChatType.PRIVATE) {
+      // 收到私信
+      const newMessage = (message as SocketPrivateChatMessage).messageInfo;
+      if (newMessage.senderId !== props.chatInfo.targetId) {
+        return;
+      }
       messageRecords.value.push({
         id: newMessage.id,
         content: newMessage.content,
@@ -345,17 +351,35 @@
         isMe: false,
         time: newMessage.createdTime,
         userInfo: {
-          username: data.userInfo.username,
-          userId: data.userInfo.userId,
-          avatarUrl: data.userInfo.avgPath
+          username: message.userInfo.username,
+          userId: message.userInfo.userId,
+          avatarUrl: message.userInfo.avgPath
         }
       });
-      recordsLength += 1;
-      if (recordsLength <= pageSize) {
-        existMore = false;
+    } else {
+      // 收到群聊消息
+      const newMessage = (message as SocketGroupChatMessage).message;
+      if (newMessage.groupId !== props.chatInfo.targetId) {
+        return;
       }
-      scrollToBottom(chatMessageArea.value);
+      messageRecords.value.push({
+        id: newMessage.id,
+        content: newMessage.content,
+        isPhoto: newMessage.type !== 'text',
+        isMe: message.userInfo?.userId === userInfo.value.userId,
+        time: newMessage.createdTime,
+        userInfo: {
+          username: message.userInfo.username,
+          userId: message.userInfo.userId,
+          avatarUrl: message.userInfo.avgPath
+        }
+      });
     }
+    recordsLength += 1;
+    if (recordsLength <= pageSize) {
+      existMore = false;
+    }
+    scrollToBottom(chatMessageArea.value);
   };
 
   /**

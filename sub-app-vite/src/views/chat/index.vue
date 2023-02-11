@@ -50,7 +50,7 @@
   import { useChatStore } from '@/store/chat';
   import { ChatType } from '@/typings';
   import { computed } from 'vue';
-  import { SocketPrivateMessage } from '@/services/socket/typings';
+  import { SocketChatMessage } from '@/services/socket/typings';
 
   const {navItemList, currentNavItemIndex} = storeToRefs(useChatStore());
   const route = useRoute();
@@ -76,8 +76,8 @@
   init();
 
   // 接收新聊天消息
-  const onReceiveChatMessage = (data: SocketPrivateMessage) => {
-    chatStore.receivePrivateChatMessage(data);
+  const onReceiveChatMessage = (data: SocketChatMessage) => {
+    chatStore.receiveChatMessage(data);
   };
 
   const chatPageRef = ref<HTMLElement | null>(null);

@@ -9,7 +9,7 @@ export enum SocketMessageType {
    */
   IGNORE = 'ignore',
   /**
-   * 聊天消息
+   * 私聊消息
    */
   CHAT = 'chat'
 }

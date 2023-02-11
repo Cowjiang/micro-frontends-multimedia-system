@@ -2,7 +2,8 @@ import { defineStore } from 'pinia';
 import { NavItemList } from '@/views/chat/components/nav-bar/typings';
 import { GetPrivateChatListParams, GroupChat, MessageList } from '@/services/api/modules/chat/typings';
 import { chatApi } from '@/services/api';
-import { SocketPrivateMessage } from '@/services/socket/typings';
+import { SocketChatMessage, SocketGroupChatMessage, SocketPrivateChatMessage } from '@/services/socket/typings';
+import { ChatType } from '@/typings';
 
 export const useChatStore = defineStore('chat', {
   state: () => ({
@@ -33,28 +34,48 @@ export const useChatStore = defineStore('chat', {
         return Promise.reject(err);
       });
     },
-    // 收到新私信
-    receivePrivateChatMessage(message: SocketPrivateMessage) {
-      const newMessage = message.messageInfo;
-      const findIndex = this.privateChatList.findIndex(message => message.friendId === newMessage.friendId);
-      if (findIndex !== -1) {
-        // 消息列表中存在的消息
-        const messageTemp = this.privateChatList[findIndex];
-        this.privateChatList.splice(findIndex, 1);
-        this.privateChatList.unshift({
-          ...newMessage,
-          friendId: messageTemp.friendId,
-          friendInfo: messageTemp.friendInfo,
-          senderId: messageTemp.senderId,
-          unread: (messageTemp.unread ?? 0) + 1 || 1
-        });
+    // 收到新聊天消息
+    receiveChatMessage(data: SocketChatMessage) {
+      const message = data.message;
+      if (data.chatType === ChatType.PRIVATE) {
+        // 收到私信
+        const newMessage = (message as SocketPrivateChatMessage).messageInfo;
+        const findIndex = this.privateChatList.findIndex(message => message.friendId === newMessage.friendId);
+        if (findIndex !== -1) {
+          // 消息列表中存在的消息
+          const messageTemp = this.privateChatList[findIndex];
+          this.privateChatList.splice(findIndex, 1);
+          this.privateChatList.unshift({
+            ...newMessage,
+            friendId: messageTemp.friendId,
+            friendInfo: messageTemp.friendInfo,
+            senderId: messageTemp.senderId,
+            unread: (messageTemp.unread ?? 0) + 1 || 1
+          });
+        } else {
+          // 消息列表中不存在的消息
+          this.privateChatList.unshift({
+            ...newMessage,
+            friendInfo: message.userInfo,
+            unread: 1
+          });
+        }
       } else {
-        // 消息列表中不存在的消息
-        this.privateChatList.unshift({
-          ...newMessage,
-          friendInfo: message.userInfo,
-          unread: 1
-        });
+        // 收到群聊消息
+        const newMessage = (message as SocketGroupChatMessage).message;
+        const findIndex = this.groupChatList.findIndex(message => message.chatGroup?.id === newMessage.groupId);
+        if (findIndex !== -1) {
+          // 消息列表中存在的消息
+          const messageTemp = this.groupChatList[findIndex];
+          this.groupChatList.splice(findIndex, 1);
+          this.groupChatList.unshift({
+            chatGroupHistory: newMessage,
+            chatGroup: messageTemp.chatGroup,
+            userInfo: message.userInfo
+          });
+        } else {
+          // 消息列表中不存在的消息
+        }
       }
     }
   }
