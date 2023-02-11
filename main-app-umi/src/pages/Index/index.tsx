@@ -7,21 +7,14 @@ import ChatDialog from '@/components/ChatDialog';
 const IndexPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const {messageApi} = useModel('messageApi');
+
   const gotoLogin = () => {
     navigate('/auth/login', {
       state: {
         from: '/index'
       }
     });
-  };
-
-  const {messageApi} = useModel('messageApi');
-  const showMessage = () => {
-    messageApi.open({
-      type: 'loading',
-      content: '正在加载',
-      duration: 1
-    }).then(() => messageApi.warning('加载警告', 1).then(() => messageApi.error('加载失败')));
   };
 
   const loginTest = async () => {
@@ -31,10 +24,11 @@ const IndexPage: React.FC = () => {
     });
   };
 
-  const clearCache = () => {
-    localStorage.clear();
+  const logout = () => {
     dispatch({
-      type: 'user/logOut'
+      type: 'user/logout'
+    }).then(() => {
+      messageApi.success('已退出登录');
     });
   };
 
@@ -95,8 +89,8 @@ const IndexPage: React.FC = () => {
           <Button onClick={handleSocketTest}>
             Socket测试
           </Button>
-          <Button onClick={clearCache}>
-            清除缓存
+          <Button onClick={logout}>
+            退出登录
           </Button>
           <Switch
             checkedChildren="暗黑"

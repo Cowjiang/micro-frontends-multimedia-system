@@ -96,6 +96,8 @@
         nextTick(() => {
           refreshTrigger.value = false;
         });
+      } else if (detail.name === 'setting') {
+        // 设置
       } else {
         currentNavItemIndex.value = index;
         const navItem = detail.name ?? 'home';

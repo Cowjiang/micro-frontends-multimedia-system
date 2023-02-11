@@ -149,7 +149,7 @@
   import { formatTime } from '@/common/formats';
   import { ChatType } from '@/typings';
   import { ChatInfo } from '@/views/chat/components/chat-drame/typings';
-  import { GroupChat, MessageList } from '@/services/api/modules/chat/typings';
+  import { ChatMessageType, GroupChat, MessageList } from '@/services/api/modules/chat/typings';
 
   interface Props {
     chatType: ChatType;
@@ -185,7 +185,8 @@
           chat.chatGroupHistory?.content
             ? `${chat.userInfo?.userId === userInfo.value.userId
               ? '我'
-              : chat.userInfo?.username}：${chat.chatGroupHistory?.content}` : '',
+              : chat.userInfo?.username}：${chat.chatGroupHistory.type === ChatMessageType.IMAGE ? '[图片]' : chat.chatGroupHistory?.content}`
+            : '',
         createdTime: formatTime(chat.chatGroupHistory?.createdTime ?? ''),
         unread: 0
       }));

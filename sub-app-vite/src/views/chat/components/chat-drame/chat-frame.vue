@@ -279,7 +279,14 @@
   import { ChatInfo, Message } from '@/views/chat/components/chat-drame/typings';
   import { authApi, chatApi } from '@/services/api';
   import { IResponseData } from '@/services/typings';
-  import { Chat, ChatGroupHistory, GroupChat, MessageList, UserProfile } from '@/services/api/modules/chat/typings';
+  import {
+    Chat,
+    ChatGroupHistory,
+    ChatMessageType,
+    GroupChat,
+    MessageList,
+    UserProfile
+  } from '@/services/api/modules/chat/typings';
   import { ChatType } from '@/typings';
   import { SimpleUserInfo } from '@/services/api/modules/user/typings';
   import { SocketChatMessage, SocketGroupChatMessage, SocketPrivateChatMessage } from '@/services/socket/typings';
@@ -460,7 +467,7 @@
           recordsTemp.unshift({
             id: msg.message?.id,
             content: msg.message?.content,
-            isPhoto: false,
+            isPhoto: msg.message?.type === ChatMessageType.IMAGE,
             isMe: msg.userInfo?.userId === userInfo.value.userId,
             time: msg.message?.createdTime,
             userInfo: {
@@ -516,7 +523,7 @@
           res = await chatApi.sendGroupMessage({
             groupId: props.chatInfo.targetId,
             content,
-            type: isText ? 'text' : 'image'
+            type: isText ? ChatMessageType.TEXT : ChatMessageType.IMAGE
           });
           emit('groupMessageSent', {
             chatGroup: {

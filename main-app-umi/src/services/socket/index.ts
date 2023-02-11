@@ -10,6 +10,10 @@ export const connectSocket = () => {
   return new Promise<SocketIOClient.Socket | string | void>(async (resolve, reject) => {
     if (!window.$socket) {
       const at = sessionStorage.getItem('ACCESS_TOKEN') ?? '';
+      if (!at) {
+        reject('用户未登录');
+        return;
+      }
       window.$socket = io(`${wsBaseUrl}?etoken=${at}`, {
         transports: ['websocket']
       });
@@ -23,12 +27,18 @@ export const connectSocket = () => {
         console.log('[Socket]', '已连接');
         resolve(window.$socket);
       });
+      window.$socket.on('disconnect', (data: string) => {
+        console.log('[Socket]', '已断开连接');
+        closeSocket();
+      });
       window.$socket.on('connect_error', (e: any) => {
         console.error('[Socket]', '连接失败', e);
+        closeSocket();
         reject(e);
       });
       window.$socket.on('error', (e: any) => {
         console.error('[Socket]', '发生错误', e);
+        closeSocket();
         reject(e);
       });
     } else {
@@ -44,11 +54,8 @@ export const closeSocket = (): Promise<any> => {
     if (!window.$socket) {
       resolve('Socket未连接');
     } else {
-      window.$socket.on('disconnect', (data: string) => {
-        console.log('[Socket]', '已断开连接');
-        resolve('已断开连接');
-      });
       window.$socket.close();
+      window.$socket = undefined;
     }
   });
 };

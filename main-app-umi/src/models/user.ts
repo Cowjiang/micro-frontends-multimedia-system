@@ -1,5 +1,6 @@
 import { Effect, Reducer } from '@@/plugin-dva/types';
 import { authApi } from '@/services/api';
+import { getDvaApp } from '@@/exports';
 
 export interface UserModelState {
   token: {
@@ -15,13 +16,16 @@ export interface UserModelType {
   effects: {
     // 刷新AccessToken
     refreshToken: Effect;
+    // 退出登录
+    logout: Effect;
   };
   reducers: {
     // 存储UserInfo
     setUserInfo: Reducer<UserModelState>;
+    // 存储AccessToken
     setAccessToken: Reducer<UserModelState>
-    // 退出登录
-    logOut: Reducer;
+    // 重置
+    reset: Reducer;
   };
 }
 
@@ -54,6 +58,13 @@ const userModel: UserModelType = {
           return Promise.reject(e);
         }
       }
+    },
+    * logout({payload}, {put}) {
+      sessionStorage.clear();
+      localStorage.clear();
+      const {dispatch} = getDvaApp()._store;
+      dispatch({type: 'app/closeSocket'});
+      put({type: 'reset'});
     }
   },
   reducers: {
@@ -73,7 +84,7 @@ const userModel: UserModelType = {
         }
       };
     },
-    logOut() {
+    reset() {
       return {
         token: {
           accessToken: '',

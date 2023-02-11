@@ -43,6 +43,11 @@ export const requestConfig: RequestConfig = {
           sessionStorage.setItem('ACCESS_TOKEN', v.data.data.accessToken);
           localStorage.setItem('REFRESH_TOKEN', v.data.data.refreshToken);
           localStorage.setItem('REFRESH_TOKEN_EXPIRE_IN', v.data.data.refreshTokenExpireIn);
+          if (!window.$socket) {
+            dispatch({
+              type: 'app/connectSocket'
+            });
+          }
         }
         // if (systemStore.socketStatus !== 1 && getState().user.userInfo) {
         //   connectSocket().then(() => {

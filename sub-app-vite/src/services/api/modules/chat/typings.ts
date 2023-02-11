@@ -232,7 +232,6 @@ export interface UserProfile {
   username?: string;
 }
 
-
 /**
  * ChatGroupHistory
  */
@@ -263,3 +262,8 @@ export interface ChatGroupHistory {
   type?: string;
 }
 
+export enum ChatMessageType {
+  TEXT = 'text',
+  IMAGE = 'image',
+  FILE = 'file'
+}
