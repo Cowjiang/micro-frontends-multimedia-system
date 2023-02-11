@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { Button, Space, Switch } from 'antd';
+import { Button, Row, Space, Switch } from 'antd';
 import { useDispatch, useModel, useNavigate } from '@@/exports';
 import { authApi } from '@/services/api';
 import ChatDialog from '@/components/ChatDialog';
-import { connectSocketTest } from '@/services/socket';
 
 const IndexPage: React.FC = () => {
   const navigate = useNavigate();
@@ -47,66 +46,66 @@ const IndexPage: React.FC = () => {
   const [chatDialogDisplay, setChatDialogDisplay] = useState(false);
 
   const handleSocketTest = () => {
-    connectSocketTest().then(res => {
-      console.log('[Socket测试]', res);
-    }).catch(e => {
-      console.error('[Socket测试错误]', e);
+    dispatch({
+      type: 'app/connectSocket'
     });
   };
 
   return (
     <div className="w-screen h-screen flex flex-col justify-center items-center">
-      <Space size={[8, 16]} wrap>
-        <Button
-          type="primary"
-          onClick={gotoLogin}
-        >
-          跳转登录页
-        </Button>
-        <Button
-          type="primary"
-          onClick={() => navigate('/test/h5-simulator')}
-        >
-          移动端H5模拟测试
-        </Button>
-        <Button
-          type="primary"
-          onClick={() => navigate('/test/rich-editor')}
-        >
-          富文本测试
-        </Button>
-        <>
+      <Row className="mb-4">
+        <Space size={[8, 16]} wrap>
           <Button
             type="primary"
-            onClick={() => setChatDialogDisplay(true)}
+            onClick={gotoLogin}
           >
-            聊天弹窗测试
+            跳转登录页
           </Button>
-          <ChatDialog
-            open={chatDialogDisplay}
-            onCancel={() => setChatDialogDisplay(false)}
+          <Button
+            type="primary"
+            onClick={() => navigate('/test/h5-simulator')}
           >
-            <div className="w-full h-[75vh] bg-gray-200">
-
-            </div>
-          </ChatDialog>
-        </>
-        <Button onClick={loginTest}>
-          登陆测试
-        </Button>
-        <Button onClick={handleSocketTest}>
-          Socket测试
-        </Button>
-        <Button onClick={clearCache}>
-          清除缓存
-        </Button>
-        <Switch
-          checkedChildren="暗黑"
-          unCheckedChildren="浅色"
-          defaultChecked={darkTheme}
-          onChange={switchTheme}
-        />
-      </Space>
+            移动端H5模拟测试
+          </Button>
+          <Button
+            type="primary"
+            onClick={() => navigate('/test/rich-editor')}
+          >
+            富文本测试
+          </Button>
+          <>
+            <Button
+              type="primary"
+              onClick={() => setChatDialogDisplay(true)}
+            >
+              聊天弹窗
+            </Button>
+            <ChatDialog
+              open={chatDialogDisplay}
+              onCancel={() => setChatDialogDisplay(false)}
+            />
+          </>
+        </Space>
+      </Row>
+      <Row>
+        <Space size={[8, 16]} wrap>
+          <Button onClick={loginTest}>
+            登陆测试
+          </Button>
+          <Button onClick={handleSocketTest}>
+            Socket测试
+          </Button>
+          <Button onClick={clearCache}>
+            清除缓存
+          </Button>
+          <Switch
+            checkedChildren="暗黑"
+            unCheckedChildren="浅色"
+            defaultChecked={darkTheme}
+            onChange={switchTheme}
+          />
+        </Space>
+      </Row>
     </div>
   );
 };

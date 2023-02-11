@@ -1,4 +1,4 @@
-import { Action, AnyAction, Effect, Reducer, Subscription } from '@@/plugin-dva/types';
+import { Effect, Reducer } from '@@/plugin-dva/types';
 import { authApi } from '@/services/api';
 
 export interface UserModelState {

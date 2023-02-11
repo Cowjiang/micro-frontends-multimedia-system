@@ -28,6 +28,8 @@ declare global {
       location?: Object;
     };
 
+    $socket?: SocketIOClient.Socket;
+
     SERVICE_BASE_URL: string;
   }
 

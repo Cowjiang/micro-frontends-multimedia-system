@@ -1,6 +1,7 @@
 import { request } from '@@/exports';
-import type { Response } from '@/services/typings';
+import type { IResponseData } from '@/services/typings';
 
+// 使用账号登陆
 async function loginByAccount(
   data: {
     username: string;
@@ -8,13 +9,14 @@ async function loginByAccount(
   },
   options?: { [key: string]: any }
 ) {
-  return request<Response>('/user/login', {
+  return request<IResponseData<any>>('/user/login', {
     method: 'POST',
     data,
     ...(options || {})
   });
 }
 
+// 使用邮箱注册
 async function registerByEmail(
   data: {
     key: string;
@@ -22,20 +24,21 @@ async function registerByEmail(
   },
   options?: { [key: string]: any }
 ) {
-  return request<Response>('/user/register', {
+  return request<IResponseData<any>>('/user/register', {
     method: 'POST',
     data,
     ...(options || {})
   });
 }
 
+// 刷新AT
 async function refreshToken(
   data: {
     refreshToken: string;
   },
   options?: { [key: string]: any }
 ) {
-  return request<Response>('/user/token/refresh', {
+  return request<IResponseData<any>>('/user/token/refresh', {
     method: 'PUT',
     data,
     ...(options || {})

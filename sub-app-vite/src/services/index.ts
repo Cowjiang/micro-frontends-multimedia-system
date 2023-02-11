@@ -3,7 +3,6 @@ import qs from 'qs';
 import { IResponseData } from '@/services/typings';
 import { useUserStore } from '@/store/user';
 import { useAppStore } from '@/store/app';
-import { connectSocket } from '@/services/socket';
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL
@@ -32,15 +31,11 @@ instance.interceptors.request.use((config) => {
 });
 
 instance.interceptors.response.use(async (v: AxiosResponse) => {
-  //@ts-ignore
+  // @ts-ignore
   const responseStatus = v.status || v.statusCode;
   if (responseStatus === 200) {
     // 请求正常
     useUserStore().getUserInfo();
-    if (useAppStore().socketStatus !== 1 && useUserStore().userInfo.userId) {
-      // connectSocket().then(() => {
-      // })
-    }
   }
   return v;
 }, async (error: AxiosError | any) => {

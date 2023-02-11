@@ -16,7 +16,6 @@
   import { AlertType } from '@/views/login/components/typings';
   import Message from '@/components/message/message.vue';
   import { useUserStore } from '@/store/user';
-  import { connectSocket } from '@/services/socket/socket';
 
   window.$wujie?.bus.$on('vite-router-change', (path: string) => router.push(path));
 
@@ -49,6 +48,11 @@
 
   const {appContext} = getCurrentInstance() ?? {};
   appContext && (appContext.config.globalProperties.$message = messageInstance);
+
+  const handleChatMessage = (data: any) => {
+    console.log(data);
+  }
+  window.$wujie?.bus.$on('chatMessage', handleChatMessage);
 
   onMounted(() => {
     // window.$wujie?.bus.$on('vite-router-change', (path: string) => router.push(path));
