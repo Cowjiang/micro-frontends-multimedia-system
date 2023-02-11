@@ -7,41 +7,77 @@
       rounded
       temporary
     >
-      <v-list v-if="props.chatInfo.type === ChatType.GROUP">
-        <v-list-item-subtitle class="mt-6 pl-4">群聊名称</v-list-item-subtitle>
+      <v-list>
+        <div class="mt-4 pl-4 text-h6 ">聊天设置</div>
+        <v-list-item min-height="24">
+          <v-divider />
+        </v-list-item>
+        <v-list-item-subtitle class="mt-6 pl-4">
+          {{ props.chatInfo.type === ChatType.PRIVATE ? '关于TA' : '群聊名称' }}
+        </v-list-item-subtitle>
         <v-list-item>{{ props.chatInfo.targetName }}</v-list-item>
-        <v-list-item-subtitle class="mt-6 mb-2 pl-4">群聊用户</v-list-item-subtitle>
-        <v-list-item
-          v-for="user in groupUserList"
-          :key="user?.userId"
-          @click="handleGroupUserClick(user)"
-        >
-          <div class="d-flex align-center position-relative py-1">
-            <v-avatar
-              class="flex-shrink-0"
-              color="grey-lighten-3"
-              size="default">
-              <v-img
-                :src="user.avgPath"
-                alt="">
-                <template v-slot:placeholder>
-                  <div class="w-100 h-100 d-flex justify-center align-center">
+        <v-list-item min-height="24">
+          <v-divider />
+        </v-list-item>
+        <div v-if="props.chatInfo.type === ChatType.GROUP">
+          <v-list-item-subtitle class="mt-4 mb-2 pl-4">群聊用户</v-list-item-subtitle>
+          <v-list-item
+            v-for="user in groupUserList"
+            :key="user?.userId"
+            @click="handleGroupUserClick(user)"
+          >
+            <div class="d-flex align-center position-relative py-1">
+              <v-avatar
+                class="flex-shrink-0"
+                color="grey-lighten-3"
+                size="default">
+                <v-img
+                  :src="user.avgPath"
+                  alt="">
+                  <template v-slot:placeholder>
+                    <div class="w-100 h-100 d-flex justify-center align-center">
                     <span class="text-h6 text-grey-darken-2">
                       {{ user.username?.charAt(0) ?? '' }}
                     </span>
-                  </div>
-                </template>
-              </v-img>
-            </v-avatar>
-            <div class="ml-2 mr-4 w-100 d-flex flex-column overflow-hidden text-no-wrap">
-              <div class="d-flex overflow-hidden">
+                    </div>
+                  </template>
+                </v-img>
+              </v-avatar>
+              <div class="ml-2 mr-4 w-100 d-flex flex-column overflow-hidden text-no-wrap">
+                <div class="d-flex overflow-hidden">
                 <span class="w-100 mr-2 flex-grow-1 text-subtitle-1 text-grey-darken-3">
                   {{ user?.username ?? '' }}
                 </span>
+                </div>
               </div>
             </div>
-          </div>
-        </v-list-item>
+          </v-list-item>
+          <v-list-item min-height="24">
+            <v-divider />
+          </v-list-item>
+        </div>
+        <v-list-item-subtitle class="mt-4 mb-2 pl-4">操作</v-list-item-subtitle>
+        <div class="d-flex flex-wrap px-4 mb-4">
+          <v-btn
+            width="100%"
+            color="primary"
+            variant="tonal"
+            rounded="xl"
+            @click="handleChatMenuClick(0)"
+          >
+            置顶{{ props.chatInfo.type === ChatType.PRIVATE ? '聊天' : '群聊' }}
+          </v-btn>
+          <v-btn
+            class="mt-3"
+            width="100%"
+            color="red-darken-2"
+            variant="tonal"
+            rounded="xl"
+            @click="handleChatMenuClick(1)"
+          >
+            屏蔽该{{ props.chatInfo.type === ChatType.PRIVATE ? '用户' : '群聊' }}
+          </v-btn>
+        </div>
       </v-list>
     </v-navigation-drawer>
     <div class="chat-title-container w-100 px-4 d-flex flex-shrink-0 align-center">
@@ -80,30 +116,12 @@
           variant="tonal"
           size="x-small"
           :icon="true"
+          @click="showInfoDrawer = true"
         >
           <i class="fa-solid fa-ellipsis"></i>
           <v-tooltip activator="parent" location="bottom end" attach>
             更多
           </v-tooltip>
-          <v-menu activator="parent" location="start" attach>
-            <v-list
-              class="text-subtitle-2"
-              elevation="3"
-              rounded="lg"
-              density="compact"
-              @update:selected="handleChatMenuClick"
-            >
-              <v-list-item :value="0">
-                置顶{{ props.chatInfo.type === ChatType.PRIVATE ? '聊天' : '群聊' }}
-              </v-list-item>
-              <v-list-item :value="1">
-                {{ props.chatInfo.type === ChatType.PRIVATE ? '用户' : '群聊' }}信息
-              </v-list-item>
-              <v-list-item class="text-red" :value="2">
-                屏蔽该{{ props.chatInfo.type === ChatType.PRIVATE ? '用户' : '群聊' }}
-              </v-list-item>
-            </v-list>
-          </v-menu>
         </v-btn>
       </div>
     </div>
@@ -596,12 +614,9 @@
     }
   };
 
-  /**
-   * 聊天更多操作菜单点击事件
-   * @param e 当前点击的菜单项序号数组
-   */
-  const handleChatMenuClick = async (e: Array<number>) => {
-    if (e[0] === 0) {
+  // 聊天更多操作菜单点击事件
+  const handleChatMenuClick = async (index: number) => {
+    if (index === 0) {
       // 置顶
       try {
         if (props.chatInfo.type === ChatType.PRIVATE) {
@@ -618,7 +633,7 @@
         console.error(e);
         message.error('操作失败', true);
       }
-    } else if (e[0] === 1 && props.chatInfo.type === ChatType.GROUP) {
+    } else if (index === 1 && props.chatInfo.type === ChatType.GROUP) {
       showInfoDrawer.value = true;
     }
   };

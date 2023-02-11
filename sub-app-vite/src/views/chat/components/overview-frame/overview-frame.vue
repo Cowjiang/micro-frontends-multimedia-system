@@ -48,8 +48,8 @@
               v-for="privateChat in stickyPrivateChatList"
               :key="privateChat"
               sm="12"
-              md="6"
-              lg="3"
+              md="12"
+              lg="6"
             >
               <v-card
                 width="inherit"
@@ -94,10 +94,10 @@
                       {{ privateChat.message?.isRead ? '已读' : '未读' }}
                     </v-chip>
                     <span
-                      class="ml-1 text-truncate"
+                      class="ml-2 text-truncate"
                       style="max-width: 30vw"
                     >
-                      {{ privateChat.message?.content ?? '' }}
+                      {{ privateChat.message?.isText ? privateChat.message.content : '[图片]' }}
                     </span>
                   </div>
                 </template>
@@ -111,8 +111,8 @@
               v-for="groupChat in stickyGroupChatList"
               :key="groupChat"
               sm="12"
-              md="6"
-              lg="3"
+              md="12"
+              lg="6"
             >
               <v-card
                 width="100%"
