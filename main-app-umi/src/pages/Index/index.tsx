@@ -3,6 +3,7 @@ import { Button, Row, Space, Switch } from 'antd';
 import { useDispatch, useModel, useNavigate } from '@@/exports';
 import { authApi } from '@/services/api';
 import ChatDialog from '@/components/ChatDialog';
+import SideMenuPanel from '@/components/SideMenuPanel';
 
 const IndexPage: React.FC = () => {
   const navigate = useNavigate();
@@ -46,60 +47,63 @@ const IndexPage: React.FC = () => {
   };
 
   return (
-    <div className="w-screen h-screen flex flex-col justify-center items-center">
-      <Row className="mb-4">
-        <Space size={[8, 16]} wrap>
-          <Button
-            type="primary"
-            onClick={gotoLogin}
-          >
-            跳转登录页
-          </Button>
-          <Button
-            type="primary"
-            onClick={() => navigate('/test/h5-simulator')}
-          >
-            移动端H5模拟测试
-          </Button>
-          <Button
-            type="primary"
-            onClick={() => navigate('/test/rich-editor')}
-          >
-            富文本测试
-          </Button>
-          <>
+    <div className="w-full h-full flex">
+      <SideMenuPanel />
+      <div className="w-full h-full flex flex-col justify-center items-center">
+        <Row className="mb-4">
+          <Space size={[8, 16]} wrap>
             <Button
               type="primary"
-              onClick={() => setChatDialogDisplay(true)}
+              onClick={gotoLogin}
             >
-              聊天弹窗
+              跳转登录页
             </Button>
-            <ChatDialog
-              open={chatDialogDisplay}
-              onCancel={() => setChatDialogDisplay(false)}
+            <Button
+              type="primary"
+              onClick={() => navigate('/test/h5-simulator')}
+            >
+              移动端H5模拟测试
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => navigate('/test/rich-editor')}
+            >
+              富文本测试
+            </Button>
+            <>
+              <Button
+                type="primary"
+                onClick={() => setChatDialogDisplay(true)}
+              >
+                聊天弹窗
+              </Button>
+              <ChatDialog
+                open={chatDialogDisplay}
+                onCancel={() => setChatDialogDisplay(false)}
+              />
+            </>
+          </Space>
+        </Row>
+        <Row>
+          <Space size={[8, 16]} wrap>
+            <Button onClick={loginTest}>
+              登陆测试
+            </Button>
+            <Button onClick={handleSocketTest}>
+              Socket测试
+            </Button>
+            <Button onClick={logout}>
+              退出登录
+            </Button>
+            <Switch
+              checkedChildren="暗黑"
+              unCheckedChildren="浅色"
+              defaultChecked={darkTheme}
+              onChange={switchTheme}
             />
-          </>
-        </Space>
-      </Row>
-      <Row>
-        <Space size={[8, 16]} wrap>
-          <Button onClick={loginTest}>
-            登陆测试
-          </Button>
-          <Button onClick={handleSocketTest}>
-            Socket测试
-          </Button>
-          <Button onClick={logout}>
-            退出登录
-          </Button>
-          <Switch
-            checkedChildren="暗黑"
-            unCheckedChildren="浅色"
-            defaultChecked={darkTheme}
-            onChange={switchTheme}
-          />
-        </Space>
-      </Row>
+          </Space>
+        </Row>
+      </div>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-export default [
+const routes = [
   {
     path: '/*',
     redirect: '/index'
@@ -27,4 +27,6 @@ export default [
       {path: '/test/rich-editor', component: '@/pages/Test/RichEditor/index', title: '富文本测试'}
     ]
   }
-];
+]
+
+export default routes;
