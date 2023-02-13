@@ -7,11 +7,15 @@ import './index.less';
 import ChatDialog from '@/components/ChatDialog';
 import { NavItem } from '@/components/SideNavBar/typings';
 import { UserModelState } from '@/models/user';
+import TabsLayout from '@/layouts/tabs';
 
 export default () => {
   const {loading, setLoading} = useModel('global');
   const routes = useSelectedRoutes();
   const lastRoute = routes.at(-1); //当前路由
+  useEffect(() => {
+    // console.log(lastRoute.route.element);
+  }, [lastRoute]);
 
   const {userInfo}: UserModelState = useSelector((state: any) => state.user);
   const dispatch = useDispatch();
@@ -60,34 +64,43 @@ export default () => {
           className="!h-screen !max-h-screen"
         >
           {
-            lastRoute?.pathname.includes('auth') ? (
-              <>
-                <Outlet />
-              </>
-            ) : (
-              <div className="w-screen h-full flex flex-row">
-                <div
-                  className="nav-wrapper h-screen flex-shrink-0 flex-grow-0"
-                  style={{background: darkTheme ? '#333' : '#222'}}
-                >
-                  <SideNavBar
-                    secondaryColor={darkTheme ? '#1c1c1c' : '#edeef0'}
-                    onChange={handleNavItemClick}
-                  />
-                </div>
-                <div
-                  className="content-wrapper h-screen flex-grow pt-2 pr-2 pb-2"
-                  style={{background: darkTheme ? '#333' : '#222'}}
-                >
+            lastRoute?.pathname !== '/' ? (
+              lastRoute?.pathname.includes('auth') ? (
+                <>
+                  <Outlet />
+                </>
+              ) : (
+                <div className="w-screen h-full flex flex-row">
                   <div
-                    className="content-container w-full flex rounded-lg overflow-hidden"
-                    style={{background: colorBgContainer}}
+                    className="nav-wrapper h-screen flex-shrink-0 flex-grow-0"
+                    style={{background: darkTheme ? '#333' : '#222'}}
                   >
-                    <Outlet />
+                    <SideNavBar
+                      secondaryColor={darkTheme ? '#212121' : '#edeef0'}
+                      onChange={handleNavItemClick}
+                    />
+                  </div>
+                  <div
+                    className="content-wrapper h-screen flex-grow pt-2 pr-2 pb-2"
+                    style={{background: darkTheme ? '#333' : '#222'}}
+                  >
+                    <div
+                      className="content-container w-full flex rounded-lg overflow-hidden"
+                      style={{background: colorBgContainer}}
+                    >
+                      <TabsLayout>
+                        <Outlet
+                          context={{
+                            path: lastRoute?.pathname,
+                            title: lastRoute?.route.title
+                          }}
+                        />
+                      </TabsLayout>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )
+              )
+            ) : <Outlet />
           }
           {contextHolder}
           <ChatDialog

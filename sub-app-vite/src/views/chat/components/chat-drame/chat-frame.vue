@@ -45,7 +45,7 @@
               </v-avatar>
               <div class="ml-2 mr-4 w-100 d-flex flex-column overflow-hidden text-no-wrap">
                 <div class="d-flex overflow-hidden">
-                <span class="w-100 mr-2 flex-grow-1 text-subtitle-1 text-grey-darken-3">
+                <span class="w-100 mr-2 flex-grow-1 text-subtitle-1">
                   {{ user?.username ?? '' }}
                 </span>
                 </div>

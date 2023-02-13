@@ -53,7 +53,6 @@ const IndexPage: React.FC = () => {
 
   return (
     <div className="w-full h-full flex">
-      <SideMenuPanel />
       <div className="w-full h-full flex flex-col justify-center items-center">
         <Row className="mb-4">
           <Space size={[8, 16]} wrap>
