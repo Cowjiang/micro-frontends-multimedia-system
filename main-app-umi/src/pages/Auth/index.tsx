@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import WujieReact from 'wujie-react';
-import { useLocation, useModel, useNavigate } from '@@/exports';
+import { useDispatch, useLocation, useModel, useNavigate } from '@@/exports';
 import NProgress from 'nprogress';
 import { FormType, AuthPageState } from '@/pages/Auth/typings';
 import { Modal } from 'antd';
@@ -10,6 +10,7 @@ import { authApi } from '@/services/api';
 const AuthPage: React.FC = () => {
   const navigate = useNavigate();
   const {pathname, state} = useLocation();
+  const dispatch = useDispatch();
   const {bus, destroyApp} = WujieReact;
 
   // 重定向至上一页或首页
@@ -20,11 +21,17 @@ const AuthPage: React.FC = () => {
 
   // 子应用登陆提交
   const handleLoginSubmit = async ({account, password}: { [key: string]: string | undefined }) => {
-    const {success, message, code} = await authApi.loginByAccount({
-      username: account ?? '',
-      password: password ?? ''
-    });
-    const busRes = success ? {message: '登陆成功', type: 'success'} : {message: '账号或密码错误', type: 'warning'};
+    let busRes, success = false;
+    try {
+      const {success: loginSuccess, message, code} = await dispatch({
+        type: 'user/loginByAccount',
+        payload: {account, password}
+      });
+      busRes = loginSuccess ? {message: '登陆成功', type: 'success'} : {message: '账号或密码错误', type: 'warning'};
+      success = loginSuccess;
+    } catch (e) {
+      busRes = {message: '网络异常', type: 'error'};
+    }
     bus.$emit('loginResponse', busRes);
     success && redirectToPrePage();
   };

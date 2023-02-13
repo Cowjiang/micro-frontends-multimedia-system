@@ -1,31 +1,41 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import './index.less';
 import classNames from 'classnames';
 import { Image, Tooltip } from 'antd';
-import { SideNavBarProps } from '@/components/SideNavBar/typings';
+import { NavItemConfig, SideNavBarProps } from '@/components/SideNavBar/typings';
+import { useSelector } from '@@/exports';
+import { UserModelState } from '@/models/user';
 
 const SideNavBar: React.FC<SideNavBarProps> = (
   {
-    secondaryColor = '#edeef0'
+    secondaryColor = '#edeef0',
+    onChange
   }
 ) => {
-  const navItemList = [
+  const {userInfo}: UserModelState = useSelector((state: any) => state.user);
+  const navItemList = useMemo((): NavItemConfig[] => ([
     {name: 'home', title: '主页', icon: 'fi fi-sr-house-blank'},
-    {name: 'fullscreen', title: '切换全屏', icon: 'fas fa-up-right-and-down-left-from-center'},
-    {name: 'search', title: '搜索', icon: 'fas fa-search'},
-    {name: 'refresh', title: '刷新', icon: 'fas fa-rotate'},
+    {name: 'chat', title: '聊天', icon: 'fi fi-sr-comment'},
+    {name: 'file', title: '资源库', icon: 'fi fi-sr-cloud-upload'},
+    {name: 'setting', title: '设置', icon: 'fi fi-sr-settings'},
     {
-      name: '61be0f1ee7fd6865cbcd74d1',
-      chatType: 0,
-      title: 'Cowjiang',
-      imgUrl: 'https://chat-ice.oss-cn-beijing.aliyuncs.com/chat/9138f18c-1723-4d97-b027-c92c113bd707.jpg'
+      name: 'user',
+      bottom: true,
+      title: '我',
+      ...!userInfo.userId ? {icon: 'fi fi-sr-user'} : {imgUrl: userInfo.avgPath ?? ''}
     }
-  ];
+  ]), [userInfo]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentHovering, setCurrentHovering] = useState(-1);
 
   const handleNavItemClick = (index: number) => {
-    setCurrentIndex(index);
+    if (index !== currentIndex) {
+      if (onChange) {
+        onChange({index, value: navItemList[index]}, setCurrentIndex);
+      } else {
+        setCurrentIndex(index);
+      }
+    }
   };
 
   return (
@@ -38,7 +48,12 @@ const SideNavBar: React.FC<SideNavBarProps> = (
             placement="right"
           >
             <div
-              className="btn-container flex flex-col justify-center items-center mb-1"
+              className={
+                classNames(
+                  'btn-container flex flex-col justify-center items-center mb-1',
+                  {'mt-auto !mb-4': navItem.bottom}
+                )
+              }
               onMouseOver={() => setCurrentHovering(index)}
               onMouseLeave={() => setCurrentHovering(-1)}
             >

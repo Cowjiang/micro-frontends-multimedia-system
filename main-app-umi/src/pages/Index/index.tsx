@@ -9,6 +9,7 @@ const IndexPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {messageApi} = useModel('messageApi');
+  const {loading, setLoading} = useModel('global');
 
   const gotoLogin = () => {
     navigate('/auth/login', {
@@ -19,9 +20,9 @@ const IndexPage: React.FC = () => {
   };
 
   const loginTest = async () => {
-    await authApi.loginByAccount({
-      username: 'cowjiang@163.com',
-      password: 'cow20010114'
+    await dispatch({
+      type: 'user/loginByAccount',
+      payload: {account: 'cowjiang@163.com', password: 'cow20010114'}
     });
   };
 
@@ -39,6 +40,10 @@ const IndexPage: React.FC = () => {
   };
 
   const [chatDialogDisplay, setChatDialogDisplay] = useState(false);
+  const handleChatDialogClose = () => {
+    setChatDialogDisplay(false);
+    setLoading(false);
+  };
 
   const handleSocketTest = () => {
     dispatch({
@@ -79,7 +84,7 @@ const IndexPage: React.FC = () => {
               </Button>
               <ChatDialog
                 open={chatDialogDisplay}
-                onCancel={() => setChatDialogDisplay(false)}
+                onCancel={handleChatDialogClose}
               />
             </>
           </Space>

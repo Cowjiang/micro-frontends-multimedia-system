@@ -31,6 +31,7 @@ instance.interceptors.request.use((config) => {
 });
 
 instance.interceptors.response.use(async (v: AxiosResponse) => {
+  console.log(v);
   // @ts-ignore
   const responseStatus = v.status || v.statusCode;
   if (responseStatus === 200) {

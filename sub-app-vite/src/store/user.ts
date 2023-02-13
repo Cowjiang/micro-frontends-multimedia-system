@@ -10,6 +10,9 @@ export const useUserStore = defineStore('user', {
   getters: {},
   actions: {
     getUserInfo() {
+      if (!localStorage.getItem('userInfo')) {
+        return;
+      }
       if (!this.userInfo?.id && !this.userInfo?.userId) {
         userApi.getCurrentUserInfo().then(res => {
           this.userInfo = res.data ?? {};

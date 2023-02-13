@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Modal } from 'antd';
 import { ChatDialogProps } from '@/components/ChatDialog/typings';
 import './index.less';
@@ -6,13 +6,13 @@ import NProgress from 'nprogress';
 import Loading from '@/components/Loading';
 import WujieReact from 'wujie-react';
 import wujieDefaultProps from '@/config/wujieProps';
-import { useModel, useSelector } from '@@/exports';
+import { useSelector } from '@@/exports';
 import { AppModelState } from '@/models/app';
 import { handleSocketMessage } from '@/services/socket';
 import { SocketMessageType } from '@/services/socket/typings';
 
 const ChatDialog: React.FC<ChatDialogProps> = (props) => {
-  const {loading, setLoading} = useModel('global');
+  const [loading, setLoading] = useState(true);
   const [modal, contextHolder] = Modal.useModal();
   const {socket}: AppModelState = useSelector((state: any) => state.app);
   const {bus} = WujieReact;

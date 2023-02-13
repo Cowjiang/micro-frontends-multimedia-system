@@ -1,13 +1,14 @@
 import { Effect, Reducer } from '@@/plugin-dva/types';
-import { authApi } from '@/services/api';
+import { authApi, userApi } from '@/services/api';
 import { getDvaApp } from '@@/exports';
+import { SimpleUserInfo } from '@/services/api/modules/user/typings';
 
 export interface UserModelState {
   token: {
     accessToken: string,
     expireTime: number
   };
-  userInfo: any;
+  userInfo: SimpleUserInfo;
 }
 
 export interface UserModelType {
@@ -16,8 +17,12 @@ export interface UserModelType {
   effects: {
     // 刷新AccessToken
     refreshToken: Effect;
+    // 账号密码登录
+    loginByAccount: Effect;
     // 退出登录
     logout: Effect;
+    // 获取个人信息
+    getUserInfo: Effect;
   };
   reducers: {
     // 存储UserInfo
@@ -25,7 +30,7 @@ export interface UserModelType {
     // 存储AccessToken
     setAccessToken: Reducer<UserModelState>
     // 重置
-    reset: Reducer;
+    reset: Reducer<UserModelState>;
   };
 }
 
@@ -51,20 +56,42 @@ const userModel: UserModelType = {
           yield call(authApi.refreshToken, {refreshToken});
         } catch (e) {
           yield put({
-            type: 'setUserInfo',
-            payload: {}
+            type: 'logout'
           });
-          localStorage.removeItem('userInfo');
           return Promise.reject(e);
         }
       }
     },
+    * loginByAccount({payload: {account, password}}, {put, call}) {
+      try {
+        const {success, message, code} = yield call(authApi.loginByAccount, {
+          username: account ?? '',
+          password: password ?? ''
+        });
+        if (success) {
+          yield put({
+            type: 'getUserInfo'
+          });
+          const {dispatch} = getDvaApp()._store;
+          dispatch({type: 'app/connectSocket'});
+        }
+        return {success, message, code};
+      } catch (e) {
+        return Promise.reject(e);
+      }
+    },
+    * getUserInfo({payload}, {put, call}) {
+      const {data} = yield call(userApi.getCurrentUserInfo);
+      yield put({
+        type: 'setUserInfo',
+        payload: data
+      });
+    },
     * logout({payload}, {put}) {
       sessionStorage.clear();
       localStorage.clear();
-      const {dispatch} = getDvaApp()._store;
-      dispatch({type: 'app/closeSocket'});
-      put({type: 'reset'});
+      yield put({type: 'app/closeSocket'});
+      yield put({type: 'reset'});
     }
   },
   reducers: {
@@ -84,8 +111,9 @@ const userModel: UserModelType = {
         }
       };
     },
-    reset() {
+    reset(state) {
       return {
+        ...state,
         token: {
           accessToken: '',
           expireTime: 0

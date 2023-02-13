@@ -1,14 +1,27 @@
-import React, { useEffect, useMemo } from 'react';
-import { Outlet, useModel, useSelectedRoutes } from '@@/exports';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Outlet, useDispatch, useModel, useSelectedRoutes, useSelector } from '@@/exports';
 import { ConfigProvider, Layout, message, theme } from 'antd';
 import Loading from '@/components/Loading';
 import SideNavBar from '@/components/SideNavBar';
 import './index.less';
+import ChatDialog from '@/components/ChatDialog';
+import { NavItem } from '@/components/SideNavBar/typings';
+import { UserModelState } from '@/models/user';
 
 export default () => {
-  const {loading} = useModel('global');
+  const {loading, setLoading} = useModel('global');
   const routes = useSelectedRoutes();
   const lastRoute = routes.at(-1); //当前路由
+
+  const {userInfo}: UserModelState = useSelector((state: any) => state.user);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (!userInfo.userId && localStorage.getItem('userInfo')) {
+      dispatch({
+        type: 'user/getUserInfo'
+      });
+    }
+  }, []);
 
   const [messageApi, contextHolder] = message.useMessage();
   const {setMessageApi} = useModel('messageApi');
@@ -22,6 +35,17 @@ export default () => {
     () => darkTheme ? darkAlgorithm(defaultSeed) : defaultAlgorithm(defaultSeed),
     [darkTheme]
   );
+
+  const handleNavItemClick = (e: NavItem, setIndex: (index: number) => void) => {
+    if (['home', 'file', 'setting'].includes(e.value.name)) {
+      setIndex(e.index);
+    }
+    if (e.value.name === 'chat') {
+      setChatDialogDisplay(true);
+    }
+  };
+
+  const [chatDialogDisplay, setChatDialogDisplay] = useState(false);
 
   return (
     <ConfigProvider
@@ -46,7 +70,10 @@ export default () => {
                   className="nav-wrapper h-screen flex-shrink-0 flex-grow-0"
                   style={{background: darkTheme ? '#333' : '#222'}}
                 >
-                  <SideNavBar secondaryColor={darkTheme ? '#181818' : '#edeef0'} />
+                  <SideNavBar
+                    secondaryColor={darkTheme ? '#181818' : '#edeef0'}
+                    onChange={handleNavItemClick}
+                  />
                 </div>
                 <div
                   className="content-wrapper h-screen flex-grow pt-2 pr-2 pb-2"
@@ -63,6 +90,10 @@ export default () => {
             )
           }
           {contextHolder}
+          <ChatDialog
+            open={chatDialogDisplay}
+            onCancel={() => setChatDialogDisplay(false)}
+          />
         </Loading>
       </Layout>
     </ConfigProvider>
