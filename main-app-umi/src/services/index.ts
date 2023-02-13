@@ -43,16 +43,12 @@ export const requestConfig: RequestConfig = {
           sessionStorage.setItem('ACCESS_TOKEN', v.data.data.accessToken);
           localStorage.setItem('REFRESH_TOKEN', v.data.data.refreshToken);
           localStorage.setItem('REFRESH_TOKEN_EXPIRE_IN', v.data.data.refreshTokenExpireIn);
-          if (!window.$socket) {
-            dispatch({
-              type: 'app/connectSocket'
-            });
-          }
         }
-        // if (systemStore.socketStatus !== 1 && getState().user.userInfo) {
-        //   connectSocket().then(() => {
-        //   })
-        // }
+        if (!window.$socket && localStorage.getItem('userInfo')) {
+          dispatch({
+            type: 'app/connectSocket'
+          });
+        }
         return v;
       } else if (responseStatus === 401) {
         // 3002 Token过期  3003 Token不合法

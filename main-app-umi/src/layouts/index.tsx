@@ -71,7 +71,7 @@ export default () => {
                   style={{background: darkTheme ? '#333' : '#222'}}
                 >
                   <SideNavBar
-                    secondaryColor={darkTheme ? '#181818' : '#edeef0'}
+                    secondaryColor={darkTheme ? '#1c1c1c' : '#edeef0'}
                     onChange={handleNavItemClick}
                   />
                 </div>
