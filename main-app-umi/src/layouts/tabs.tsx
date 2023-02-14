@@ -10,10 +10,10 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
   const {darkTheme} = useModel('theme');
   const navigate = useNavigate();
   const routes = useSelectedRoutes();
-  const currentRoute = routes.at(-1)?.route as RouteObject; //当前路由
+  const currentRoute = routes.at(-1)?.route as RouteObject;
 
   const init = () => {
-    const items: { label: string | React.ReactNode; children: React.ReactNode; key: string }[] = [{
+    const initTabsList: { label: string | React.ReactNode; children: React.ReactNode; key: string; closable?: boolean }[] = [{
       label: (
         <div className="flex items-center">
           <i className="fi fi-rr-apps"></i>
@@ -21,23 +21,24 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
         </div>
       ),
       children: <IndexPage />,
-      key: '/index'
+      key: '/index',
+      closable: false
     }];
-    currentRoute?.path !== '/index' && items.push({
+    currentRoute?.path !== '/index' && initTabsList.push({
       label: currentRoute?.title ?? '',
       children: currentRoute.element,
       key: currentRoute?.path ?? ''
     });
-    return items;
+    return initTabsList;
   };
-  const initialItems = init();
+  const initTabsList = init();
 
-  const [activeKey, setActiveKey] = useState(initialItems[0].key);
-  const [items, setItems] = useState(initialItems);
+  const [activeKey, setActiveKey] = useState(initTabsList[0].key);
+  const [tabsList, setTabsList] = useState(initTabsList);
   const newTabIndex = useRef(0);
 
   useEffect(() => {
-    props.children.props.context.path !== '/index' && add(
+    props.children.props.context.path !== '/index' && addTab(
       currentRoute?.element,
       props.children.props.context.title,
       props.children.props.context.path
@@ -50,32 +51,35 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
     }
   }, [activeKey]);
 
-  const onChange = (newActiveKey: string) => {
+  // 当前标签变更事件
+  const onActiveTabChange = (newActiveKey: string) => {
     setActiveKey(newActiveKey);
   };
 
-  const add = (children: React.ReactNode = <IndexPage />, title?: string, key?: string) => {
-    const existIndex = items.findIndex(item => item.key === key);
+  // 新增标签
+  const addTab = (children: React.ReactNode = <IndexPage />, title?: string, key?: string) => {
+    const existIndex = tabsList.findIndex(item => item.key === key);
     if (existIndex !== -1) {
-      setActiveKey(items[existIndex].key);
+      setActiveKey(tabsList[existIndex].key);
     } else {
       const newActiveKey = key ?? `newTab${newTabIndex.current++}`;
-      const newPanes = [...items];
+      const newPanes = [...tabsList];
       newPanes.push({label: title ?? '新标签页', children: children, key: newActiveKey});
-      setItems(newPanes);
+      setTabsList(newPanes);
       setActiveKey(newActiveKey);
     }
   };
 
-  const remove = (targetKey: React.MouseEvent | React.KeyboardEvent | string) => {
+  // 移除指定标签
+  const removeTab = (targetKey: React.MouseEvent | React.KeyboardEvent | string) => {
     let newActiveKey = activeKey;
     let lastIndex = -1;
-    items.forEach((item, i) => {
+    tabsList.forEach((item, i) => {
       if (item.key === targetKey) {
         lastIndex = i - 1;
       }
     });
-    const newPanes = items.filter((item) => item.key !== targetKey);
+    const newPanes = tabsList.filter((item) => item.key !== targetKey);
     if (newPanes.length && newActiveKey === targetKey) {
       if (lastIndex >= 0) {
         newActiveKey = newPanes[lastIndex].key;
@@ -83,8 +87,22 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
         newActiveKey = newPanes[0].key;
       }
     }
-    setItems(newPanes);
+    setTabsList(newPanes);
     setActiveKey(newActiveKey);
+  };
+
+  // 移除其它标签
+  const removeOtherTabs = (currentTabKey: string) => {
+    const newTabsList = tabsList.filter(item => ['/index', currentTabKey].includes(item.key));
+    setTabsList(newTabsList);
+    setActiveKey(currentTabKey);
+  };
+
+  // 移除全部标签
+  const removeAllTabs = () => {
+    const newTabsList = tabsList.filter(item => item.key === '/index');
+    setTabsList(newTabsList);
+    setActiveKey('/index');
   };
 
   // 标签编辑
@@ -93,9 +111,9 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
     action: 'add' | 'remove'
   ) => {
     if (action === 'add') {
-      // add();
+      // addTab();
     } else {
-      remove(targetKey);
+      removeTab(targetKey);
     }
   };
 
@@ -106,17 +124,13 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
    */
   const handleTabMenuClick = (tabKey?: string | null, menuItemKey?: string) => {
     if (menuItemKey === 'closeAll') {
-      items.forEach(item => {
-        item.key !== '/index' && remove(item.key);
-      });
-      onChange('/index');
+      removeAllTabs();
+      return;
     }
     if (tabKey) {
       // 标签页右键
-      menuItemKey === 'closeCurrent' && remove(tabKey);
-      menuItemKey === 'closeOthers' && items.forEach(item => {
-        !['/index', tabKey].includes(item.key) && remove(item.key);
-      });
+      menuItemKey === 'closeCurrent' && removeTab(tabKey);
+      menuItemKey === 'closeOthers' && removeOtherTabs(tabKey);
     } else {
       // 更多按钮右键
       menuItemKey === 'backHome' && navigate('/index');
@@ -139,17 +153,7 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
       >
         <Tabs
           type="editable-card"
-          items={
-            items.map((item, index) => {
-              if (index === 0) {
-                return {
-                  ...item,
-                  closable: false
-                };
-              }
-              return item;
-            })
-          }
+          items={tabsList}
           activeKey={activeKey}
           tabBarStyle={{
             background: darkTheme ? '#212121' : '#f6f6f6',
@@ -216,7 +220,7 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
           tabBarExtraContent={{
             left: <div className="w-2 h-full"></div>
           }}
-          onChange={onChange}
+          onChange={onActiveTabChange}
           onEdit={onTabEdit}
         />
       </div>
