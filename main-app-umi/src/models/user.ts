@@ -2,6 +2,7 @@ import { Effect, Reducer } from '@@/plugin-dva/types';
 import { authApi, userApi } from '@/services/api';
 import { getDvaApp } from '@@/exports';
 import { SimpleUserInfo } from '@/services/api/modules/user/typings';
+import { message } from 'antd';
 
 export interface UserModelState {
   token: {
@@ -81,11 +82,15 @@ const userModel: UserModelType = {
       }
     },
     * getUserInfo({payload}, {put, call}) {
-      const {data} = yield call(userApi.getCurrentUserInfo);
-      yield put({
-        type: 'setUserInfo',
-        payload: data
-      });
+      try {
+        const {data} = yield call(userApi.getCurrentUserInfo);
+        yield put({
+          type: 'setUserInfo',
+          payload: data
+        });
+      } catch (e) {
+        message.error('网络异常').then(() => {});
+      }
     },
     * logout({payload}, {put}) {
       sessionStorage.clear();

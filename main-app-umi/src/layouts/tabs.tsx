@@ -5,6 +5,7 @@ import SideMenuPanel from '@/components/SideMenuPanel';
 import { useModel, useNavigate, useSelectedRoutes } from '@@/exports';
 import './tabs.less';
 import IndexPage from '@/pages/Index';
+import classNames from 'classnames';
 
 const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
   const {darkTheme} = useModel('theme');
@@ -147,14 +148,14 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
     <div className="w-full h-full flex">
       <SideMenuPanel />
       <div
-        id="test"
-        className="w-full h-full"
+        className={classNames('w-full h-full', darkTheme ? 'dark' : 'light')}
         style={{borderLeft: `1px solid ${darkTheme ? colorBorderSecondary : '#ececec'}`}}
       >
         <Tabs
           type="editable-card"
           items={tabsList}
           activeKey={activeKey}
+          tabBarGutter={0}
           tabBarStyle={{
             background: darkTheme ? '#212121' : '#f6f6f6',
             paddingTop: '0.3rem',
