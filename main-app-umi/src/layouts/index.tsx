@@ -13,9 +13,6 @@ export default () => {
   const {loading, setLoading} = useModel('global');
   const routes = useSelectedRoutes();
   const lastRoute = routes.at(-1); //当前路由
-  useEffect(() => {
-    // console.log(lastRoute.route.element);
-  }, [lastRoute]);
 
   const {userInfo}: UserModelState = useSelector((state: any) => state.user);
   const dispatch = useDispatch();
@@ -76,7 +73,7 @@ export default () => {
                     style={{background: darkTheme ? '#333' : '#222'}}
                   >
                     <SideNavBar
-                      secondaryColor={darkTheme ? '#212121' : '#edeef0'}
+                      secondaryColor={darkTheme ? '#212121' : '#f6f6f6'}
                       onChange={handleNavItemClick}
                     />
                   </div>
@@ -92,7 +89,7 @@ export default () => {
                         <Outlet
                           context={{
                             path: lastRoute?.pathname,
-                            title: lastRoute?.route.title
+                            title: (lastRoute?.route as RouteObject).title
                           }}
                         />
                       </TabsLayout>

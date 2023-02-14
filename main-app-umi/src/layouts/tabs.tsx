@@ -1,31 +1,36 @@
-import React, { MouseEvent, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { TabsLayoutProps } from '@/layouts/typings';
-import { Button, Space, Tabs } from 'antd';
+import { Dropdown, Tabs, theme } from 'antd';
 import SideMenuPanel from '@/components/SideMenuPanel';
 import { useModel, useNavigate, useSelectedRoutes } from '@@/exports';
 import './tabs.less';
 import IndexPage from '@/pages/Index';
 
-type TargetKey = React.MouseEvent | React.KeyboardEvent | string;
-
 const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
   const {darkTheme} = useModel('theme');
   const navigate = useNavigate();
   const routes = useSelectedRoutes();
-  const currentRoute = routes.at(-1)?.route; //当前路由
+  const currentRoute = routes.at(-1)?.route as RouteObject; //当前路由
 
-  const initialItems = [
-    {
-      label: '首页',
+  const init = () => {
+    const items: { label: string | React.ReactNode; children: React.ReactNode; key: string }[] = [{
+      label: (
+        <div className="flex items-center">
+          <i className="fi fi-rr-apps"></i>
+          <span className="ml-2">首页</span>
+        </div>
+      ),
       children: <IndexPage />,
       key: '/index'
-    },
-    currentRoute?.path === '/index' ? {} : {
-      label: currentRoute?.title,
-      children: currentRoute?.element,
+    }];
+    currentRoute?.path !== '/index' && items.push({
+      label: currentRoute?.title ?? '',
+      children: currentRoute.element,
       key: currentRoute?.path ?? ''
-    }
-  ];
+    });
+    return items;
+  };
+  const initialItems = init();
 
   const [activeKey, setActiveKey] = useState(initialItems[0].key);
   const [items, setItems] = useState(initialItems);
@@ -62,7 +67,7 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
     }
   };
 
-  const remove = (targetKey: TargetKey) => {
+  const remove = (targetKey: React.MouseEvent | React.KeyboardEvent | string) => {
     let newActiveKey = activeKey;
     let lastIndex = -1;
     items.forEach((item, i) => {
@@ -82,26 +87,56 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
     setActiveKey(newActiveKey);
   };
 
-  const onTabClick = (e: MouseEvent) => {
-    e.preventDefault();
-    const currentKey = (e.target as HTMLElement)?.id.replaceAll('rc-tabs-0-tab-', '');
-  };
-
-  const onEdit = (
+  // 标签编辑
+  const onTabEdit = (
     targetKey: React.MouseEvent | React.KeyboardEvent | string,
     action: 'add' | 'remove'
   ) => {
     if (action === 'add') {
-      add();
+      // add();
     } else {
       remove(targetKey);
     }
   };
 
+  /**
+   * 标签下拉菜单项点击事件
+   * @param tabKey 标签的key，更多按钮右键触发时为null
+   * @param menuItemKey 菜单项的key
+   */
+  const handleTabMenuClick = (tabKey?: string | null, menuItemKey?: string) => {
+    if (menuItemKey === 'closeAll') {
+      items.forEach(item => {
+        item.key !== '/index' && remove(item.key);
+      });
+      onChange('/index');
+    }
+    if (tabKey) {
+      // 标签页右键
+      menuItemKey === 'closeCurrent' && remove(tabKey);
+      menuItemKey === 'closeOthers' && items.forEach(item => {
+        !['/index', tabKey].includes(item.key) && remove(item.key);
+      });
+    } else {
+      // 更多按钮右键
+      menuItemKey === 'backHome' && navigate('/index');
+    }
+  };
+
+  const {defaultAlgorithm, darkAlgorithm, defaultSeed} = theme;
+  const {colorBorder, colorBorderSecondary} = useMemo(
+    () => darkTheme ? darkAlgorithm(defaultSeed) : defaultAlgorithm(defaultSeed),
+    [darkTheme]
+  );
+
   return (
     <div className="w-full h-full flex">
       <SideMenuPanel />
-      <div className="w-full h-full">
+      <div
+        id="test"
+        className="w-full h-full"
+        style={{borderLeft: `1px solid ${darkTheme ? colorBorderSecondary : '#ececec'}`}}
+      >
         <Tabs
           type="editable-card"
           items={
@@ -117,17 +152,72 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
           }
           activeKey={activeKey}
           tabBarStyle={{
-            background: darkTheme ? '#212121' : '#edeef0',
+            background: darkTheme ? '#212121' : '#f6f6f6',
             paddingTop: '0.3rem',
             minHeight: '40px'
           }}
-          hideAdd
+          addIcon={
+            <Dropdown
+              menu={{
+                items: [
+                  {
+                    label: '回到首页',
+                    key: 'backHome'
+                  },
+                  {
+                    label: '关闭全部标签页',
+                    key: 'closeAll',
+                    danger: true
+                  }
+                ],
+                onClick: ({key}) => handleTabMenuClick(null, key)
+              }}
+            >
+              <i className="fi fi-bs-menu-dots" />
+            </Dropdown>
+          }
+          renderTabBar={(tabBarProps, DefaultTabBar) => (
+            <DefaultTabBar {...tabBarProps}>
+              {
+                (node) => {
+                  return (
+                    <Dropdown
+                      menu={{
+                        items: [
+                          {
+                            label: '关闭',
+                            key: 'closeCurrent',
+                            disabled: node.key === '/index',
+                            icon: <i className="fi fi-br-cross" />
+                          },
+                          {
+                            label: '关闭其他标签页',
+                            key: 'closeOthers',
+                            icon: <div></div>
+                          },
+                          {
+                            label: '关闭全部标签页',
+                            key: 'closeAll',
+                            danger: true,
+                            icon: <div></div>
+                          }
+                        ],
+                        onClick: ({key}) => handleTabMenuClick(node.key as string, key)
+                      }}
+                      trigger={['contextMenu']}
+                    >
+                      {node}
+                    </Dropdown>
+                  );
+                }
+              }
+            </DefaultTabBar>
+          )}
           tabBarExtraContent={{
             left: <div className="w-2 h-full"></div>
           }}
-          onContextMenu={onTabClick}
           onChange={onChange}
-          onEdit={onEdit}
+          onEdit={onTabEdit}
         />
       </div>
     </div>

@@ -10,7 +10,7 @@ const SideMenuPanel: React.FC<SideMenuPanelProps> = (props) => {
       className="h-full flex-shrink-0"
       style={{
         width: props.width ?? '300px',
-        background: darkTheme ? '#212121' : '#edeef0'
+        background: darkTheme ? '#212121' : '#f6f6f6'
       }}
     >
       {props.children}

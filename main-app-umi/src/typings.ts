@@ -39,5 +39,6 @@ declare global {
     element?: React.ReactNode;
     index?: boolean;
     path?: string;
+    title?: string;
   }
 }

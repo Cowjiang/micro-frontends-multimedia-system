@@ -5,8 +5,13 @@
 .ant-tabs-tab:not(.ant-tabs-tab-active), .ant-tabs-nav-add {
   background: transparent !important;
   border: 1px solid transparent !important;
+  opacity: 0.7;
 }
 
-.ant-tabs-tab-active {
-  //border: 1px solid #333 !important;
+.ant-tabs-tab {
+  min-width: 100px;
+
+  .fi::before {
+    line-height: unset !important;
+  }
 }
