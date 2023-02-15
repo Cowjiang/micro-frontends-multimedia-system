@@ -1,17 +1,18 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import './tabs.less';
+import classNames from 'classnames';
 import { TabsLayoutProps } from '@/layouts/typings';
 import { Dropdown, Tabs, theme } from 'antd';
 import SideMenuPanel from '@/components/SideMenuPanel';
-import { useModel, useNavigate, useSelectedRoutes } from '@@/exports';
-import './tabs.less';
+import { useLocation, useModel, useNavigate, useSelectedRoutes } from '@@/exports';
 import IndexPage from '@/pages/Index';
-import classNames from 'classnames';
 
 const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
   const {darkTheme} = useModel('theme');
   const navigate = useNavigate();
   const routes = useSelectedRoutes();
   const currentRoute = routes.at(-1)?.route as RouteObject;
+  const location = useLocation();
 
   const init = () => {
     const initTabsList: { label: string | React.ReactNode; children: React.ReactNode; key: string; closable?: boolean }[] = [{
@@ -25,14 +26,14 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
       key: '/index',
       closable: false
     }];
-    currentRoute?.path !== '/index' && initTabsList.push({
+    location.pathname !== '/index' && currentRoute.title && initTabsList.push({
       label: currentRoute?.title ?? '',
       children: currentRoute.element,
-      key: currentRoute?.path ?? ''
+      key: location.pathname
     });
     return initTabsList;
   };
-  const initTabsList = init();
+  const initTabsList = useMemo(() => init(), []);
 
   const [activeKey, setActiveKey] = useState(initTabsList[0].key);
   const [tabsList, setTabsList] = useState(initTabsList);
@@ -49,7 +50,7 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
         const newTabsList = tabsList.filter(tab => tab.key !== activeKey);
         setTabsList(newTabsList);
       } else if (props.children.props.context.action === 'POP') {
-        const prevTab = tabsList.find(tab => tab.key === currentRoute?.path);
+        const prevTab = tabsList.find(tab => tab.key === location.pathname);
         if (prevTab) {
           setActiveKey(prevTab.key);
         }
@@ -73,7 +74,7 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
     const existIndex = tabsList.findIndex(item => item.key === key);
     if (existIndex !== -1) {
       setActiveKey(tabsList[existIndex].key);
-    } else {
+    } else if (title) {
       const newActiveKey = key ?? `newTab${newTabIndex.current++}`;
       const newPanes = [...tabsList];
       newPanes.push({label: title ?? '新标签页', children: children, key: newActiveKey});
@@ -150,7 +151,7 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
   };
 
   const {defaultAlgorithm, darkAlgorithm, defaultSeed} = theme;
-  const {colorBorder, colorBorderSecondary} = useMemo(
+  const {colorBorderSecondary} = useMemo(
     () => darkTheme ? darkAlgorithm(defaultSeed) : defaultAlgorithm(defaultSeed),
     [darkTheme]
   );

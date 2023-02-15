@@ -51,11 +51,10 @@ export const rootContainer: RuntimeConfig['rootContainer'] = (container) => {
 // };
 
 export const onRouteChange: RuntimeConfig['onRouteChange'] = ({clientRoutes, location, action}) => {
-  type RouteObj = RouteObject & { title?: string; action?: string}
-  const route = matchRoutes(clientRoutes, location.pathname)?.pop()?.route as RouteObj;
+  const route = matchRoutes(clientRoutes, location.pathname)?.pop()?.route as RouteObject;
   if (route) {
     document.title = route.title ?? '';
-    route.action = action
+    route.action = action;
   }
 };
 

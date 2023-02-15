@@ -1,8 +1,8 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './index.less';
 import classNames from 'classnames';
 import { Affix, Button, Input, Select, Steps, theme, Typography } from 'antd';
-import { useModel } from '@@/exports';
+import { useLocation, useModel, useParams } from '@@/exports';
 import { useSize } from 'ahooks';
 import { MinusOutlined } from '@ant-design/icons';
 
