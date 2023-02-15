@@ -1,0 +1,47 @@
+.project-member-config-page {
+  .custom-input {
+    height: 60px;
+    border-width: 2px !important;
+
+    &:not(&:focus) {
+      border-color: transparent !important;
+    }
+  }
+
+  .ant-upload-select {
+    border: unset !important;
+  }
+
+  .ant-select {
+    .ant-select-selector {
+      height: 60px !important;
+      border-width: 2px !important;
+
+      .ant-select-selection-item, .ant-select-selection-placeholder {
+        line-height: 54px !important;
+      }
+    }
+
+    &:not(.ant-select-focused) {
+      .ant-select-selector {
+        border-color: transparent !important;
+      }
+    }
+  }
+}
+
+.light {
+  .project-member-config-page {
+    .ant-upload-select, .ant-select-selector {
+      background: #fff !important;
+    }
+  }
+}
+
+.dark {
+  .project-member-config-page {
+    .ant-upload-select, .ant-select-selector {
+      background: #383838 !important;
+    }
+  }
+}

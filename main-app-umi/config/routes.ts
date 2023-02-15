@@ -1,3 +1,5 @@
+import ProjectMemberConfigPage from '@/pages/Project/ProjectMemberConfig';
+
 const routes = [
   {
     path: '/*',
@@ -31,6 +33,7 @@ const routes = [
     path: '/project',
     routes: [
       {path: '/project/new', component: '@/pages/Project/NewProject/index', title: '新建项目'},
+      {path: '/project/:id/member/config', component: '@/pages/Project/ProjectMemberConfig/index', title: '项目人员设置'},
     ]
   }
 ]

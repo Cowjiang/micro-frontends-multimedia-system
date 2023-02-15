@@ -39,11 +39,22 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
   const newTabIndex = useRef(0);
 
   useEffect(() => {
-    props.children.props.context.path !== '/index' && addTab(
-      currentRoute?.element,
-      props.children.props.context.title,
-      props.children.props.context.path
-    );
+    if (props.children.props.context.path !== '/index') {
+      addTab(
+        currentRoute?.element,
+        props.children.props.context.title,
+        props.children.props.context.path
+      );
+      if (props.children.props.context.action === 'REPLACE') {
+        const newTabsList = tabsList.filter(tab => tab.key !== activeKey);
+        setTabsList(newTabsList);
+      } else if (props.children.props.context.action === 'POP') {
+        const prevTab = tabsList.find(tab => tab.key === currentRoute?.path);
+        if (prevTab) {
+          setActiveKey(prevTab.key);
+        }
+      }
+    }
   }, [props.children]);
 
   useEffect(() => {

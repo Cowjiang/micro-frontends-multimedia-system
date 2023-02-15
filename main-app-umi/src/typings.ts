@@ -40,5 +40,6 @@ declare global {
     index?: boolean;
     path?: string;
     title?: string;
+    action?: string;
   }
 }

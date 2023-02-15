@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './index.less';
 import { Affix, Button, DatePicker, Input, Steps, theme, Typography, Upload } from 'antd';
-import { useModel } from '@@/exports';
+import { useModel, useNavigate } from '@@/exports';
 import { useInViewport, useSize } from 'ahooks';
 import classNames from 'classnames';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
@@ -10,6 +10,7 @@ const {Title, Text} = Typography;
 const {TextArea} = Input;
 
 const NewProjectPage: React.FC = () => {
+  const navigate = useNavigate();
   const {darkTheme} = useModel('theme');
   const {defaultAlgorithm, darkAlgorithm, defaultSeed} = theme;
   const {
@@ -77,7 +78,7 @@ const NewProjectPage: React.FC = () => {
                   description: '第二步'
                 },
                 {
-                  title: '填写人员信息',
+                  title: '设置人员',
                   description: '第三步'
                 }
               ]}
@@ -222,6 +223,7 @@ const NewProjectPage: React.FC = () => {
               className="ml-auto w-36 !h-14"
               type="primary"
               size="large"
+              onClick={() => navigate('/project/1/member/config', {replace: true})}
             >
               下一步
             </Button>
