@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import WujieReact from 'wujie-react';
 import { useDispatch, useLocation, useModel, useNavigate } from '@@/exports';
 import NProgress from 'nprogress';
-import { FormType, AuthPageState } from '@/pages/Auth/typings';
+import { AuthPageState, FormType } from '@/pages/Auth/typings';
 import { Modal } from 'antd';
 import wujieDefaultProps from '@/config/wujieProps';
 import { authApi } from '@/services/api';
