@@ -26,6 +26,12 @@ const routes = [
       {path: '/test/h5-simulator', component: '@/pages/Test/H5Simulator/index', title: 'H5模拟器测试'},
       {path: '/test/rich-editor', component: '@/pages/Test/RichEditor/index', title: '富文本测试'}
     ]
+  },
+  {
+    path: '/project',
+    routes: [
+      {path: '/project/new', component: '@/pages/Project/NewProject/index', title: '新建项目'},
+    ]
   }
 ]
 

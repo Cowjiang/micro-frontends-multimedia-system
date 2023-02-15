@@ -60,38 +60,32 @@ const IndexPage: React.FC = () => {
               type="primary"
               onClick={gotoLogin}
             >
-              跳转登录页
+              登录页
             </Button>
             <Button
               type="primary"
               onClick={() => navigate('/test/h5-simulator')}
             >
-              移动端H5模拟测试
+              移动端H5模拟
             </Button>
             <Button
               type="primary"
               onClick={() => navigate('/test/rich-editor')}
             >
-              富文本测试
+              富文本
             </Button>
-            <>
-              <Button
-                type="primary"
-                onClick={() => setChatDialogDisplay(true)}
-              >
-                聊天弹窗
-              </Button>
-              <ChatDialog
-                open={chatDialogDisplay}
-                onCancel={handleChatDialogClose}
-              />
-            </>
+            <Button
+              type="primary"
+              onClick={() => navigate('/project/new')}
+            >
+            新建项目
+            </Button>
           </Space>
         </Row>
         <Row>
           <Space size={[8, 16]} wrap>
             <Button onClick={loginTest}>
-              登陆测试
+              登录API
             </Button>
             <Button onClick={handleSocketTest}>
               Socket测试
