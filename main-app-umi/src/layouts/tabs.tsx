@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import './tabs.less';
 import classNames from 'classnames';
 import { TabsLayoutProps } from '@/layouts/typings';
@@ -10,6 +10,11 @@ import { AppModelState } from '@/models/app';
 
 const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
   const {darkTheme} = useModel('theme');
+  const {defaultAlgorithm, darkAlgorithm, defaultSeed} = theme;
+  const {colorBorderSecondary} = useMemo(
+    () => darkTheme ? darkAlgorithm(defaultSeed) : defaultAlgorithm(defaultSeed),
+    [darkTheme]
+  );
   const navigate = useNavigate();
   const routes = useSelectedRoutes();
   const currentRoute = routes.at(-1)?.route as RouteObject;
@@ -109,11 +114,7 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
     targetKey: React.MouseEvent | React.KeyboardEvent | string,
     action: 'add' | 'remove'
   ) => {
-    if (action === 'add') {
-      // addTab();
-    } else {
-      removeTab(targetKey);
-    }
+    action === 'remove' && removeTab(targetKey);
   };
 
   /**
@@ -132,19 +133,18 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
       menuItemKey === 'closeOthers' && removeOtherTabs(tabKey);
     } else {
       // 更多按钮右键
-      menuItemKey === 'backHome' && navigate('/index');
+      menuItemKey === 'backHome' && activeTabKey !== '/index' && navigate('/index');
     }
   };
 
-  const {defaultAlgorithm, darkAlgorithm, defaultSeed} = theme;
-  const {colorBorderSecondary} = useMemo(
-    () => darkTheme ? darkAlgorithm(defaultSeed) : defaultAlgorithm(defaultSeed),
-    [darkTheme]
-  );
+  const [showSideMenuPanel, setShowSideMenuPanel] = useState(true);
+  const changeSideMenuPanelShow = () => {
+    setShowSideMenuPanel(!showSideMenuPanel);
+  };
 
   return (
     <div className="w-full h-full flex">
-      <SideMenuPanel />
+      <SideMenuPanel hide={!showSideMenuPanel} />
       <div
         className={classNames('w-full h-full', darkTheme ? 'dark' : 'light')}
         style={{borderLeft: `1px solid ${darkTheme ? colorBorderSecondary : '#ececec'}`}}
@@ -175,6 +175,7 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
                 ],
                 onClick: ({key}) => handleTabMenuClick(null, key)
               }}
+              trigger={['click']}
             >
               <i className="fi fi-bs-menu-dots" />
             </Dropdown>
@@ -217,7 +218,20 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
             </DefaultTabBar>
           )}
           tabBarExtraContent={{
-            left: <div className="w-2 h-full"></div>
+            left:
+              <div className="w-10 h-full flex justify-center items-center opacity-70">
+                {
+                  showSideMenuPanel
+                    ? <i
+                      className="fi fi-rr-angle-double-left text-xs cursor-pointer"
+                      onClick={changeSideMenuPanelShow}
+                    />
+                    : <i
+                      className="fi fi-rr-angle-double-right text-xs cursor-pointer"
+                      onClick={changeSideMenuPanelShow}
+                    />
+                }
+              </div>
           }}
           onChange={onActiveTabChange}
           onEdit={onTabEdit}
