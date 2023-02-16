@@ -86,6 +86,12 @@ const IndexPage: React.FC = () => {
             >
               部门详情
             </Button>
+            <Button
+              type="primary"
+              onClick={() => navigate('/department/1/members')}
+            >
+              部门成员信息
+            </Button>
           </Space>
         </Row>
         <Row>

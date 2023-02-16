@@ -146,7 +146,7 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
     <div className="w-full h-full flex">
       <SideMenuPanel hide={!showSideMenuPanel} />
       <div
-        className={classNames('w-full h-full', darkTheme ? 'dark' : 'light')}
+        className={classNames('w-full h-full overflow-scroll', darkTheme ? 'dark' : 'light')}
         style={{borderLeft: `1px solid ${darkTheme ? colorBorderSecondary : '#ececec'}`}}
       >
         <Tabs
