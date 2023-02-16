@@ -14,7 +14,11 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
   const currentRoute = routes.at(-1)?.route as RouteObject;
   const location = useLocation();
 
-  const init = () => {
+  // 当前激活的标签路径
+  const [activeKey, setActiveKey] = useState('');
+
+  // 初始化标签页列表
+  const initTabsList = useMemo(() => {
     const initTabsList: { label: string | React.ReactNode; children: React.ReactNode; key: string; closable?: boolean }[] = [{
       label: (
         <div className="flex items-center">
@@ -26,16 +30,20 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
       key: '/index',
       closable: false
     }];
-    location.pathname !== '/index' && currentRoute.title && initTabsList.push({
-      label: currentRoute?.title ?? '',
-      children: currentRoute.element,
-      key: location.pathname
-    });
+    if (location.pathname !== '/index' && currentRoute.title) {
+      initTabsList.push({
+        label: currentRoute?.title ?? '',
+        children: currentRoute.element,
+        key: location.pathname
+      });
+      setActiveKey(location.pathname);
+    } else {
+      setActiveKey('/index');
+    }
     return initTabsList;
-  };
-  const initTabsList = useMemo(() => init(), []);
+  }, []);
 
-  const [activeKey, setActiveKey] = useState(initTabsList[0].key);
+  // 标签页列表
   const [tabsList, setTabsList] = useState(initTabsList);
   const newTabIndex = useRef(0);
 
@@ -60,6 +68,7 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
 
   useEffect(() => {
     if (activeKey) {
+      console.log(activeKey);
       navigate(activeKey);
     }
   }, [activeKey]);
