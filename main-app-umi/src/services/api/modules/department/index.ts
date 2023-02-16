@@ -18,7 +18,7 @@ async function getDepartmentDetail(
   departmentId: string | number,
   options?: { [key: string]: any }
 ) {
-  return request<IResponseData<Department[]>>(`/department/${departmentId}/detail`, {
+  return request<IResponseData<Department>>(`/department/${departmentId}/detail`, {
     method: 'GET',
     ...(options || {})
   });

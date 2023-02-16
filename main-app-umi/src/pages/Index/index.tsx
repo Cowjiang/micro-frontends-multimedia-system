@@ -80,6 +80,12 @@ const IndexPage: React.FC = () => {
             >
             新建项目
             </Button>
+            <Button
+              type="primary"
+              onClick={() => navigate('/department/1/detail')}
+            >
+              部门详情
+            </Button>
           </Space>
         </Row>
         <Row>
