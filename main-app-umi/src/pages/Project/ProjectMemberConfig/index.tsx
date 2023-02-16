@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './index.less';
 import classNames from 'classnames';
-import { Affix, Button, Input, message, Select, Steps, theme, Typography } from 'antd';
-import { useModel } from '@@/exports';
+import { Affix, Button, Input, Select, Steps, theme, Typography } from 'antd';
+import { useModel, useParams } from '@@/exports';
 import { useSize } from 'ahooks';
 import { MinusOutlined } from '@ant-design/icons';
 import { departmentApi } from '@/services/api';
@@ -22,6 +22,7 @@ const ProjectMemberConfigPage: React.FC = () => {
     [darkTheme]
   );
   const {messageApi} = useModel('messageApi');
+  const {id: groupId} = useParams();
 
   const containerRef = useRef(null);
   const containerSize = useSize(containerRef);

@@ -25,6 +25,8 @@ export interface AppModelType {
     addTab: Effect;
     // 移除标签页
     removeTab: Effect;
+    // 修改标签页标题
+    editTabTitle: Effect;
   };
   reducers: {
     // 存储Socket
@@ -77,9 +79,9 @@ const appModel: AppModelType = {
       if (existIndex !== -1) {
         yield put({type: 'setActiveTabKey', payload: {activeTabKey: tabsList[existIndex].key}});
       } else if (title && key) {
-        const newPanes = [...tabsList];
-        newPanes.push({label: title, children: children, key});
-        yield put({type: 'setTabsList', payload: {tabsList: newPanes}});
+        const newTabsList = [...tabsList];
+        newTabsList.push({label: title, children: children, key});
+        yield put({type: 'setTabsList', payload: {tabsList: newTabsList}});
         yield put({type: 'setActiveTabKey', payload: {activeTabKey: key}});
       }
     },
@@ -92,16 +94,26 @@ const appModel: AppModelType = {
           lastIndex = i - 1;
         }
       });
-      const newPanes = tabsList.filter((item) => item.key !== targetKey);
-      if (newPanes.length && newActiveKey === targetKey) {
+      const newTabsList = tabsList.filter((item) => item.key !== targetKey);
+      if (newTabsList.length && newActiveKey === targetKey) {
         if (lastIndex >= 0) {
-          newActiveKey = newPanes[lastIndex].key;
+          newActiveKey = newTabsList[lastIndex].key;
         } else {
-          newActiveKey = newPanes[0].key;
+          newActiveKey = newTabsList[0].key;
         }
       }
-      yield put({type: 'setTabsList', payload: {tabsList: newPanes}});
+      yield put({type: 'setTabsList', payload: {tabsList: newTabsList}});
       yield put({type: 'setActiveTabKey', payload: {activeTabKey: newActiveKey}});
+    },
+    * editTabTitle({payload: {key, title}}, {put, select}) {
+      const {tabsList}: AppModelState = yield select((state: any) => state.app);
+      const newTabsList = tabsList.map(item => {
+        if (item.key === key) {
+          return {...item, label: title};
+        }
+        return item;
+      });
+      yield put({type: 'setTabsList', payload: {tabsList: newTabsList}});
     }
   },
   reducers: {

@@ -40,6 +40,7 @@ const routes = [
     path: '/department',
     routes: [
       {path: '/department/:id/detail', component: '@/pages/Department/DepartmentDetail', title: '部门详情'},
+      {path: '/department/:id/members', component: '@/pages/Department/DepartmentMembers', title: '部门成员'},
     ]
   }
 ]

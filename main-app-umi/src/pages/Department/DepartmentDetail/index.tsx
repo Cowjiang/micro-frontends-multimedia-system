@@ -1,12 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './index.less';
-import { Affix, Button, DatePicker, Input, Steps, theme, Typography, Upload } from 'antd';
+import { Affix, Button, Input, Steps, theme, Typography } from 'antd';
 import { useModel, useNavigate, useParams } from '@@/exports';
 import { useInViewport, useSize } from 'ahooks';
 import classNames from 'classnames';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { departmentApi } from '@/services/api';
 import { Department } from '@/services/api/modules/department/typings';
+import { useSetDocTitle } from '@/utils/hooks';
 
 const {Title, Text} = Typography;
 const {TextArea} = Input;
@@ -37,7 +38,7 @@ const DepartmentDetailPage: React.FC = () => {
         messageApi.error('获取部门详情失败');
       });
     }
-  }, [id]);
+  }, []);
 
   const containerRef = useRef(null);
   const containerSize = useSize(containerRef);
@@ -58,8 +59,8 @@ const DepartmentDetailPage: React.FC = () => {
   const uploadButton = <div>{imgUploading ? <LoadingOutlined /> : <PlusOutlined />}</div>;
 
   const [formValue, setFormValue] = useState<Department>({});
-
   const [currentFormIndex, setCurrentFormIndex] = useState(0);
+  useSetDocTitle(`部门详情${formValue.name ? ' - ' + formValue.name : ''}`)
 
   return (
     <div className="department-detail-page w-full h-full px-16 flex justify-center">
