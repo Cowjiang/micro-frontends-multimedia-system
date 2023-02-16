@@ -1,10 +1,12 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './index.less';
 import classNames from 'classnames';
-import { Affix, Button, Input, Select, Steps, theme, Typography } from 'antd';
-import { useLocation, useModel, useParams } from '@@/exports';
+import { Affix, Button, Input, message, Select, Steps, theme, Typography } from 'antd';
+import { useModel } from '@@/exports';
 import { useSize } from 'ahooks';
 import { MinusOutlined } from '@ant-design/icons';
+import { departmentApi } from '@/services/api';
+import { Department } from '@/services/api/modules/department/typings';
 
 const {Title, Text} = Typography;
 
@@ -19,18 +21,25 @@ const ProjectMemberConfigPage: React.FC = () => {
     () => darkTheme ? darkAlgorithm(defaultSeed) : defaultAlgorithm(defaultSeed),
     [darkTheme]
   );
+  const {messageApi} = useModel('messageApi');
 
   const containerRef = useRef(null);
   const containerSize = useSize(containerRef);
 
   const [configList, setConfigList] = useState([{department: '', count: 0}]);
 
-  const departmentList = [
-    {id: 0, name: '策划部'},
-    {id: 1, name: '编辑部'},
-    {id: 2, name: '设计部'},
-    {id: 3, name: '开发部'}
-  ];
+  // 部门列表
+  const [departmentList, setDepartmentList] = useState<Department[]>([]);
+  useEffect(() => {
+    departmentApi.getDepartmentList().then(res => {
+      if (res.data?.length) {
+        setDepartmentList(res.data);
+      }
+    }).catch(e => {
+      console.error(e);
+      messageApi.error('获取部门列表失败');
+    });
+  }, []);
 
   // 表单数据更新
   const onFormValueChange = (col: 'department' | 'count', index: number, value: any) => {
