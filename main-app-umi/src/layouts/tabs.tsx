@@ -1,11 +1,12 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import './tabs.less';
 import classNames from 'classnames';
 import { TabsLayoutProps } from '@/layouts/typings';
 import { Dropdown, Tabs, theme } from 'antd';
 import SideMenuPanel from '@/components/SideMenuPanel';
-import { useLocation, useModel, useNavigate, useSelectedRoutes } from '@@/exports';
+import { useDispatch, useLocation, useModel, useNavigate, useSelectedRoutes, useSelector } from '@@/exports';
 import IndexPage from '@/pages/Index';
+import { AppModelState } from '@/models/app';
 
 const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
   const {darkTheme} = useModel('theme');
@@ -13,12 +14,11 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
   const routes = useSelectedRoutes();
   const currentRoute = routes.at(-1)?.route as RouteObject;
   const location = useLocation();
-
-  // 当前激活的标签路径
-  const [activeKey, setActiveKey] = useState('');
+  const {tabsList, activeTabKey}: AppModelState = useSelector((state: any) => state.app);
+  const dispatch = useDispatch();
 
   // 初始化标签页列表
-  const initTabsList = useMemo(() => {
+  useEffect(() => {
     const initTabsList: { label: string | React.ReactNode; children: React.ReactNode; key: string; closable?: boolean }[] = [{
       label: (
         <div className="flex items-center">
@@ -36,95 +36,72 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
         children: currentRoute.element,
         key: location.pathname
       });
-      setActiveKey(location.pathname);
+      dispatch({type: 'app/setActiveTabKey', payload: {activeTabKey: location.pathname}});
     } else {
-      setActiveKey('/index');
+      dispatch({type: 'app/setActiveTabKey', payload: {activeTabKey: '/index'}});
     }
-    return initTabsList;
+    dispatch({type: 'app/setTabsList', payload: {tabsList: initTabsList}});
   }, []);
 
-  // 标签页列表
-  const [tabsList, setTabsList] = useState(initTabsList);
-  const newTabIndex = useRef(0);
-
   useEffect(() => {
+    if (props.children.props.context.action === 'POP') {
+      const prevTab = tabsList.find(tab => tab.key === location.pathname);
+      if (prevTab) {
+        dispatch({type: 'app/setActiveTabKey', payload: {activeTabKey: prevTab.key}});
+      }
+    }
     if (props.children.props.context.path !== '/index') {
+      if (props.children.props.context.action === 'REPLACE') {
+        const newTabsList = tabsList.filter(tab => tab.key !== activeTabKey);
+        dispatch({type: 'app/setTabsList', payload: {tabsList: newTabsList}});
+      }
       addTab(
         currentRoute?.element,
         props.children.props.context.title,
         props.children.props.context.path
       );
-      if (props.children.props.context.action === 'REPLACE') {
-        const newTabsList = tabsList.filter(tab => tab.key !== activeKey);
-        setTabsList(newTabsList);
-      } else if (props.children.props.context.action === 'POP') {
-        const prevTab = tabsList.find(tab => tab.key === location.pathname);
-        if (prevTab) {
-          setActiveKey(prevTab.key);
-        }
-      }
     }
   }, [props.children]);
 
   useEffect(() => {
-    if (activeKey) {
-      console.log(activeKey);
-      navigate(activeKey);
+    if (activeTabKey && activeTabKey !== location.pathname) {
+      navigate(activeTabKey);
     }
-  }, [activeKey]);
+  }, [activeTabKey]);
 
   // 当前标签变更事件
   const onActiveTabChange = (newActiveKey: string) => {
-    setActiveKey(newActiveKey);
+    dispatch({type: 'app/setActiveTabKey', payload: {activeTabKey: newActiveKey}});
   };
 
   // 新增标签
   const addTab = (children: React.ReactNode = <IndexPage />, title?: string, key?: string) => {
-    const existIndex = tabsList.findIndex(item => item.key === key);
-    if (existIndex !== -1) {
-      setActiveKey(tabsList[existIndex].key);
-    } else if (title) {
-      const newActiveKey = key ?? `newTab${newTabIndex.current++}`;
-      const newPanes = [...tabsList];
-      newPanes.push({label: title ?? '新标签页', children: children, key: newActiveKey});
-      setTabsList(newPanes);
-      setActiveKey(newActiveKey);
-    }
+    dispatch({
+      type: 'app/addTab',
+      payload: {children, title, key}
+    });
   };
 
   // 移除指定标签
   const removeTab = (targetKey: React.MouseEvent | React.KeyboardEvent | string) => {
-    let newActiveKey = activeKey;
-    let lastIndex = -1;
-    tabsList.forEach((item, i) => {
-      if (item.key === targetKey) {
-        lastIndex = i - 1;
-      }
+    dispatch({
+      type: 'app/removeTab',
+      payload: {targetKey}
     });
-    const newPanes = tabsList.filter((item) => item.key !== targetKey);
-    if (newPanes.length && newActiveKey === targetKey) {
-      if (lastIndex >= 0) {
-        newActiveKey = newPanes[lastIndex].key;
-      } else {
-        newActiveKey = newPanes[0].key;
-      }
-    }
-    setTabsList(newPanes);
-    setActiveKey(newActiveKey);
   };
 
   // 移除其它标签
   const removeOtherTabs = (currentTabKey: string) => {
     const newTabsList = tabsList.filter(item => ['/index', currentTabKey].includes(item.key));
-    setTabsList(newTabsList);
-    setActiveKey(currentTabKey);
+    dispatch({type: 'app/setTabsList', payload: {tabsList: newTabsList}});
+    dispatch({type: 'app/setActiveTabKey', payload: {activeTabKey: currentTabKey}});
   };
 
   // 移除全部标签
   const removeAllTabs = () => {
     const newTabsList = tabsList.filter(item => item.key === '/index');
-    setTabsList(newTabsList);
-    setActiveKey('/index');
+    dispatch({type: 'app/setTabsList', payload: {tabsList: newTabsList}});
+    dispatch({type: 'app/setActiveTabKey', payload: {activeTabKey: '/index'}});
   };
 
   // 标签编辑
@@ -175,7 +152,7 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
         <Tabs
           type="editable-card"
           items={tabsList}
-          activeKey={activeKey}
+          activeKey={activeTabKey}
           tabBarGutter={0}
           tabBarStyle={{
             background: darkTheme ? '#212121' : '#f6f6f6',

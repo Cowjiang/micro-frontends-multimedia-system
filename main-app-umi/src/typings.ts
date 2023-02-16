@@ -43,3 +43,10 @@ declare global {
     action?: string;
   }
 }
+
+export interface Tabs {
+  label: string | React.ReactNode;
+  children: React.ReactNode;
+  key: string;
+  closable?: boolean;
+}
