@@ -19,12 +19,22 @@
   }
 }
 
+.ant-tabs-nav-list {
+  width: 100%;
+}
+
 .ant-tabs-content {
-  overflow: scroll;
+  overflow: auto;
 }
 
 .ant-tabs-tab {
-  min-width: 100px;
+  min-width: 120px;
+  max-width: 15%;
+
+  .ant-tabs-tab-btn {
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
 
   .fi::before {
     line-height: unset !important;

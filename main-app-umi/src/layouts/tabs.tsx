@@ -146,7 +146,7 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
     <div className="w-full h-full flex">
       <SideMenuPanel hide={!showSideMenuPanel} />
       <div
-        className={classNames('w-full h-full overflow-scroll', darkTheme ? 'dark' : 'light')}
+        className={classNames('w-full h-full overflow-auto min-w-[750px]', darkTheme ? 'dark' : 'light')}
         style={{borderLeft: `1px solid ${darkTheme ? colorBorderSecondary : '#ececec'}`}}
       >
         <Tabs
@@ -154,6 +154,7 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
           items={tabsList}
           activeKey={activeTabKey}
           tabBarGutter={0}
+          tabPosition="top"
           tabBarStyle={{
             background: darkTheme ? '#212121' : '#f6f6f6',
             paddingTop: '0.3rem',
@@ -177,8 +178,11 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
               }}
               trigger={['click']}
             >
-              <i className="fi fi-bs-menu-dots" />
+              <i className="fi fi-sr-angle-down" />
             </Dropdown>
+          }
+          moreIcon={
+            <i className="fi fi-bs-menu-dots opacity-70" />
           }
           renderTabBar={(tabBarProps, DefaultTabBar) => (
             <DefaultTabBar {...tabBarProps}>
