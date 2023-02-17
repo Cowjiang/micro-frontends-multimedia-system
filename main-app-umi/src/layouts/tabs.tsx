@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './tabs.less';
 import classNames from 'classnames';
 import { TabsLayoutProps } from '@/layouts/typings';
@@ -8,13 +8,13 @@ import { useDispatch, useLocation, useModel, useNavigate, useSelectedRoutes, use
 import IndexPage from '@/pages/Index';
 import { AppModelState } from '@/models/app';
 
+const {useToken} = theme;
+
 const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
   const {darkTheme} = useModel('theme');
-  const {defaultAlgorithm, darkAlgorithm, defaultSeed} = theme;
-  const {colorBorderSecondary} = useMemo(
-    () => darkTheme ? darkAlgorithm(defaultSeed) : defaultAlgorithm(defaultSeed),
-    [darkTheme]
-  );
+  const {token} = useToken();
+  const {colorBorderSecondary} = token;
+
   const navigate = useNavigate();
   const routes = useSelectedRoutes();
   const currentRoute = routes.at(-1)?.route as RouteObject;

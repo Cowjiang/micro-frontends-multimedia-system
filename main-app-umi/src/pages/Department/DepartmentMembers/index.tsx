@@ -3,12 +3,13 @@ import './index.less';
 import { useNavigate, useParams } from '@@/exports';
 import { departmentApi } from '@/services/api';
 import { Department } from '@/services/api/modules/department/typings';
-import { Button, Table, Tag, Typography } from 'antd';
+import { Button, Table, Tag, theme, Typography } from 'antd';
 import { useSetDocTitle } from '@/utils/hooks';
 import { ColumnsType } from 'antd/es/table';
 import { useSize } from 'ahooks';
 
 const {Title, Text} = Typography;
+const {useToken} = theme;
 
 interface DataType {
   key: React.Key;
@@ -106,6 +107,7 @@ const columns: ColumnsType<DataType> = [
 
 const DepartmentMembersPage: React.FC = () => {
   const navigate = useNavigate();
+  const {token} = useToken();
 
   const tableContainerRef = useRef(null);
   const tableContainerSize = useSize(tableContainerRef);
@@ -167,10 +169,16 @@ const DepartmentMembersPage: React.FC = () => {
     }
   };
 
+  // 编辑状态
+  const [editStatus, setEditStatus] = useState(false);
+  // 切换编辑状态
+  const changeEditStatus = () => {
+    setEditStatus(!editStatus);
+    setSelectedRowKeys([]);
+  };
   // 表格行多选更改事件
   const onSelectChange = (newSelectedRowKeys: React.Key[], selectedRows: DataType[]) => {
     setSelectedRowKeys(newSelectedRowKeys);
-    console.log(selectedRows);
   };
 
   return (
@@ -184,9 +192,16 @@ const DepartmentMembersPage: React.FC = () => {
           <Button ghost type="primary" onClick={() => navigate(`/department/${departmentId}/detail`)}>
             部门详情
           </Button>
-          <Button className="ml-4" type="primary">
-            编辑人员
+          <Button className="ml-4" type="primary" onClick={changeEditStatus}>
+            {editStatus ? '取消' : '编辑人员'}
           </Button>
+          {
+            editStatus && (
+              <Button className="ml-4" type="primary" danger onClick={changeEditStatus}>
+                保存更改
+              </Button>
+            )
+          }
         </div>
       </div>
       <div className="w-full h-[30px] flex-shrink-0"></div>
@@ -199,19 +214,44 @@ const DepartmentMembersPage: React.FC = () => {
             size: 'large',
             spinning: tableLoading
           }}
-          // size="small"
           pagination={{
             pageSize: 20,
-            showSizeChanger: false
+            showSizeChanger: false,
+            showTotal: () => (
+              editStatus && (
+                <div className="w-full h-full flex items-center">
+                  {
+                    selectedRowKeys.length > 0 && (
+                      <>
+                        <Text
+                          strong
+                          style={{color: token.colorPrimary}}
+                        >
+                          当前已选中 {selectedRowKeys.length} 人
+                        </Text>
+                        <Button className="mx-4" danger>
+                          移出部门
+                        </Button>
+                      </>
+                    )
+                  }
+                  <Button type="primary">
+                    新增成员
+                  </Button>
+                </div>
+              )
+            )
           }}
-          rowSelection={{
-            selectedRowKeys,
-            onChange: onSelectChange
-          }}
-          // bordered
+          {
+            ...{
+              rowSelection: editStatus ? {
+                selectedRowKeys,
+                onChange: onSelectChange
+              } : undefined
+            }
+          }
         />
       </div>
-      {/*<div className="w-full h-[100px] flex-shrink-0"></div>*/}
     </div>
   );
 };

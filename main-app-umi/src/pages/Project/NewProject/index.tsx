@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './index.less';
 import { Affix, Button, DatePicker, Input, Steps, theme, Typography, Upload } from 'antd';
 import { useModel, useNavigate } from '@@/exports';
@@ -8,19 +8,13 @@ import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 
 const {Title, Text} = Typography;
 const {TextArea} = Input;
+const {useToken} = theme;
 
 const NewProjectPage: React.FC = () => {
   const navigate = useNavigate();
   const {darkTheme} = useModel('theme');
-  const {defaultAlgorithm, darkAlgorithm, defaultSeed} = theme;
-  const {
-    colorFillQuaternary,
-    colorFillSecondary,
-    colorFillTertiary
-  } = useMemo(
-    () => darkTheme ? darkAlgorithm(defaultSeed) : defaultAlgorithm(defaultSeed),
-    [darkTheme]
-  );
+  const {token} = useToken();
+  const {colorFillQuaternary, colorFillSecondary, colorFillTertiary} = token;
 
   const containerRef = useRef(null);
   const containerSize = useSize(containerRef);

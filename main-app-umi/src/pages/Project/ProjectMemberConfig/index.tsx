@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './index.less';
 import classNames from 'classnames';
 import { Affix, Button, Input, Select, Steps, theme, Typography } from 'antd';
@@ -9,18 +9,12 @@ import { departmentApi } from '@/services/api';
 import { Department } from '@/services/api/modules/department/typings';
 
 const {Title, Text} = Typography;
+const {useToken} = theme;
 
 const ProjectMemberConfigPage: React.FC = () => {
   const {darkTheme} = useModel('theme');
-  const {defaultAlgorithm, darkAlgorithm, defaultSeed} = theme;
-  const {
-    colorFillQuaternary,
-    colorFillSecondary,
-    colorFillTertiary
-  } = useMemo(
-    () => darkTheme ? darkAlgorithm(defaultSeed) : defaultAlgorithm(defaultSeed),
-    [darkTheme]
-  );
+  const {token} = useToken();
+  const {colorFillQuaternary, colorFillSecondary, colorFillTertiary} = token;
   const {messageApi} = useModel('messageApi');
   const {id: groupId} = useParams();
 

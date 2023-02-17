@@ -11,19 +11,13 @@ import { useSetDocTitle } from '@/utils/hooks';
 
 const {Title, Text} = Typography;
 const {TextArea} = Input;
+const {useToken} = theme;
 
 const DepartmentDetailPage: React.FC = () => {
   const navigate = useNavigate();
+  const {token} = useToken();
+  const {colorFillQuaternary, colorFillSecondary, colorFillTertiary} = token;
   const {darkTheme} = useModel('theme');
-  const {defaultAlgorithm, darkAlgorithm, defaultSeed} = theme;
-  const {
-    colorFillQuaternary,
-    colorFillSecondary,
-    colorFillTertiary
-  } = useMemo(
-    () => darkTheme ? darkAlgorithm(defaultSeed) : defaultAlgorithm(defaultSeed),
-    [darkTheme]
-  );
   const {messageApi} = useModel('messageApi');
 
   const {id: departmentId} = useParams();
@@ -60,7 +54,7 @@ const DepartmentDetailPage: React.FC = () => {
 
   const [formValue, setFormValue] = useState<Department>({});
   const [currentFormIndex, setCurrentFormIndex] = useState(0);
-  useSetDocTitle(`部门详情${formValue.name ? ' - ' + formValue.name : ''}`)
+  useSetDocTitle(`部门详情${formValue.name ? ' - ' + formValue.name : ''}`);
 
   return (
     <div className="department-detail-page w-full h-full px-16 flex justify-center">
