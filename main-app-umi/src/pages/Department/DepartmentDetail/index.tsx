@@ -26,10 +26,10 @@ const DepartmentDetailPage: React.FC = () => {
   );
   const {messageApi} = useModel('messageApi');
 
-  const {id} = useParams();
+  const {id: departmentId} = useParams();
   useEffect(() => {
-    if (id) {
-      departmentApi.getDepartmentDetail(id).then(res => {
+    if (departmentId) {
+      departmentApi.getDepartmentDetail(departmentId).then(res => {
         if (res.data) {
           setFormValue(res.data);
         }

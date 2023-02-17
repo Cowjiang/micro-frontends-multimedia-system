@@ -54,7 +54,7 @@ export default () => {
         algorithm: darkTheme ? theme.darkAlgorithm : theme.defaultAlgorithm
       }}
     >
-      <Layout style={{background: colorBgContainer}}>
+      <Layout className={darkTheme ? 'dark' : 'light'} style={{background: colorBgContainer}}>
         <Loading
           spinning={loading}
           size="large"
