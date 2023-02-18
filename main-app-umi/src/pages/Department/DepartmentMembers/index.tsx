@@ -3,7 +3,7 @@ import './index.less';
 import { useNavigate, useParams } from '@@/exports';
 import { departmentApi } from '@/services/api';
 import { Department } from '@/services/api/modules/department/typings';
-import { Button, Table, Tag, theme, Typography } from 'antd';
+import { Button, Dropdown, Table, Tag, theme, Typography } from 'antd';
 import { useSetDocTitle } from '@/utils/hooks';
 import { ColumnsType } from 'antd/es/table';
 import { useSize } from 'ahooks';
@@ -101,7 +101,32 @@ const columns: ColumnsType<DataType> = [
     key: 'operation',
     fixed: 'right',
     width: 60,
-    render: () => <Button type="text"><i className="fi fi-bs-menu-dots" /></Button>
+    render: () => (
+      <Dropdown
+        menu={{
+          items: [
+            {
+              label: '编辑',
+              key: '1'
+            },
+            {
+              label: '查看详细',
+              key: '2'
+            },
+            {
+              label: '移出部门',
+              key: '3',
+              danger: true,
+              disabled: true
+            }
+          ]
+        }}
+        trigger={['click']}
+        placement="bottomRight"
+      >
+        <Button type="text"><i className="fi fi-bs-menu-dots" /></Button>
+      </Dropdown>
+    )
   }
 ];
 

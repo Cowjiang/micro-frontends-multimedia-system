@@ -7,6 +7,7 @@ import SideMenuPanel from '@/components/SideMenuPanel';
 import { useDispatch, useLocation, useModel, useNavigate, useSelectedRoutes, useSelector } from '@@/exports';
 import IndexPage from '@/pages/Index';
 import { AppModelState } from '@/models/app';
+import DepartmentMenu from '@/components/SideMenuPanel/DepartmentMenu';
 
 const {useToken} = theme;
 
@@ -137,6 +138,7 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
     }
   };
 
+  // 是否显示侧边菜单栏
   const [showSideMenuPanel, setShowSideMenuPanel] = useState(true);
   const changeSideMenuPanelShow = () => {
     setShowSideMenuPanel(!showSideMenuPanel);
@@ -144,7 +146,13 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
 
   return (
     <div className="w-full h-full flex">
-      <SideMenuPanel hide={!showSideMenuPanel} />
+      <SideMenuPanel hide={!showSideMenuPanel}>
+        {
+          activeTabKey.includes('department')
+            ? <DepartmentMenu />
+            : <></>
+        }
+      </SideMenuPanel>
       <div
         className={classNames('w-full h-full overflow-auto min-w-[750px]', darkTheme ? 'dark' : 'light')}
         style={{borderLeft: `1px solid ${darkTheme ? colorBorderSecondary : '#ececec'}`}}
