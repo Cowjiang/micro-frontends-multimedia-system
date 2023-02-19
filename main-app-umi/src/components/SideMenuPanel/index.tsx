@@ -34,21 +34,21 @@ const SideMenuPanel: React.FC<SideMenuPanelProps> = (props) => {
         opacity
       }}
     >
+      <div className="min-h-[80vh]">
+        {props.children}
+      </div>
       <div
-        className="w-full mt-8 px-8 flex items-center cursor-pointer opacity-[85%]"
+        className="absolute bottom-6 w-full mt-8 px-16 flex items-center cursor-pointer opacity-[15%]"
         onClick={() => window.open('https://github.com/Cowjiang')}
       >
-        <Title className="w-[30px] !m-0 !mr-4" level={2}>
+        <Title className="!m-0 !mr-2" level={4}>
           <i className="fi fi-brands-github" />
         </Title>
         <img
-          className="w-[190px] h-full flex-shrink-0 opacity-90"
+          className="w-[130px] h-full flex-shrink-0 opacity-90"
           src={darkTheme ? logoWhite : logoBlack}
           alt=""
         />
-      </div>
-      <div className="min-h-[80vh]">
-        {props.children}
       </div>
     </div>
   );

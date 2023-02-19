@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import './tabs.less';
 import classNames from 'classnames';
 import { TabsLayoutProps } from '@/layouts/typings';
@@ -8,6 +8,7 @@ import { useDispatch, useLocation, useModel, useNavigate, useSelectedRoutes, use
 import IndexPage from '@/pages/Index';
 import { AppModelState } from '@/models/app';
 import DepartmentMenu from '@/components/SideMenuPanel/DepartmentMenu';
+import ProjectMenu from '@/components/SideMenuPanel/ProjectMenu';
 
 const {useToken} = theme;
 
@@ -146,14 +147,20 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
     setShowSideMenuPanel(!showSideMenuPanel);
   };
 
+  const sideMenuPanelContent = useMemo(() => {
+    if (activeTabKey.includes('department')) {
+      return <DepartmentMenu />;
+    } else if (activeTabKey.includes('project')) {
+      return <ProjectMenu />;
+    } else {
+      return <></>;
+    }
+  }, [activeTabKey]);
+
   return (
     <div className="w-full h-full flex">
       <SideMenuPanel hide={!showSideMenuPanel}>
-        {
-          activeTabKey.includes('department')
-            ? <DepartmentMenu />
-            : <></>
-        }
+        {sideMenuPanelContent}
       </SideMenuPanel>
       <div
         className={classNames('w-full h-full overflow-auto min-w-[750px]', darkTheme ? 'dark' : 'light')}
