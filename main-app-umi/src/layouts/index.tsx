@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Outlet, useDispatch, useModel, useSelectedRoutes, useSelector } from '@@/exports';
+import './index.less';
+import { Outlet, useDispatch, useModel, useNavigate, useSelectedRoutes, useSelector } from '@@/exports';
 import { ConfigProvider, Layout, message, theme } from 'antd';
 import Loading from '@/components/Loading';
 import SideNavBar from '@/components/SideNavBar';
-import './index.less';
 import ChatDialog from '@/components/ChatDialog';
 import { NavItem } from '@/components/SideNavBar/typings';
 import { UserModelState } from '@/models/user';
@@ -11,6 +11,7 @@ import TabsLayout from '@/layouts/tabs';
 
 export default () => {
   const {loading, setLoading} = useModel('global');
+  const navigate = useNavigate();
   const routes = useSelectedRoutes();
   const lastRoute = routes.at(-1); //当前路由
 
@@ -32,21 +33,48 @@ export default () => {
 
   const {darkTheme} = useModel('theme');
   const {defaultAlgorithm, darkAlgorithm, defaultSeed} = theme;
-  const {colorBgContainer, colorFill, colorFillSecondary, colorFillTertiary} = useMemo(
+  const {colorBgContainer} = useMemo(
     () => darkTheme ? darkAlgorithm(defaultSeed) : defaultAlgorithm(defaultSeed),
     [darkTheme]
   );
 
-  const handleNavItemClick = (e: NavItem, setIndex: (index: number) => void) => {
-    if (['home', 'file', 'setting'].includes(e.value.name)) {
-      setIndex(e.index);
+  // 导航栏点击事件
+  const handleNavItemClick = (e: NavItem) => {
+    if (['home', 'project', 'file', 'department', 'setting'].includes(e.value.name)) {
+      dispatch({
+        type: 'app/setActiveNavIndex',
+        payload: {
+          activeNavIndex: e.index
+        }
+      });
     }
     if (e.value.name === 'chat') {
       setChatDialogDisplay(true);
     }
+    const url = e.value.url ?? '';
+    url && navigate(url);
   };
 
+  // 是否显示聊天弹窗子应用
   const [chatDialogDisplay, setChatDialogDisplay] = useState(false);
+
+  useEffect(() => {
+    const currentPath = lastRoute?.pathname ?? '';
+    let activeNavIndex: number;
+    if (currentPath === '/index') {
+      activeNavIndex = 0;
+    } else if (currentPath.includes('project')) {
+      activeNavIndex = 1;
+    } else if (currentPath.includes('department')) {
+      activeNavIndex = 3;
+    } else {
+      activeNavIndex = 0;
+    }
+    dispatch({
+      type: 'app/setActiveNavIndex',
+      payload: {activeNavIndex}
+    });
+  }, [lastRoute]);
 
   return (
     <ConfigProvider

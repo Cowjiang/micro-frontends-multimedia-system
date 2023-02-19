@@ -184,7 +184,7 @@ const DepartmentMembersPage: React.FC = () => {
         });
       }
       departmentApi.getDepartmentUser(departmentId).then(res => {
-        console.log(res.data);
+        // console.log(res.data);
       });
       setTimeout(() => {
         setTableData(data);

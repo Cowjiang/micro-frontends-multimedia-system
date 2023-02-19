@@ -11,6 +11,8 @@ export interface AppModelState {
   tabsList: Tabs[];
   // 当前激活的标签Key
   activeTabKey: string;
+  // 当前激活的导航栏项Index
+  activeNavIndex: number;
 }
 
 export interface AppModelType {
@@ -35,6 +37,8 @@ export interface AppModelType {
     setTabsList: Reducer<AppModelState>;
     // 设置当前激活标签的Key
     setActiveTabKey: Reducer<AppModelState>;
+    // 设置当前激活的导航栏项Index
+    setActiveNavIndex: Reducer<AppModelState>;
   };
 }
 
@@ -43,7 +47,8 @@ const appModel: AppModelType = {
   state: {
     socket: null,
     tabsList: [],
-    activeTabKey: ''
+    activeTabKey: '',
+    activeNavIndex: 0
   },
   effects: {
     * connectSocket({payload}, {put, call}) {
@@ -133,6 +138,12 @@ const appModel: AppModelType = {
       return {
         ...state,
         activeTabKey
+      };
+    },
+    setActiveNavIndex(state, {payload: {activeNavIndex}}) {
+      return {
+        ...state,
+        activeNavIndex
       };
     }
   }

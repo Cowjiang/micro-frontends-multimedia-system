@@ -32,7 +32,7 @@ export const requestConfig: RequestConfig = {
   responseInterceptors: [
     // @ts-ignore
     (v: AxiosResponse<any>) => {
-      console.log(v.data);
+      console.log(v);
       const {dispatch} = getDvaApp()._store;
       // @ts-ignore
       const responseStatus = v.status || v.statusCode;

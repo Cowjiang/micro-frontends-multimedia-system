@@ -66,6 +66,8 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
         props.children.props.context.title,
         props.children.props.context.path
       );
+    } else {
+      dispatch({type: 'app/setActiveTabKey', payload: {activeTabKey: '/index'}});
     }
   }, [props.children]);
 

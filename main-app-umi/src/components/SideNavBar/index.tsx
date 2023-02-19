@@ -3,8 +3,9 @@ import './index.less';
 import classNames from 'classnames';
 import { Image, Tooltip } from 'antd';
 import { NavItemConfig, SideNavBarProps } from '@/components/SideNavBar/typings';
-import { useSelector } from '@@/exports';
+import { useDispatch, useNavigate, useSelector } from '@@/exports';
 import { UserModelState } from '@/models/user';
+import { AppModelState } from '@/models/app';
 
 const SideNavBar: React.FC<SideNavBarProps> = (
   {
@@ -12,11 +13,17 @@ const SideNavBar: React.FC<SideNavBarProps> = (
     onChange
   }
 ) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const {userInfo}: UserModelState = useSelector((state: any) => state.user);
+  const {activeNavIndex}: AppModelState = useSelector((state: any) => state.app);
+
   const navItemList = useMemo((): NavItemConfig[] => ([
-    {name: 'home', title: '主页', icon: 'fi fi-sr-house-blank'},
-    {name: 'chat', title: '聊天', icon: 'fi fi-sr-comment'},
+    {name: 'home', title: '主页', icon: 'fi fi-sr-house-blank', url: '/index'},
+    {name: 'project', title: '项目', icon: 'fi fi-sr-apps'},
     {name: 'file', title: '资源库', icon: 'fi fi-sr-cloud-upload'},
+    {name: 'department', title: '部门信息', icon: 'fi fi-ss-users'},
+    {name: 'chat', title: '聊天', icon: 'fi fi-sr-comment'},
     {name: 'setting', title: '设置', icon: 'fi fi-sr-settings'},
     {
       name: 'user',
@@ -25,15 +32,24 @@ const SideNavBar: React.FC<SideNavBarProps> = (
       ...!userInfo.userId ? {icon: 'fi fi-sr-user'} : {imgUrl: userInfo.avgPath ?? ''}
     }
   ]), [userInfo]);
-  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // 导航栏当前hover的Index
   const [currentHovering, setCurrentHovering] = useState(-1);
 
+  // 导航栏点击事件
   const handleNavItemClick = (index: number) => {
-    if (index !== currentIndex) {
+    if (index !== activeNavIndex) {
       if (onChange) {
-        onChange({index, value: navItemList[index]}, setCurrentIndex);
+        onChange({index, value: navItemList[index]});
       } else {
-        setCurrentIndex(index);
+        dispatch({
+          type: 'app/setActiveNavIndex',
+          payload: {
+            activeNavIndex: index
+          }
+        });
+        const url = navItemList[index].url ?? '';
+        url && navigate(url);
       }
     }
   };
@@ -63,12 +79,12 @@ const SideNavBar: React.FC<SideNavBarProps> = (
                     classNames(
                       'btn-content flex justify-center items-center flex-grow-0 flex-shrink-0',
                       {
-                        'btn-content__focus': index === currentIndex,
-                        'btn-content__hover': currentHovering === index && index !== currentIndex
+                        'btn-content__focus': index === activeNavIndex,
+                        'btn-content__hover': currentHovering === index && index !== activeNavIndex
                       }
                     )
                   }
-                  style={index === currentIndex ? {backgroundColor: secondaryColor} : {}}
+                  style={index === activeNavIndex ? {backgroundColor: secondaryColor} : {}}
                   onClick={() => handleNavItemClick(index)}
                 >
                   {
@@ -77,7 +93,7 @@ const SideNavBar: React.FC<SideNavBarProps> = (
                         className={
                           classNames(
                             'btn-icon text-white text-xl flex justify-center items-center animate__animated',
-                            {'animate__bounceIn': currentIndex === index}
+                            {'animate__bounceIn': activeNavIndex === index}
                           )
                         }
                       >
@@ -88,7 +104,7 @@ const SideNavBar: React.FC<SideNavBarProps> = (
                         className={
                           classNames(
                             'btn-icon text-white text-xl flex justify-center items-center overflow-hidden animate__animated',
-                            {'animate__bounceIn': currentIndex === index}
+                            {'animate__bounceIn': activeNavIndex === index}
                           )
                         }
                       >
@@ -106,7 +122,7 @@ const SideNavBar: React.FC<SideNavBarProps> = (
                   }
                 </div>
                 <svg
-                  style={index === currentIndex ? {color: secondaryColor} : {color: 'transparent'}}
+                  style={index === activeNavIndex ? {color: secondaryColor} : {color: 'transparent'}}
                   width="30px"
                   height="60px"
                   viewBox="0 0 36 60"

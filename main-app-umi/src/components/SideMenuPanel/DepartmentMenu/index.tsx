@@ -4,13 +4,12 @@ import { Button, Divider, Input, Menu, theme, Typography } from 'antd';
 import { Department } from '@/services/api/modules/department/typings';
 import { departmentApi } from '@/services/api';
 import { useModel, useNavigate } from '@@/exports';
-import { DepartmentMenuProps } from '@/components/SideMenuPanel/DepartmentMenu/typings';
 import Loading from '@/components/Loading';
 
 const {Title} = Typography;
 const {useToken} = theme;
 
-const DepartmentMenu: React.FC<DepartmentMenuProps> = (props) => {
+const DepartmentMenu: React.FC = () => {
   const {messageApi} = useModel('messageApi');
   const navigate = useNavigate();
   const {darkTheme} = useModel('theme');

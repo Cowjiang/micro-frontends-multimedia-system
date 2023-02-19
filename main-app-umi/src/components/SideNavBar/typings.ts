@@ -5,7 +5,7 @@ export interface SideNavBarProps {
    * @param index 更改的序号
    * @param setIndex 设置导航栏项的序号
    */
-  onChange?: (e: NavItem, setIndex: (index: number) => void) => void;
+  onChange?: (e: NavItem) => void;
 }
 
 export interface NavItem {
@@ -19,4 +19,5 @@ export interface NavItemConfig {
   icon?: string;
   bottom?: boolean;
   imgUrl?: string;
+  url?: string;
 }
