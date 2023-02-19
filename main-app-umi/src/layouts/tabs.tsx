@@ -2,13 +2,14 @@ import React, { useEffect, useMemo, useState } from 'react';
 import './tabs.less';
 import classNames from 'classnames';
 import { TabsLayoutProps } from '@/layouts/typings';
-import { Dropdown, Tabs, theme } from 'antd';
+import { Drawer, Dropdown, Tabs, theme } from 'antd';
 import SideMenuPanel from '@/components/SideMenuPanel';
 import { useDispatch, useLocation, useModel, useNavigate, useSelectedRoutes, useSelector } from '@@/exports';
 import IndexPage from '@/pages/Index';
 import { AppModelState } from '@/models/app';
 import DepartmentMenu from '@/components/SideMenuPanel/DepartmentMenu';
 import ProjectMenu from '@/components/SideMenuPanel/ProjectMenu';
+import { useSize } from 'ahooks';
 
 const {useToken} = theme;
 
@@ -16,6 +17,7 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
   const {darkTheme} = useModel('theme');
   const {token} = useToken();
   const {colorBorderSecondary} = token;
+  const bodySize = useSize(document.querySelector('body'));
 
   const navigate = useNavigate();
   const routes = useSelectedRoutes();
@@ -147,21 +149,46 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
     setShowSideMenuPanel(!showSideMenuPanel);
   };
 
-  const sideMenuPanelContent = useMemo(() => {
+  // 侧边栏组件
+  const sideMenuPanel = useMemo(() => {
+    let sideMenuPanelContent: React.ReactNode;
     if (activeTabKey.includes('department')) {
-      return <DepartmentMenu />;
+      sideMenuPanelContent = <DepartmentMenu />;
     } else if (activeTabKey.includes('project')) {
-      return <ProjectMenu />;
+      sideMenuPanelContent = <ProjectMenu />;
     } else {
-      return <></>;
+      sideMenuPanelContent = <></>;
     }
-  }, [activeTabKey]);
-
-  return (
-    <div className="w-full h-full flex">
+    return (
       <SideMenuPanel hide={!showSideMenuPanel}>
         {sideMenuPanelContent}
       </SideMenuPanel>
+    );
+  }, [activeTabKey, showSideMenuPanel]);
+
+  return (
+    <div className="relative w-full h-full flex">
+      {
+        bodySize && bodySize?.width <= 1000
+          ? (
+            <Drawer
+              placement="left"
+              closable={false}
+              open={showSideMenuPanel}
+              onClose={() => setShowSideMenuPanel(false)}
+              getContainer={false}
+              bodyStyle={{
+                padding: 0
+              }}
+              contentWrapperStyle={{
+                width: 'auto'
+              }}
+            >
+              {sideMenuPanel}
+            </Drawer>
+          )
+          : sideMenuPanel
+      }
       <div
         className={classNames('w-full h-full overflow-auto min-w-[750px]', darkTheme ? 'dark' : 'light')}
         style={{borderLeft: `1px solid ${darkTheme ? colorBorderSecondary : '#ececec'}`}}
