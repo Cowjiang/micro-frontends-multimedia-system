@@ -85,7 +85,8 @@ const ProjectMenu: React.FC = () => {
                     {type: 'divider'},
                     {
                       label: '新建项目',
-                      key: 'create-project'
+                      key: 'create-project',
+                      onClick: () => navigate('/project/new')
                     }
                   ]
                 }

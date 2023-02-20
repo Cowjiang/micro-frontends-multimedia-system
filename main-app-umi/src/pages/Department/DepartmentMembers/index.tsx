@@ -7,6 +7,7 @@ import { Button, Dropdown, Table, Tag, theme, Typography } from 'antd';
 import { useSetDocTitle } from '@/utils/hooks';
 import { ColumnsType } from 'antd/es/table';
 import { useSize } from 'ahooks';
+import Empty from '@/components/Empty';
 
 const {Title, Text} = Typography;
 const {useToken} = theme;
@@ -161,6 +162,7 @@ const DepartmentMembersPage: React.FC = () => {
         }
       }).catch(e => {
         console.error(e);
+        setTableLoading(false);
       });
     }
   }, []);
@@ -185,12 +187,11 @@ const DepartmentMembersPage: React.FC = () => {
       }
       departmentApi.getDepartmentUser(departmentId).then(res => {
         // console.log(res.data);
-      });
-      setTimeout(() => {
+      }).finally(() => {
         setTableData(data);
         setSelectedRowKeys([]);
         setTableLoading(false);
-      }, 500);
+      });
     }
   };
 
@@ -275,6 +276,13 @@ const DepartmentMembersPage: React.FC = () => {
               } : undefined
             }
           }
+          locale={{
+            emptyText: () => (
+              <div className="w-full my-[22vh]">
+                <Empty />
+              </div>
+            )
+          }}
         />
       </div>
     </div>
