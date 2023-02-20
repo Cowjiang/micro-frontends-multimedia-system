@@ -169,7 +169,7 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
   return (
     <div className="relative w-full h-full flex">
       {
-        bodySize && bodySize?.width <= 1000
+        bodySize && bodySize?.width <= 1150
           ? (
             <Drawer
               placement="left"
@@ -229,7 +229,7 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
             <i className="fi fi-bs-menu-dots opacity-70" />
           }
           renderTabBar={(tabBarProps, DefaultTabBar) => (
-            <DefaultTabBar {...tabBarProps}>
+            <DefaultTabBar {...tabBarProps} className="tab-bar">
               {
                 (node) => {
                   return (
