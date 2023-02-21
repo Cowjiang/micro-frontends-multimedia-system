@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import './index.less';
 import { Col, Divider, List, Row, Tabs, TabsProps, Tag, theme, Typography } from 'antd';
 import { useModel, useNavigate } from '@@/exports';
@@ -115,6 +115,13 @@ const ProjectDetailPage: React.FC = () => {
     }
   ];
 
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+  }, []);
+
   return (
     <div className="project-detail-page w-full h-full px-12 flex flex-col">
       <div>
@@ -131,7 +138,11 @@ const ProjectDetailPage: React.FC = () => {
       <div className="w-full pb-24">
         <Row gutter={[16, 16]}>
           <Col flex="1 1 500px">
-            <Card title="项目信息">
+            <Card
+              title="项目信息"
+              loading={loading}
+              loadingOptions={{paragraph: {rows: 7}}}
+            >
               <div className="w-full h-[300px] overflow-y-auto">
                 <Row className="mb-4">
                   <Col span={4}><Text strong>负责人：</Text></Col>
@@ -169,7 +180,11 @@ const ProjectDetailPage: React.FC = () => {
             </Card>
           </Col>
           <Col flex="1 1 40%" className="w-screen min-w-[500px]">
-            <Card title="项目构成">
+            <Card
+              title="项目构成"
+              loading={loading}
+              loadingOptions={{paragraph: {rows: 7}}}
+            >
               <div className="w-full h-[300px] overflow-y-auto flex">
                 <div className="w-full flex-grow">
                   <ReactECharts
@@ -186,7 +201,11 @@ const ProjectDetailPage: React.FC = () => {
             </Card>
           </Col>
           <Col flex="1 1 60%">
-            <Card title="稿件列表">
+            <Card
+              title="稿件列表"
+              loading={loading}
+              loadingOptions={{paragraph: {rows: 6}}}
+            >
               <div className="w-full h-[300px] flex flex-col overflow-y-auto">
                 <Tabs className="!h-auto" defaultActiveKey="1" items={items} />
                 <List
@@ -214,7 +233,11 @@ const ProjectDetailPage: React.FC = () => {
             </Card>
           </Col>
           <Col flex="1 1 40%">
-            <Card title="资源库">
+            <Card
+              title="资源库"
+              loading={loading}
+              loadingOptions={{paragraph: {rows: 6}}}
+            >
               <div className="w-full h-[300px] flex flex-col overflow-y-auto">
                 <Tabs className="!h-auto" defaultActiveKey="1" items={items} />
                 <List
@@ -232,9 +255,13 @@ const ProjectDetailPage: React.FC = () => {
             </Card>
           </Col>
           <Col flex="1 1 100%">
-            <Card title="操作历史">
+            <Card
+              title="操作历史"
+              loading={loading}
+              loadingOptions={{paragraph: {rows: 6}}}
+            >
               <div className="w-full min-h-[280px]">
-
+                <div className="pt-12"><Empty /></div>
               </div>
             </Card>
           </Col>
