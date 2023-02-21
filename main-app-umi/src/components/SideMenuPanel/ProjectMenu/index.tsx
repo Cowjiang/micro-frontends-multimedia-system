@@ -52,15 +52,18 @@ const ProjectMenu: React.FC = () => {
                     {type: 'divider'},
                     {
                       label: '我参与的',
-                      key: 'participated'
+                      key: 'participated',
+                      onClick: () => navigate('/project/list?type=participated')
                     },
                     {
                       label: '我创建的',
-                      key: 'created'
+                      key: 'created',
+                      onClick: () => navigate('/project/list?type=created')
                     },
                     {
                       label: '星标项目',
-                      key: 'stared'
+                      key: 'stared',
+                      onClick: () => navigate('/project/list?type=stared')
                     }
                   ]
                 },

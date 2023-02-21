@@ -36,6 +36,7 @@ const routes = [
     routes: [
       {path: '/project/new', component: '@/pages/Project/NewProject/index', title: '新建项目'},
       {path: '/project/:id/detail', component: '@/pages/Project/ProjectDetail/index', title: '项目详情'},
+      {path: '/project/list', component: '@/pages/Project/ProjectList/index', title: '项目列表'},
       {path: '/project/:id/member/config', component: '@/pages/Project/ProjectMemberConfig/index', title: '项目人员设置'},
     ]
   },
