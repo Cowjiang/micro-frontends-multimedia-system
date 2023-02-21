@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import './index.less';
-import { Col, Divider, List, Row, Tabs, TabsProps, Tag, theme, Typography } from 'antd';
+import { Breadcrumb, Col, Divider, List, Row, Tabs, TabsProps, Tag, theme, Typography } from 'antd';
 import { useModel, useNavigate } from '@@/exports';
 import Card from '@/components/Card';
 import Empty from '@/components/Empty';
@@ -125,6 +125,14 @@ const ProjectDetailPage: React.FC = () => {
   return (
     <div className="project-detail-page w-full h-full px-12 flex flex-col">
       <div>
+        <Breadcrumb className="!mt-2">
+          <Breadcrumb.Item>
+            <a onClick={() => navigate(`/project/list`)}>
+              项目列表
+            </a>
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>大美湾区科技之美</Breadcrumb.Item>
+        </Breadcrumb>
         <Title level={3}>项目详情 - 大美湾区科技之美</Title>
         {
           projectInfo.tags.map(status => (

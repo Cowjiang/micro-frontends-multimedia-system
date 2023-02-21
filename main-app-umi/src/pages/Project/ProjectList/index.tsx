@@ -190,11 +190,14 @@ const ProjectListPage: React.FC = () => {
     navigate(`/project/${projectId}/detail`);
   };
 
+  const handleTabsChange = (newTabKey: string) => {
+    setSearchParams({type: newTabKey});
+  }
+
   return (
     <div className="project-list-page w-full h-full px-12 flex flex-col">
       <div>
         <Title level={3}>项目列表</Title>
-        {/*<Divider />*/}
       </div>
       <div>
         <Tabs
@@ -218,11 +221,6 @@ const ProjectListPage: React.FC = () => {
                       </div>
                     )
                   }}
-                  onRow={() => {
-                    return {
-                      onClick: (event) => {console.log(event);},
-                    };
-                  }}
                 />
               )
             },
@@ -244,6 +242,7 @@ const ProjectListPage: React.FC = () => {
               <Input.Search placeholder="搜索项目..." enterButton />
             )
           }}
+          onChange={handleTabsChange}
         />
       </div>
     </div>

@@ -92,6 +92,12 @@ const IndexPage: React.FC = () => {
             >
               部门成员信息
             </Button>
+            <Button
+              type="primary"
+              onClick={() => navigate('/project/1/draft/list')}
+            >
+              稿件列表
+            </Button>
           </Space>
         </Row>
         <Row>

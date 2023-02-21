@@ -38,6 +38,7 @@ const routes = [
       {path: '/project/:id/detail', component: '@/pages/Project/ProjectDetail/index', title: '项目详情'},
       {path: '/project/list', component: '@/pages/Project/ProjectList/index', title: '项目列表'},
       {path: '/project/:id/member/config', component: '@/pages/Project/ProjectMemberConfig/index', title: '项目人员设置'},
+      {path: '/project/:id/draft/list', component: '@/pages/Project/Draft/DraftList/index', title: '稿件列表'},
     ]
   },
   {
