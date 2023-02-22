@@ -17,7 +17,7 @@
     "@flaticon/flaticon-uicons": "^2.0.1",
     "@tinymce/tinymce-react": "^4.3.0",
     "@types/nprogress": "^0.2.0",
-    "@umijs/max": "^4.0.34",
+    "@umijs/max": "^4.0.52",
     "ahooks": "^3.7.2",
     "animate.css": "^4.1.1",
     "antd": "^5.1.6",

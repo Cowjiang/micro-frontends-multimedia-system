@@ -41,7 +41,7 @@ const ProjectListPage: React.FC = () => {
       }
     }
   }, [projectListType, searchParams]);
-  useSetDocTitle(`${projectListType}项目`);
+  useSetDocTitle(`项目列表 - ${projectListType}`);
 
 
   const columns: ColumnsType<ProjectListDataType> = [

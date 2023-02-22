@@ -17,8 +17,7 @@ export default defineConfig({
       SERVICE_BASE_URL: MOCK ? '/mock' : '/api'
     }
   },
-  exportStatic: {},
   routes,
   npmClient: 'pnpm',
-  tailwindcss: {}
+  tailwindcss: {},
 });

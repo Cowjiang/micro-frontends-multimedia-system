@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import './index.less';
-import { Breadcrumb, Col, Divider, List, Row, Tabs, TabsProps, Tag, theme, Typography } from 'antd';
+import { Breadcrumb, Button, Col, Divider, List, Row, Tabs, TabsProps, Tag, theme, Typography } from 'antd';
 import { useModel, useNavigate } from '@@/exports';
 import Card from '@/components/Card';
 import Empty from '@/components/Empty';
@@ -133,14 +133,21 @@ const ProjectDetailPage: React.FC = () => {
           </Breadcrumb.Item>
           <Breadcrumb.Item>大美湾区科技之美</Breadcrumb.Item>
         </Breadcrumb>
-        <Title level={3}>项目详情 - 大美湾区科技之美</Title>
-        {
-          projectInfo.tags.map(status => (
-            <Tag color={PRIMARY_COLOR} key={status}>
-              {status}
-            </Tag>
-          ))
-        }
+        <div className="w-full flex items-center">
+          <div>
+            <Title level={3}>项目详情 - 大美湾区科技之美</Title>
+            {
+              projectInfo.tags.map(status => (
+                <Tag color={PRIMARY_COLOR} key={status}>
+                  {status}
+                </Tag>
+              ))
+            }
+          </div>
+          <div className="ml-auto">
+            <Button type="primary">编辑项目</Button>
+          </div>
+        </div>
         <Divider />
       </div>
       <div className="w-full pb-24">

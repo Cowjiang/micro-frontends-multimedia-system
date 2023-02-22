@@ -1,5 +1,3 @@
-import ProjectMemberConfigPage from '@/pages/Project/ProjectMemberConfig';
-
 const routes = [
   {
     path: '/*',

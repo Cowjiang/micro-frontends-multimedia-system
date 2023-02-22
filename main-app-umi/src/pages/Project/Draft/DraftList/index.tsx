@@ -4,6 +4,7 @@ import { Breadcrumb, Button, Dropdown, Input, Skeleton, Table, Tabs, Tag, theme,
 import { useSetDocTitle } from '@/utils/hooks';
 import { ColumnsType } from 'antd/es/table';
 import Empty from '@/components/Empty';
+import { PlusOutlined } from '@ant-design/icons';
 
 const {useToken} = theme;
 const {Title, Text, Paragraph} = Typography;
@@ -299,6 +300,9 @@ const DraftListPage: React.FC = () => {
             right: (
               <div className="flex">
                 <Input.Search placeholder="搜索稿件..." enterButton />
+                <Button className="ml-4" type="primary" icon={<PlusOutlined />}>
+                  新建稿件
+                </Button>
                 <Button className="ml-4" type="primary" ghost onClick={changeEditStatus}>
                   {editStatus ? '取消' : '编辑'}
                 </Button>

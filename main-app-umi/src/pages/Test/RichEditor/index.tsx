@@ -1,6 +1,5 @@
 import React, { useRef, useState } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
-import { Button } from 'antd';
 import Loading from '@/components/Loading';
 
 const RichEditorTestPage: React.FC = () => {
@@ -22,6 +21,7 @@ const RichEditorTestPage: React.FC = () => {
       >
         <div className="h-[500px]">
           <Editor
+            tinymceScriptSrc="/tinymce/tinymce.min.js"
             apiKey="7r39ggx9nkeyq2y3o5scbv5en93047bmpy3221wg2tnmr3qv"
             onInit={(evt, editor) => {
               editorRef.current = editor;
@@ -30,7 +30,7 @@ const RichEditorTestPage: React.FC = () => {
             initialValue={initValue}
             init={{
               height: 500,
-              language: 'zh_CN',
+              language: 'zh-Hans',
               plugins: [
                 'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
                 'anchor', 'searchreplace', 'visualblocks', 'code',
