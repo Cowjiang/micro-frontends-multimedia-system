@@ -53,22 +53,22 @@ const NewProjectPage: React.FC = () => {
       startTime,
       endTime
     } = formValue;
-    if (name && description && startTime && endTime) {
-      projectApi.createProject({
-        projectName: name,
-        projectDesc: description,
-        startTime: startTime as number,
-        endTime: endTime as number
-      }).then(({success, data}) => {
-        if (success && data) {
-          navigate(`/project/${data.id}/member/config`, {replace: true});
-        } else {
-          messageApi.error('项目创建失败');
-        }
-      });
-    } else {
+    if (!(name && description && startTime && endTime)) {
       messageApi.warning('请完整填写项目信息');
+      // return;
     }
+    projectApi.createProject({
+      projectName: name,
+      projectDesc: description,
+      startTime: startTime as number,
+      endTime: endTime as number
+    }).then(({success, data}) => {
+      if (success && data) {
+        navigate(`/project/${data.id}/member/config`, {replace: true});
+      } else {
+        messageApi.error('项目创建失败');
+      }
+    });
   };
 
   return (

@@ -85,10 +85,9 @@ async function getProjectMemberConfig(
   });
 }
 
-// 添加项目信息（添加单个）
+// 添加项目人员指派信息（添加单个）
 async function addProjectMemberConfig(
   data: {
-    id: number;
     departmentId: number;
     num: number;
     projectId: number;
@@ -102,7 +101,7 @@ async function addProjectMemberConfig(
   });
 }
 
-// 修改项目信息（修改单个）
+// 修改项目人员指派信息（修改单个）
 async function updateProjectMemberConfig(
   data: {
     id: number;
@@ -115,6 +114,17 @@ async function updateProjectMemberConfig(
   return request<IResponseData<any>>('/project/member/config', {
     method: 'PUT',
     data,
+    ...(options || {})
+  });
+}
+
+// 删除项目人员指派信息（单个）
+async function deleteProjectMemberConfig(
+  configId: number,
+  options?: { [key: string]: any }
+) {
+  return request<IResponseData<any>>(`/project/member/config/${configId}`, {
+    method: 'DELETE',
     ...(options || {})
   });
 }
@@ -164,8 +174,10 @@ export default {
   createProject,
   updateProject,
   deleteProject,
+  getProjectMemberConfig,
   addProjectMemberConfig,
   updateProjectMemberConfig,
+  deleteProjectMemberConfig,
   getProjectMember,
   addProjectMember,
   deleteProjectMember

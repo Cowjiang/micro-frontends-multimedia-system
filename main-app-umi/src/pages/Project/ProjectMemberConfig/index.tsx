@@ -5,8 +5,9 @@ import { Affix, Button, Input, Select, Steps, theme, Typography } from 'antd';
 import { useModel, useParams } from '@@/exports';
 import { useSize } from 'ahooks';
 import { MinusOutlined } from '@ant-design/icons';
-import { departmentApi } from '@/services/api';
+import { departmentApi, projectApi } from '@/services/api';
 import { Department } from '@/services/api/modules/department/typings';
+import NProgress from 'nprogress';
 
 const {Title, Text} = Typography;
 const {useToken} = theme;
@@ -16,12 +17,20 @@ const ProjectMemberConfigPage: React.FC = () => {
   const {token} = useToken();
   const {colorFillQuaternary, colorFillSecondary, colorFillTertiary} = token;
   const {messageApi} = useModel('messageApi');
-  const {id: groupId} = useParams();
+  const {id: projectId} = useParams();
 
   const containerRef = useRef(null);
   const containerSize = useSize(containerRef);
 
-  const [configList, setConfigList] = useState([{department: '', count: 0}]);
+  const [configList, setConfigList] = useState<{
+    id?: number,
+    department: string | number,
+    count: number
+  }[]>([{
+    department: '',
+    count: 0
+  }]);
+  const [configListTemp, setConfigListTemp] = useState<typeof configList>([]);
 
   // 部门列表
   const [departmentList, setDepartmentList] = useState<Department[]>([]);
@@ -36,9 +45,26 @@ const ProjectMemberConfigPage: React.FC = () => {
     });
   }, []);
 
+  useEffect(() => {
+    projectId && projectApi.getProjectMemberConfig(Number(projectId)).then(res => {
+      if (res.data?.length) {
+        const initConfigList = res.data.map(config => ({
+          id: config.id,
+          department: config.departmentId ?? '',
+          count: config.num ?? 0
+        }));
+        setConfigList(initConfigList);
+        setConfigListTemp(initConfigList);
+      }
+    }).catch(e => {
+      console.error(e);
+      messageApi.error('获取人员配置失败');
+    });
+  }, [projectId]);
+
   // 表单数据更新
   const onFormValueChange = (col: 'department' | 'count', index: number, value: any) => {
-    const newConfigList = JSON.parse(JSON.stringify(configList));
+    const newConfigList = [...configList];
     if (col === 'count' && value >= 0) {
       newConfigList[index].count = value;
       setConfigList(newConfigList);
@@ -53,6 +79,65 @@ const ProjectMemberConfigPage: React.FC = () => {
     const newConfigList = JSON.parse(JSON.stringify(configList));
     newConfigList.splice(index, 1);
     setConfigList(newConfigList);
+  };
+
+  // 提交设置
+  const onSubmitConfig = () => {
+    const emptyIndex = configList.findIndex(config => !config.department);
+    if (emptyIndex !== -1) {
+      messageApi.warning('部门或人数填写有误');
+      return;
+    }
+    let [addPromiseList, removePromiseList, updatePromiseList]: Promise<unknown>[][] = [[], [], []];
+    if (configListTemp.length) {
+      // 已有初始化设置
+      // 删除的配置列表
+      const removeConfigList = configListTemp.filter(t => {
+        return configList.every(config => t.department !== config.department);
+      });
+      if (removeConfigList.length) {
+        // 存在删除的
+        removePromiseList = removeConfigList.map(config => new Promise((resolve, reject) => {
+          projectApi.deleteProjectMemberConfig(Number(config.department)).then(res => resolve(res)).catch(e => reject(e));
+        }));
+      }
+      // 修改的配置列表
+      const updateConfigList = configListTemp.filter(t => {
+        return configList.every(config => t.department === config.department && t.count !== config.count);
+      });
+      if (updateConfigList.length) {
+        // 存在修改的
+        updatePromiseList = updateConfigList.map(config => new Promise((resolve, reject) => {
+          projectApi.updateProjectMemberConfig({
+            id: config.id as number,
+            departmentId: Number(config.department),
+            num: config.count,
+            projectId: Number(projectId)
+          }).then(res => resolve(res)).catch(e => reject(e));
+        }));
+      }
+    }
+    // 添加的配置列表
+    const addConfigList = configList.filter(config => !config.id);
+    if (addConfigList.length) {
+      // 存在添加的
+      addPromiseList = addConfigList.map(config => new Promise((resolve, reject) => {
+        projectApi.addProjectMemberConfig({
+          departmentId: Number(config.department),
+          num: config.count,
+          projectId: Number(projectId)
+        }).then(res => resolve(res)).catch(e => reject(e));
+      }));
+    }
+    NProgress.start();
+    Promise.all([...addPromiseList, ...removePromiseList, ...updatePromiseList]).then(res => {
+      messageApi.success('保存成功');
+    }).catch(e => {
+      console.error(e);
+      messageApi.error('保存人员配置失败');
+    }).finally(() => {
+      NProgress.done();
+    });
   };
 
   return (
@@ -133,7 +218,12 @@ const ProjectMemberConfigPage: React.FC = () => {
                       <Select
                         className="w-full !mt-2"
                         size="large"
-                        options={departmentList.map(department => ({label: department.name, value: department.id}))}
+                        options={
+                          departmentList.map(department => ({
+                            label: department.name,
+                            value: department.id
+                          }))
+                        }
                         placeholder="请选择部门"
                         {...{value: config.department !== '' ? {value: config.department} : null}}
                         onChange={(v) => onFormValueChange('department', index, v)}
@@ -157,7 +247,7 @@ const ProjectMemberConfigPage: React.FC = () => {
                         shape="circle"
                         size="small"
                         icon={<MinusOutlined />}
-                        disabled={index === 0}
+                        disabled={configList.length === 1}
                         onClick={() => removeDepartment(index)}
                       />
                     </div>
@@ -182,6 +272,7 @@ const ProjectMemberConfigPage: React.FC = () => {
               className="ml-auto w-36 !h-14"
               type="primary"
               size="large"
+              onClick={onSubmitConfig}
             >
               下一步
             </Button>
