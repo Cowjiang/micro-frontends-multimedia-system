@@ -7,6 +7,7 @@ import { useNavigate } from '@@/exports';
 import { Project } from '@/services/api/modules/project/typings';
 import { projectApi } from '@/services/api';
 import { formatDate } from '@/utils/format';
+import dayjs from 'dayjs';
 
 const {useToken} = theme;
 const {Title, Text} = Typography;
@@ -81,8 +82,12 @@ const ProjectPage: React.FC = () => {
       ellipsis: true,
       render: (_, {startTime, endTime}) => (
         <div className="flex flex-col">
-          <Text type="secondary" ellipsis>{formatDate(String(startTime) ?? '')}</Text>
-          <Text type="secondary" ellipsis>{formatDate(String(endTime) ?? '')}</Text>
+          <Text type="secondary" ellipsis>
+            {dayjs(startTime).format('YYYY年MM月DD日 hh:mm')}
+          </Text>
+          <Text type="secondary" ellipsis>
+            {dayjs(endTime).format('YYYY年MM月DD日 hh:mm')}
+          </Text>
         </div>
       )
     },
@@ -93,7 +98,9 @@ const ProjectPage: React.FC = () => {
       ellipsis: true,
       responsive: ['xxl'],
       render: (_, {updateTime}) => (
-        <Text type="secondary" ellipsis>{formatDate(String(updateTime) ?? '')}</Text>
+        <Text type="secondary" ellipsis>
+          {dayjs(updateTime).format('YYYY年MM月DD日 hh:mm')}
+        </Text>
       )
     },
     {

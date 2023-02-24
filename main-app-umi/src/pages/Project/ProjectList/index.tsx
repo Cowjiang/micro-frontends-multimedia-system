@@ -5,8 +5,8 @@ import { useSetDocTitle } from '@/utils/hooks';
 import { ColumnsType } from 'antd/es/table';
 import Empty from '@/components/Empty';
 import { Project } from '@/services/api/modules/project/typings';
-import { formatDate } from '@/utils/format';
 import { projectApi } from '@/services/api';
+import dayjs from 'dayjs';
 
 const {useToken} = theme;
 const {Title, Text} = Typography;
@@ -103,8 +103,12 @@ const ProjectListPage: React.FC = () => {
       ellipsis: true,
       render: (_, {startTime, endTime}) => (
         <div className="flex flex-col">
-          <Text type="secondary" ellipsis>{formatDate(String(startTime) ?? '')}</Text>
-          <Text type="secondary" ellipsis>{formatDate(String(endTime) ?? '')}</Text>
+          <Text type="secondary" ellipsis>
+            {dayjs(startTime).format('YYYY年MM月DD日 hh:mm')}
+          </Text>
+          <Text type="secondary" ellipsis>
+            {dayjs(endTime).format('YYYY年MM月DD日 hh:mm')}
+          </Text>
         </div>
       )
     },
@@ -115,7 +119,9 @@ const ProjectListPage: React.FC = () => {
       ellipsis: true,
       responsive: ['xxl'],
       render: (_, {updateTime}) => (
-        <Text type="secondary" ellipsis>{formatDate(String(updateTime) ?? '')}</Text>
+        <Text type="secondary" ellipsis>
+          {dayjs(updateTime).format('YYYY年MM月DD日 hh:mm')}
+        </Text>
       )
     },
     {

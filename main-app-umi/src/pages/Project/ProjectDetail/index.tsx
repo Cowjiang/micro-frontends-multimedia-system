@@ -3,14 +3,13 @@ import { Breadcrumb, Button, Col, Divider, List, Row, Tabs, TabsProps, Tag, them
 import { useModel, useNavigate, useParams } from '@@/exports';
 import Card from '@/components/Card';
 import Empty from '@/components/Empty';
-import { formatDate } from '@/utils/format';
 import { PRIMARY_COLOR } from '@/constants';
 import { useSetDocTitle } from '@/utils/hooks';
 import ReactECharts from 'echarts-for-react';
 import { EChartsOption } from 'echarts';
-import { useSize } from 'ahooks';
 import { projectApi } from '@/services/api';
 import { Project } from '@/services/api/modules/project/typings';
+import dayjs from 'dayjs';
 
 const {useToken} = theme;
 const {Title, Text} = Typography;
@@ -192,15 +191,21 @@ const ProjectDetailPage: React.FC = () => {
                 </Row>
                 <Row className="mb-4">
                   <Col span={4}><Text strong>开始时间：</Text></Col>
-                  <Col span={20}>{formatDate(String(projectInfo.startTime ?? ''))}</Col>
+                  <Col span={20}>
+                    {dayjs(projectInfo.startTime ?? '').format('YYYY年MM月DD日 hh:mm')}
+                  </Col>
                 </Row>
                 <Row className="mb-4">
                   <Col span={4}><Text strong>结束时间：</Text></Col>
-                  <Col span={20}>{formatDate(String(projectInfo.endTime ?? ''))}</Col>
+                  <Col span={20}>
+                    {dayjs(projectInfo.endTime ?? '').format('YYYY年MM月DD日 hh:mm')}
+                  </Col>
                 </Row>
                 <Row className="mb-4">
                   <Col span={4}><Text strong>上次更新：</Text></Col>
-                  <Col span={20}>{formatDate(String(projectInfo.updateTime ?? ''))}</Col>
+                  <Col span={20}>
+                    {dayjs(projectInfo.updateTime ?? '').format('YYYY年MM月DD日 hh:mm')}
+                  </Col>
                 </Row>
               </div>
             </Card>
