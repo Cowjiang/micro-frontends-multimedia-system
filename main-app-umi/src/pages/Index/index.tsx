@@ -76,7 +76,7 @@ const IndexPage: React.FC = () => {
             </Button>
             <Button
               type="primary"
-              onClick={() => navigate('/project/new')}
+              onClick={() => navigate('/project/edit/new')}
             >
             新建项目
             </Button>

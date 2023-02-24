@@ -1,20 +1,25 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './index.less';
 import { Affix, Button, DatePicker, Input, Steps, theme, Typography, Upload } from 'antd';
-import { useModel, useNavigate } from '@@/exports';
+import { useLocation, useModel, useNavigate, useParams } from '@@/exports';
 import { useInViewport, useSize } from 'ahooks';
 import classNames from 'classnames';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { projectApi } from '@/services/api';
+import dayjs from 'dayjs';
 
 const {Title, Text} = Typography;
 const {TextArea} = Input;
 const {useToken} = theme;
 
-const NewProjectPage: React.FC = () => {
+const ProjectEditPage: React.FC = () => {
+  const {id: projectId} = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+
   const {darkTheme} = useModel('theme');
   const {messageApi} = useModel('messageApi');
+
   const {token} = useToken();
   const {colorFillQuaternary, colorFillSecondary, colorFillTertiary} = token;
 
@@ -45,6 +50,26 @@ const NewProjectPage: React.FC = () => {
     endTime: '' as number | string | undefined
   });
 
+  // 获取项目信息
+  const getProjectInfo = async () => {
+    if (projectId) {
+      const {data: projectInfo} = await projectApi.getProjectDetail(Number(projectId));
+      setFormValue({
+        name: projectInfo?.projectName ?? '',
+        description: projectInfo?.projectDesc ?? '',
+        projectImageUrl: '',
+        startTime: projectInfo?.startTime,
+        endTime: projectInfo?.endTime
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (location.pathname.includes('/project/edit/')) {
+      projectId && getProjectInfo();
+    }
+  }, [projectId]);
+
   const createProject = () => {
     const {
       name,
@@ -57,18 +82,33 @@ const NewProjectPage: React.FC = () => {
       messageApi.warning('请完整填写项目信息');
       // return;
     }
-    projectApi.createProject({
+    const data = {
       projectName: name,
       projectDesc: description,
       startTime: startTime as number,
       endTime: endTime as number
-    }).then(({success, data}) => {
-      if (success && data) {
-        navigate(`/project/${data.id}/member/config`, {replace: true});
-      } else {
-        messageApi.error('项目创建失败');
-      }
-    });
+    };
+    if (projectId) {
+      projectApi.updateProject({
+        id: Number(projectId),
+        ...data
+      }).then(({success}) => {
+        if (success) {
+          messageApi.success('修改成功');
+          navigate(`/project/${projectId}/detail`, {replace: true});
+        }
+      }).catch(e => {
+        messageApi.error('修改失败');
+      });
+    } else {
+      projectApi.createProject(data).then(({success, data}) => {
+        if (success && data) {
+          navigate(`/project/${data.id}/member/config`, {replace: true});
+        } else {
+          messageApi.error('项目创建失败');
+        }
+      });
+    }
   };
 
   return (
@@ -83,7 +123,7 @@ const NewProjectPage: React.FC = () => {
               )
             }
           >
-            <Title level={1}>新建项目</Title>
+            <Title level={1}>{projectId ? '编辑' : '新建'}项目</Title>
             <Steps
               className="!mt-12 h-full"
               current={currentFormIndex}
@@ -158,6 +198,7 @@ const NewProjectPage: React.FC = () => {
                   autoSize={{minRows: 2, maxRows: 5}}
                   size="large"
                   placeholder="请填写项目简介"
+                  value={formValue.description}
                   onChange={(e) => setFormValue({...formValue, description: e.target.value})}
                 />
               </div>
@@ -221,7 +262,8 @@ const NewProjectPage: React.FC = () => {
                   showTime
                   size="large"
                   format="YYYY年MM月DD日 hh:mm"
-                  onChange={(date) => setFormValue({...formValue, startTime: date?.unix()})}
+                  {...{value: formValue.startTime ? dayjs(formValue.startTime) : undefined}}
+                  onChange={(date) => setFormValue({...formValue, startTime: date?.valueOf()})}
                 />
               </div>
               <div className="w-full mt-6 flex flex-col">
@@ -232,7 +274,8 @@ const NewProjectPage: React.FC = () => {
                   showTime
                   size="large"
                   format="YYYY年MM月DD日 hh:mm"
-                  onChange={(date) => setFormValue({...formValue, endTime: date?.unix()})}
+                  {...{value: formValue.endTime ? dayjs(formValue.endTime) : undefined}}
+                  onChange={(date) => setFormValue({...formValue, endTime: date?.valueOf()})}
                 />
               </div>
             </div>
@@ -257,4 +300,4 @@ const NewProjectPage: React.FC = () => {
   );
 };
 
-export default NewProjectPage;
+export default ProjectEditPage;

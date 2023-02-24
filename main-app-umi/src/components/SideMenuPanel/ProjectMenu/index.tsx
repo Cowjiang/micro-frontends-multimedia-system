@@ -128,7 +128,7 @@ const ProjectMenu: React.FC = () => {
                     {
                       label: '新建项目',
                       key: 'create-project',
-                      onClick: () => navigate('/project/new')
+                      onClick: () => navigate('/project/edit/new')
                     }
                   ]
                 }

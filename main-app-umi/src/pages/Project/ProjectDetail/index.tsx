@@ -18,11 +18,11 @@ const {Title, Text} = Typography;
 const ProjectDetailPage: React.FC = () => {
   const {id: projectId} = useParams();
   const navigate = useNavigate();
-  const {token} = useToken();
 
   const {darkTheme} = useModel('theme');
   const [loading, setLoading] = useState(true);
 
+  const {token} = useToken();
   const {
     colorPrimary,
     colorPrimaryActive,
@@ -33,7 +33,7 @@ const ProjectDetailPage: React.FC = () => {
   } = token;
 
   const [projectInfo, setProjectInfo] = useState<Project>({});
-  // 获取项目列表
+  // 获取项目信息
   const getProjectInfo = async () => {
     if (projectId) {
       const {data: projectInfo} = await projectApi.getProjectDetail(Number(projectId));
@@ -145,7 +145,12 @@ const ProjectDetailPage: React.FC = () => {
             </Tag>
           </div>
           <div className="ml-auto">
-            <Button type="primary">编辑项目</Button>
+            <Button
+              type="primary"
+              onClick={() => navigate(`/project/edit/${projectId}`, {replace: true})}
+            >
+              编辑项目
+            </Button>
           </div>
         </div>
         <Divider />
