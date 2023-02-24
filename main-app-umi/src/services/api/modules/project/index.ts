@@ -168,6 +168,30 @@ async function deleteProjectMember(
   });
 }
 
+// 获取星标项目列表
+async function getStaredProjectList(
+  options?: { [key: string]: any }
+) {
+  return request<IResponseData<Project[]>>('/project/list/star', {
+    method: 'GET',
+    ...(options || {})
+  });
+}
+
+// 设置项目星标状态
+async function setProjectStarStatus(
+  data: {
+    id: number;
+    starFlag: boolean;
+  },
+  options?: { [key: string]: any }
+) {
+  return request<IResponseData<any>>(`/project/${data.id}/star/${data.starFlag}`, {
+    method: 'PUT',
+    ...(options || {})
+  });
+}
+
 export default {
   getProjectList,
   getProjectDetail,
@@ -180,5 +204,7 @@ export default {
   deleteProjectMemberConfig,
   getProjectMember,
   addProjectMember,
-  deleteProjectMember
+  deleteProjectMember,
+  getStaredProjectList,
+  setProjectStarStatus
 };

@@ -4,9 +4,12 @@ import { Button, Dropdown, Input, Table, Tabs, Tag, theme, Typography } from 'an
 import { useSetDocTitle } from '@/utils/hooks';
 import { ColumnsType } from 'antd/es/table';
 import Empty from '@/components/Empty';
+import { Project } from '@/services/api/modules/project/typings';
+import { formatDate } from '@/utils/format';
+import { projectApi } from '@/services/api';
 
 const {useToken} = theme;
-const {Title} = Typography;
+const {Title, Text} = Typography;
 
 const projectListTypes: { [key: string]: string } = {
   all: '全部',
@@ -14,13 +17,6 @@ const projectListTypes: { [key: string]: string } = {
   created: '我创建的',
   stared: '星标'
 };
-
-interface ProjectListDataType {
-  id: number;
-  projectName: string;
-  username: string;
-  status: string[];
-}
 
 const ProjectListPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -43,95 +39,105 @@ const ProjectListPage: React.FC = () => {
   }, [projectListType, searchParams]);
   useSetDocTitle(`项目列表 - ${projectListType}`);
 
-
-  const columns: ColumnsType<ProjectListDataType> = [
+  const columns: ColumnsType<Project> = [
     {
-      title: '编号',
-      dataIndex: 'projectId',
-      key: 'projectId',
-      width: 80,
-      ellipsis: true
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+      width: 60
     },
     {
-      title: '项目名称',
+      title: '项目',
       dataIndex: 'projectName',
       key: 'projectName',
-      width: '60%',
+      width: '25%',
       ellipsis: true,
-      render: (_, {projectName,id}) => (
-        <a
+      render: (_, {projectName, id}) => (
+        <Text
+          className="cursor-pointer"
           style={{color: colorPrimaryText}}
-          onClick={() => handleProjectClick(id)}
+          onClick={() => handleProjectClick(id as number)}
         >
           {projectName}
-        </a>
+        </Text>
       )
     },
     {
       title: '负责人',
       dataIndex: 'username',
       key: 'username',
-      width: '25%',
-      ellipsis: true
-    },
-    {
-      title: '状态',
-      key: 'status',
-      dataIndex: 'status',
-      width: '20%',
-      ellipsis: true,
-      render: (_, {status}) => (
+      width: '15%',
+      render: (_, {userId}) => (
         <>
-          {status.map((tag) => {
-            let color = tag !== '进行中' ? 'geekblue' : 'green';
-            if (tag === '已取消') {
-              color = 'red';
-            }
-            return (
-              <Tag color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
+          破壁机
         </>
       )
     },
     {
-      title: '稿件数',
-      key: 'draftCount',
-      dataIndex: 'draftCount',
-      width: 100,
-      ellipsis: true
+      title: '状态',
+      key: 'stat',
+      dataIndex: 'stat',
+      width: 150,
+      render: (_, {stat}) => (
+        <Tag color="green">
+          进行中
+        </Tag>
+      )
     },
     {
-      title: '素材数',
-      key: 'resourceCount',
-      dataIndex: 'resourceCount',
+      title: '稿件数',
+      dataIndex: 'username',
+      key: 'username',
       width: 100,
-      ellipsis: true
+      responsive: ['xl'],
+      render: (_, {}) => (
+        <Text>
+          14
+        </Text>
+      )
+    },
+    {
+      title: '开始 / 结束时间',
+      key: 'startTime',
+      dataIndex: 'startTime',
+      ellipsis: true,
+      render: (_, {startTime, endTime}) => (
+        <div className="flex flex-col">
+          <Text type="secondary" ellipsis>{formatDate(String(startTime) ?? '')}</Text>
+          <Text type="secondary" ellipsis>{formatDate(String(endTime) ?? '')}</Text>
+        </div>
+      )
     },
     {
       title: '更新时间',
       key: 'updateTime',
       dataIndex: 'updateTime',
-      width: '25%',
-      ellipsis: true
+      ellipsis: true,
+      responsive: ['xxl'],
+      render: (_, {updateTime}) => (
+        <Text type="secondary" ellipsis>{formatDate(String(updateTime) ?? '')}</Text>
+      )
     },
     {
-      title: '',
+      title: <div className="!ml-2">操作</div>,
       key: 'action',
-      width: 120,
-      render: () => (
+      width: 90,
+      render: (_, {id}) => (
         <Dropdown
           menu={{
             items: [
               {
-                label: '查看',
-                key: '1'
+                label: '进入项目',
+                key: '1',
+                onClick: () => handleProjectClick(id as number)
               },
               {
-                label: '设为星标',
+                label: '编辑项目',
                 key: '2'
+              },
+              {
+                label: '设置星标',
+                key: '3'
               }
             ]
           }}
@@ -146,44 +152,21 @@ const ProjectListPage: React.FC = () => {
     }
   ];
 
-  const data: ProjectListDataType[] = [
-    {
-      id: 0,
-      projectName: '大美湾区科技之美大美湾区科技之美大美湾区科技之美大美湾区科技之美',
-      username: '破壁机',
-      status: ['进行中']
-    },
-    {
-      id: 1,
-      projectName: '大美湾区科技之美',
-      username: '破壁机',
-      status: ['已取消']
-    },
-    {
-      id: 2,
-      projectName: '大美湾区科技之美',
-      username: '破壁机',
-      status: ['已结束']
-    },
-    {
-      id: 3,
-      projectName: '大美湾区科技之美',
-      username: '破壁机',
-      status: ['已结束']
-    },
-    {
-      id: 4,
-      projectName: '大美湾区科技之美',
-      username: '破壁机',
-      status: ['已结束']
-    },
-    {
-      id: 5,
-      projectName: '大美湾区科技之美',
-      username: '破壁机',
-      status: ['已结束']
-    }
-  ];
+  // 项目列表
+  const [projectList, setProjectList] = useState<Project[]>([]);
+  // 星标项目列表
+  const [staredProjectList, setStaredProjectList] = useState<Project[]>([]);
+
+  // 获取项目列表
+  const getProjectList = async () => {
+    const {data: projectList} = await projectApi.getProjectList();
+    setProjectList((projectList ?? []).map(project => ({key: project.id, ...project})));
+    const {data: starProjectList} = await projectApi.getProjectList();
+    setStaredProjectList((starProjectList ?? []).map(project => ({key: project.id, ...project})));
+  };
+  useEffect(() => {
+    getProjectList().then(() => {});
+  }, []);
 
   // 项目点击
   const handleProjectClick = (projectId: number) => {
@@ -192,7 +175,7 @@ const ProjectListPage: React.FC = () => {
 
   const handleTabsChange = (newTabKey: string) => {
     setSearchParams({type: newTabKey});
-  }
+  };
 
   return (
     <div className="project-list-page w-full h-full px-12 flex flex-col">
@@ -207,12 +190,12 @@ const ProjectListPage: React.FC = () => {
           items={[
             {
               key: 'all',
-              label: `全部项目`,
+              label: '全部项目',
               children: (
                 <Table
                   className="mt-4"
                   columns={columns}
-                  dataSource={data}
+                  dataSource={projectList}
                   scroll={{x: 900}}
                   locale={{
                     emptyText: () => (
@@ -226,15 +209,60 @@ const ProjectListPage: React.FC = () => {
             },
             {
               key: 'participated',
-              label: `我参与的`
+              label: '我参与的',
+              children: (
+                <Table
+                  className="mt-4"
+                  columns={columns}
+                  dataSource={projectList}
+                  scroll={{x: 900}}
+                  locale={{
+                    emptyText: () => (
+                      <div className="w-full my-48">
+                        <Empty />
+                      </div>
+                    )
+                  }}
+                />
+              )
             },
             {
               key: 'created',
-              label: `我创建的`
+              label: '我创建的',
+              children: (
+                <Table
+                  className="mt-4"
+                  columns={columns}
+                  dataSource={projectList}
+                  scroll={{x: 900}}
+                  locale={{
+                    emptyText: () => (
+                      <div className="w-full my-48">
+                        <Empty />
+                      </div>
+                    )
+                  }}
+                />
+              )
             },
             {
               key: 'stared',
-              label: `星标项目`
+              label: '星标项目',
+              children: (
+                <Table
+                  className="mt-4"
+                  columns={columns}
+                  dataSource={staredProjectList}
+                  scroll={{x: 900}}
+                  locale={{
+                    emptyText: () => (
+                      <div className="w-full my-48">
+                        <Empty />
+                      </div>
+                    )
+                  }}
+                />
+              )
             }
           ]}
           tabBarExtraContent={{

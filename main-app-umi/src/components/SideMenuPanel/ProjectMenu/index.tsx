@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './index.less';
 import { Button, Input, Menu, theme, Typography } from 'antd';
 import { useModel, useNavigate } from '@@/exports';
 import Loading from '@/components/Loading';
+import { Project } from '@/services/api/modules/project/typings';
+import { projectApi } from '@/services/api';
 
-const {Title} = Typography;
+const {Title, Text} = Typography;
 const {useToken} = theme;
 
 const ProjectMenu: React.FC = () => {
@@ -15,6 +17,23 @@ const ProjectMenu: React.FC = () => {
   const {colorFillSecondary} = token;
 
   const [loading, setLoading] = useState(false);
+
+  // 项目列表
+  const [projectList, setProjectList] = useState<Project[]>([]);
+
+  // 获取项目列表
+  const getProjectList = async () => {
+    const {data: projectList} = await projectApi.getProjectList();
+    setProjectList((projectList ?? []).map(project => ({key: project.id, ...project})));
+  };
+  useEffect(() => {
+    getProjectList().then(() => {});
+  }, []);
+
+  // 项目点击
+  const handleProjectClick = (projectId: number) => {
+    navigate(`/project/${projectId}/detail`);
+  };
 
   return (
     <Loading spinning={loading} size="large">
@@ -73,11 +92,31 @@ const ProjectMenu: React.FC = () => {
                   type: 'group',
                   children: [
                     {type: 'divider'},
-                    {
-                      label: '空空如也',
-                      key: 'empty',
-                      disabled: true
-                    }
+                    ...projectList.length
+                      ? projectList.map(project => ({
+                        label: (
+                          <div className="w-full flex">
+                            <Text ellipsis>{project.projectName ?? ''}</Text>
+                          </div>
+                        ),
+                        key: String(project.id),
+                        children: [
+                          {
+                            label: '项目详情',
+                            key: `detail${project.id}`,
+                            onClick: () => handleProjectClick(project.id as number)
+                          },
+                          {
+                            label: '稿件列表',
+                            key: `draftList${project.id}`
+                          }
+                        ]
+                      }))
+                      : [{
+                        label: '空空如也',
+                        key: 'empty',
+                        disabled: true
+                      }]
                   ]
                 },
                 {
