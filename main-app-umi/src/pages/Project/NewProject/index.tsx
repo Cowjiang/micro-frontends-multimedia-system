@@ -5,6 +5,7 @@ import { useModel, useNavigate } from '@@/exports';
 import { useInViewport, useSize } from 'ahooks';
 import classNames from 'classnames';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import { projectApi } from '@/services/api';
 
 const {Title, Text} = Typography;
 const {TextArea} = Input;
@@ -13,6 +14,7 @@ const {useToken} = theme;
 const NewProjectPage: React.FC = () => {
   const navigate = useNavigate();
   const {darkTheme} = useModel('theme');
+  const {messageApi} = useModel('messageApi');
   const {token} = useToken();
   const {colorFillQuaternary, colorFillSecondary, colorFillTertiary} = token;
 
@@ -20,6 +22,7 @@ const NewProjectPage: React.FC = () => {
   const containerSize = useSize(containerRef);
 
   const formRefList = [useRef(null), useRef(null)];
+  const [currentFormIndex, setCurrentFormIndex] = useState(0);
   const formInViewport = [
     useInViewport(formRefList[0], {threshold: 1}),
     useInViewport(formRefList[1], {threshold: 1})
@@ -42,7 +45,31 @@ const NewProjectPage: React.FC = () => {
     endTime: '' as number | string | undefined
   });
 
-  const [currentFormIndex, setCurrentFormIndex] = useState(0);
+  const createProject = () => {
+    const {
+      name,
+      description,
+      projectImageUrl,
+      startTime,
+      endTime
+    } = formValue;
+    if (name && description && startTime && endTime) {
+      projectApi.createProject({
+        projectName: name,
+        projectDesc: description,
+        startTime: startTime as number,
+        endTime: endTime as number
+      }).then(({success, data}) => {
+        if (success && data) {
+          navigate(`/project/${data.id}/member/config`, {replace: true});
+        } else {
+          messageApi.error('项目创建失败');
+        }
+      });
+    } else {
+      messageApi.warning('请完整填写项目信息');
+    }
+  };
 
   return (
     <div className="new-project-page w-full h-full px-16 flex justify-center">
@@ -217,7 +244,7 @@ const NewProjectPage: React.FC = () => {
               className="ml-auto w-36 !h-14"
               type="primary"
               size="large"
-              onClick={() => navigate('/project/1/member/config', {replace: true})}
+              onClick={createProject}
             >
               下一步
             </Button>

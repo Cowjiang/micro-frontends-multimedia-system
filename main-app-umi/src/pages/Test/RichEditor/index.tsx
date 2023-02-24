@@ -18,11 +18,12 @@ const RichEditorTestPage: React.FC = () => {
 
   const [loading, setLoading] = useState(true);
   const initValue = '<h1>一二三四五六七</h1>\n' +
-    '<h2>一二三<a href="#flag" name="comment">四五</a>六</h2>\n' +
+    '<h2>一二三<a href="http://" name="comment">四五</a>六</h2>\n' +
     '<h3>一二三四五</h3>\n' +
     '<h4>一二三四</h4>';
   const [editorValue, setEditorValue] = useState('');
   const [selectedNode, setSelectedNode] = useState();
+
 
   const onSelectionChange = () => {
     const selection = editorRef.current?.selection.getSel();
@@ -46,11 +47,17 @@ const RichEditorTestPage: React.FC = () => {
       }
     }
   };
+
   const [allowComment, setAllowComment] = useState(false);
   const [disabled, setDisabled] = useState(false);
-  const handleClick = () => {
+  // 当前选中批注
+  const [currentComment, setCurrentComment] = useState(0);
+  const handleClick = (event: MouseEvent) => {
+    const element = event.target as Element;
+    setCurrentComment(eval(element.getAttribute('data-mce-id') ?? '0'));
     console.log('你不要点我');
   };
+
   return (
     <div className="mx-auto">
       <Loading
@@ -124,13 +131,14 @@ const RichEditorTestPage: React.FC = () => {
               );
               if (result) {
                 let node;
-                const elementList: Element[] = [];
+                const elementList: HTMLElement[] = [];
                 while (node = result.iterateNext()) {
-                  node.nodeType === Node.ELEMENT_NODE && elementList.push(node as Element);
+                  node.nodeType === Node.ELEMENT_NODE && elementList.push(node as HTMLElement);
                 }
                 elementList.forEach(element => {
                   element.setAttribute('name', 'comment');
-                  element.setAttribute('custom', 'commentId');
+                  element.setAttribute('data-mce-id', '1');
+                  element.setAttribute('href','#none');
                   element.addEventListener('click', handleClick);
                 });
               }
@@ -151,7 +159,21 @@ const RichEditorTestPage: React.FC = () => {
           <Button
             onClick={() => {
               editorRef.current?.execCommand('Unlink');
+              console.log(currentComment);
+              if (currentComment !== 0) {
+                let elementToUnlink: HTMLElement[] = [];
+                editorRef.current?.getBody().ownerDocument.getElementsByName('comment').forEach((element) => {
+                  if (eval(element.getAttribute('data-mce-id') ?? '0') === currentComment) {
+                    elementToUnlink.push(element);
+                  }
+                });
+                for (const element of elementToUnlink) {
+                  editorRef.current?.selection.select(element);
+                  editorRef.current?.execCommand('Unlink');
+                }
+              }
             }}
+
           >
             移除批注
           </Button>
