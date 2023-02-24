@@ -1,7 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import './index.less';
+import React, { useEffect, useState } from 'react';
 import { Breadcrumb, Button, Col, Divider, List, Row, Tabs, TabsProps, Tag, theme, Typography } from 'antd';
-import { useModel, useNavigate } from '@@/exports';
+import { useModel, useNavigate, useParams } from '@@/exports';
 import Card from '@/components/Card';
 import Empty from '@/components/Empty';
 import { formatDate } from '@/utils/format';
@@ -10,37 +9,42 @@ import { useSetDocTitle } from '@/utils/hooks';
 import ReactECharts from 'echarts-for-react';
 import { EChartsOption } from 'echarts';
 import { useSize } from 'ahooks';
+import { projectApi } from '@/services/api';
+import { Project } from '@/services/api/modules/project/typings';
 
 const {useToken} = theme;
 const {Title, Text} = Typography;
 
 const ProjectDetailPage: React.FC = () => {
-  const {token} = useToken();
+  const {id: projectId} = useParams();
   const navigate = useNavigate();
+  const {token} = useToken();
+
   const {darkTheme} = useModel('theme');
-  const bodySize = useSize(document.body);
+  const [loading, setLoading] = useState(true);
+
   const {
     colorPrimary,
     colorPrimaryActive,
     colorPrimaryBgHover,
     colorPrimaryBorder,
     colorPrimaryBorderHover,
-    colorFillQuaternary,
-    colorFillSecondary,
-    colorFillTertiary,
     colorText
   } = token;
 
-  const projectInfo = {
-    username: '破壁机',
-    projectName: '大美湾区科技之美',
-    projectDesc: '第31届夏季奥林匹克运动会(Gamesof he xxX/ 0mpiad)，又称2016年里约热内运会，2016年8月5日到2016年8月21日在巴西里约热内卢举行201年里约热内卢奥运会主会场是马拉卡纳体育场，举办竞选2016年奥运会申办进程于2007年5月16日启动，所有国际奥林匹克委员会成员国所管辖范围内城市向国..',
-    tags: ['爆炸', '竞技'],
-    startTime: formatDate(String(Date.now())),
-    endTime: formatDate(String(Date.now())),
-    updateTime: formatDate(String(Date.now())),
-    status: ['进行中']
+  const [projectInfo, setProjectInfo] = useState<Project>({});
+  // 获取项目列表
+  const getProjectInfo = async () => {
+    if (projectId) {
+      const {data: projectInfo} = await projectApi.getProjectDetail(Number(projectId));
+      setProjectInfo(projectInfo ?? {});
+    }
   };
+  useEffect(() => {
+    getProjectInfo().then(() => {
+      setLoading(false);
+    });
+  }, []);
   useSetDocTitle(`项目详情 - ${projectInfo.projectName}`);
 
   const option: EChartsOption = {
@@ -115,13 +119,6 @@ const ProjectDetailPage: React.FC = () => {
     }
   ];
 
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-  }, []);
-
   return (
     <div className="project-detail-page w-full h-full px-12 flex flex-col">
       <div>
@@ -131,18 +128,21 @@ const ProjectDetailPage: React.FC = () => {
               项目列表
             </a>
           </Breadcrumb.Item>
-          <Breadcrumb.Item>大美湾区科技之美</Breadcrumb.Item>
+          <Breadcrumb.Item>{projectInfo.projectName}</Breadcrumb.Item>
         </Breadcrumb>
         <div className="w-full flex items-center">
           <div>
-            <Title level={3}>项目详情 - 大美湾区科技之美</Title>
-            {
-              projectInfo.tags.map(status => (
-                <Tag color={PRIMARY_COLOR} key={status}>
-                  {status}
-                </Tag>
-              ))
-            }
+            <Title level={3}>项目详情 - {projectInfo.projectName}</Title>
+            {/*{*/}
+            {/*  projectInfo.tags.map(status => (*/}
+            {/*    <Tag color={PRIMARY_COLOR} key={status}>*/}
+            {/*      {status}*/}
+            {/*    </Tag>*/}
+            {/*  ))*/}
+            {/*}*/}
+            <Tag color={PRIMARY_COLOR}>
+              项目标签
+            </Tag>
           </div>
           <div className="ml-auto">
             <Button type="primary">编辑项目</Button>
@@ -157,22 +157,28 @@ const ProjectDetailPage: React.FC = () => {
               title="项目信息"
               loading={loading}
               loadingOptions={{paragraph: {rows: 7}}}
+              onActionBtnClick={
+                (action) => action === 'refresh' && getProjectInfo()
+              }
             >
               <div className="w-full h-[300px] overflow-y-auto">
                 <Row className="mb-4">
                   <Col span={4}><Text strong>负责人：</Text></Col>
-                  <Col span={20}>{projectInfo.username}</Col>
+                  <Col span={20}>破壁机</Col>
                 </Row>
                 <Row className="mb-4">
                   <Col span={4}><Text strong>项目状态：</Text></Col>
                   <Col span={20}>
-                    {
-                      projectInfo.status.map(status => (
-                        <Tag color="green" key={status}>
-                          {status}
-                        </Tag>
-                      ))
-                    }
+                    {/*{*/}
+                    {/*  projectInfo.status.map(status => (*/}
+                    {/*    <Tag color="green" key={status}>*/}
+                    {/*      {status}*/}
+                    {/*    </Tag>*/}
+                    {/*  ))*/}
+                    {/*}*/}
+                    <Tag color="green">
+                      {projectInfo.stat}
+                    </Tag>
                   </Col>
                 </Row>
                 <Row className="mb-4">
@@ -181,15 +187,15 @@ const ProjectDetailPage: React.FC = () => {
                 </Row>
                 <Row className="mb-4">
                   <Col span={4}><Text strong>开始时间：</Text></Col>
-                  <Col span={20}>{projectInfo.startTime}</Col>
+                  <Col span={20}>{formatDate(String(projectInfo.startTime ?? ''))}</Col>
                 </Row>
                 <Row className="mb-4">
                   <Col span={4}><Text strong>结束时间：</Text></Col>
-                  <Col span={20}>{projectInfo.endTime}</Col>
+                  <Col span={20}>{formatDate(String(projectInfo.endTime ?? ''))}</Col>
                 </Row>
                 <Row className="mb-4">
                   <Col span={4}><Text strong>上次更新：</Text></Col>
-                  <Col span={20}>{projectInfo.updateTime}</Col>
+                  <Col span={20}>{formatDate(String(projectInfo.updateTime ?? ''))}</Col>
                 </Row>
               </div>
             </Card>
@@ -220,6 +226,9 @@ const ProjectDetailPage: React.FC = () => {
               title="稿件列表"
               loading={loading}
               loadingOptions={{paragraph: {rows: 6}}}
+              onActionBtnClick={
+                (action) => action === 'more' && navigate(`/project/${projectId}/draft/list`)
+              }
             >
               <div className="w-full h-[300px] flex flex-col overflow-y-auto">
                 <Tabs className="!h-auto" defaultActiveKey="1" items={items} />

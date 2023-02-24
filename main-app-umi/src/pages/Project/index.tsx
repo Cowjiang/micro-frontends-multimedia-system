@@ -160,7 +160,12 @@ const ProjectPage: React.FC = () => {
       <div className="w-full pb-24">
         <Row gutter={[16, 16]}>
           <Col flex="1 1 60%" className="w-screen">
-            <Card title="星标项目">
+            <Card
+              title="星标项目"
+              onActionBtnClick={
+                (action) => action === 'refresh' && getProjectList()
+              }
+            >
               <div className="w-full h-[290px] overflow-y-auto">
                 <Table
                   columns={
@@ -203,7 +208,12 @@ const ProjectPage: React.FC = () => {
             </Card>
           </Col>
           <Col flex="1 1 100%">
-            <Card title="全部项目">
+            <Card
+              title="全部项目"
+              onActionBtnClick={
+                (action) => action === 'refresh' && getProjectList()
+              }
+            >
               <div className="w-full min-h-[280px]">
                 <Table
                   columns={columns}
