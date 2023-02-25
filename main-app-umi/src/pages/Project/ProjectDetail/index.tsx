@@ -7,9 +7,11 @@ import { PRIMARY_COLOR } from '@/constants';
 import { useSetDocTitle } from '@/utils/hooks';
 import ReactECharts from 'echarts-for-react';
 import { EChartsOption } from 'echarts';
-import { projectApi } from '@/services/api';
+import { draftApi, projectApi } from '@/services/api';
 import { Project } from '@/services/api/modules/project/typings';
 import dayjs from 'dayjs';
+import { ProjectContribution } from '@/services/api/modules/draft/typings';
+import { formatDraftType } from '@/utils/format';
 
 const {useToken} = theme;
 const {Title, Text} = Typography;
@@ -28,9 +30,11 @@ const ProjectDetailPage: React.FC = () => {
     colorPrimaryBgHover,
     colorPrimaryBorder,
     colorPrimaryBorderHover,
-    colorText
+    colorText,
+    colorPrimaryText
   } = token;
 
+  // 项目信息
   const [projectInfo, setProjectInfo] = useState<Project>({});
   // 获取项目信息
   const getProjectInfo = async () => {
@@ -39,8 +43,19 @@ const ProjectDetailPage: React.FC = () => {
       setProjectInfo(projectInfo ?? {});
     }
   };
+
+  //稿件列表
+  const [draftList, setDraftList] = useState<ProjectContribution[]>([]);
+  // 获取稿件列表
+  const getDraftList = async () => {
+    if (projectId) {
+      const {data: draftList} = await draftApi.getProjectDraftList(projectId);
+      setDraftList(draftList ?? []);
+    }
+  };
+
   useEffect(() => {
-    getProjectInfo().then(() => {
+    Promise.all([getProjectInfo(), getDraftList()]).then(() => {
       setLoading(false);
     });
   }, []);
@@ -143,12 +158,25 @@ const ProjectDetailPage: React.FC = () => {
               项目标签
             </Tag>
           </div>
-          <div className="ml-auto">
+          <div className="ml-auto flex">
             <Button
+              className="mr-4"
+              type="primary"
+              ghost
+            >
+              人员指派
+            </Button>
+            <Button
+              className="mr-4"
               type="primary"
               onClick={() => navigate(`/project/edit/${projectId}`, {replace: true})}
             >
               编辑项目
+            </Button>
+            <Button
+              type="primary"
+            >
+              进入群聊
             </Button>
           </div>
         </div>
@@ -237,31 +265,57 @@ const ProjectDetailPage: React.FC = () => {
               loading={loading}
               loadingOptions={{paragraph: {rows: 6}}}
               onActionBtnClick={
-                (action) => action === 'more' && navigate(`/project/${projectId}/draft/list`)
+                (action) => {
+                  action === 'more' && navigate(`/project/${projectId}/draft/list`);
+                  action === 'refresh' && getDraftList();
+                }
               }
             >
               <div className="w-full h-[300px] flex flex-col overflow-y-auto">
-                <Tabs className="!h-auto" defaultActiveKey="1" items={items} />
-                <List
-                  dataSource={[
-                    'Racing car sprays burning fuel into crowd.',
-                    'Japanese princess to wed commoner.',
-                    'Australian walks 100km after outback crash.',
-                    'Man charged over missing wedding girl.',
-                    'Los Angeles battles huge wildfires.',
-                    'Los Angeles battles huge wildfires.',
-                    'Los Angeles battles huge wildfires.',
-                    'Los Angeles battles huge wildfires.',
-                    'Los Angeles battles huge wildfires.'
-                  ]}
-                  renderItem={(item) => (
-                    <List.Item className="!px-0">
-                      <Tag color={PRIMARY_COLOR}>H5</Tag>{item}
-                    </List.Item>
-                  )}
-                  locale={{
-                    emptyText: <div className="pt-12"><Empty /></div>
-                  }}
+                <Tabs
+                  className="!h-auto"
+                  defaultActiveKey="1"
+                  items={
+                    items.map((item, index) => ({
+                      ...item,
+                      children: (
+                        <List
+                          dataSource={
+                            draftList.filter(draft => {
+                              switch (index) {
+                                case 0:
+                                  return draft;
+                                case 1:
+                                  return draft.type === 'ARTICLE';
+                                case 2:
+                                  return draft.type === 'HTML5';
+                                case 3:
+                                  return draft.type === 'MEDIA';
+                              }
+                            }).map(draft => ({
+                              id: draft.id,
+                              title: draft.name,
+                              type: draft.type
+                            }))
+                          }
+                          renderItem={(item) => (
+                            <List.Item className="!px-0">
+                              <div className="w-full flex">
+                                <Tag color={formatDraftType(item.type ?? '').color}>
+                                  {formatDraftType(item.type ?? '').tag}
+                                </Tag>
+                                <Text className="cursor-pointer">{item.title}</Text>
+                                <a className="ml-auto" style={{color: colorPrimaryText}}>查看稿件</a>
+                              </div>
+                            </List.Item>
+                          )}
+                          locale={{
+                            emptyText: <div className="pt-12"><Empty /></div>
+                          }}
+                        />
+                      )
+                    }))
+                  }
                 />
               </div>
             </Card>
@@ -279,11 +333,6 @@ const ProjectDetailPage: React.FC = () => {
                   locale={{
                     emptyText: <div className="pt-12"><Empty /></div>
                   }}
-                  renderItem={(item) => (
-                    <List.Item className="!px-0">
-                      <Tag color={PRIMARY_COLOR}>H5</Tag>{item}
-                    </List.Item>
-                  )}
                 />
               </div>
             </Card>
