@@ -3,7 +3,7 @@ import './index.less';
 import { Button, Input, Menu, theme, Typography } from 'antd';
 import { useModel, useNavigate } from '@@/exports';
 import Loading from '@/components/Loading';
-import { Project } from '@/services/api/modules/project/typings';
+import { Project, ProjectVo } from '@/services/api/modules/project/typings';
 import { projectApi } from '@/services/api';
 
 const {Title, Text} = Typography;
@@ -19,12 +19,12 @@ const ProjectMenu: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   // 项目列表
-  const [projectList, setProjectList] = useState<Project[]>([]);
+  const [projectList, setProjectList] = useState<ProjectVo[]>([]);
 
   // 获取项目列表
   const getProjectList = async () => {
     const {data: projectList} = await projectApi.getProjectList();
-    setProjectList((projectList ?? []).map(project => ({key: project.id, ...project})));
+    setProjectList((projectList ?? []).map(project => ({key: project.project.id, ...project})));
   };
   useEffect(() => {
     getProjectList().then(() => {});
@@ -96,19 +96,19 @@ const ProjectMenu: React.FC = () => {
                       ? projectList.map(project => ({
                         label: (
                           <div className="w-full flex">
-                            <Text ellipsis>{project.projectName ?? ''}</Text>
+                            <Text ellipsis>{project.project.projectName ?? ''}</Text>
                           </div>
                         ),
-                        key: String(project.id),
+                        key: String(project.project.id),
                         children: [
                           {
                             label: '项目详情',
-                            key: `detail${project.id}`,
-                            onClick: () => handleProjectClick(project.id as number)
+                            key: `detail${project.project.id}`,
+                            onClick: () => handleProjectClick(project.project.id as number)
                           },
                           {
                             label: '稿件列表',
-                            key: `draftList${project.id}`
+                            key: `draftList${project.project.id}`
                           }
                         ]
                       }))

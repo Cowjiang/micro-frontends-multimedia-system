@@ -8,7 +8,7 @@ import { useSetDocTitle } from '@/utils/hooks';
 import ReactECharts from 'echarts-for-react';
 import { EChartsOption } from 'echarts';
 import { draftApi, projectApi } from '@/services/api';
-import { Project } from '@/services/api/modules/project/typings';
+import { ProjectVo } from '@/services/api/modules/project/typings';
 import dayjs from 'dayjs';
 import { ProjectContribution } from '@/services/api/modules/draft/typings';
 import { formatDraftType } from '@/utils/format';
@@ -35,12 +35,12 @@ const ProjectDetailPage: React.FC = () => {
   } = token;
 
   // 项目信息
-  const [projectInfo, setProjectInfo] = useState<Project>({});
+  const [projectInfo, setProjectInfo] = useState<ProjectVo>();
   // 获取项目信息
   const getProjectInfo = async () => {
     if (projectId) {
       const {data: projectInfo} = await projectApi.getProjectDetail(Number(projectId));
-      setProjectInfo(projectInfo ?? {});
+      setProjectInfo(projectInfo ?? undefined);
     }
   };
 
@@ -59,7 +59,7 @@ const ProjectDetailPage: React.FC = () => {
       setLoading(false);
     });
   }, []);
-  useSetDocTitle(`项目详情 - ${projectInfo.projectName}`);
+  useSetDocTitle(`项目详情 - ${projectInfo?.project.projectName}`);
 
   const option: EChartsOption = {
     title: {
@@ -142,11 +142,11 @@ const ProjectDetailPage: React.FC = () => {
               项目列表
             </a>
           </Breadcrumb.Item>
-          <Breadcrumb.Item>{projectInfo.projectName}</Breadcrumb.Item>
+          <Breadcrumb.Item>{projectInfo?.project.projectName}</Breadcrumb.Item>
         </Breadcrumb>
         <div className="w-full flex items-center">
           <div>
-            <Title level={3}>项目详情 - {projectInfo.projectName}</Title>
+            <Title level={3}>项目详情 - {projectInfo?.project.projectName}</Title>
             {/*{*/}
             {/*  projectInfo.tags.map(status => (*/}
             {/*    <Tag color={PRIMARY_COLOR} key={status}>*/}
@@ -196,7 +196,7 @@ const ProjectDetailPage: React.FC = () => {
               <div className="w-full h-[300px] overflow-y-auto">
                 <Row className="mb-4">
                   <Col span={4}><Text strong>负责人：</Text></Col>
-                  <Col span={20}>破壁机</Col>
+                  <Col span={20}>{projectInfo?.charge.username}</Col>
                 </Row>
                 <Row className="mb-4">
                   <Col span={4}><Text strong>项目状态：</Text></Col>
@@ -209,30 +209,30 @@ const ProjectDetailPage: React.FC = () => {
                     {/*  ))*/}
                     {/*}*/}
                     <Tag color="green">
-                      {projectInfo.stat}
+                      {projectInfo?.project.stat}
                     </Tag>
                   </Col>
                 </Row>
                 <Row className="mb-4">
                   <Col span={4}><Text strong>项目描述：</Text></Col>
-                  <Col span={20}>{projectInfo.projectDesc}</Col>
+                  <Col span={20}>{projectInfo?.project.projectDesc}</Col>
                 </Row>
                 <Row className="mb-4">
                   <Col span={4}><Text strong>开始时间：</Text></Col>
                   <Col span={20}>
-                    {dayjs(projectInfo.startTime ?? '').format('YYYY年MM月DD日 hh:mm')}
+                    {dayjs(projectInfo?.project.startTime ?? '').format('YYYY年MM月DD日 hh:mm')}
                   </Col>
                 </Row>
                 <Row className="mb-4">
                   <Col span={4}><Text strong>结束时间：</Text></Col>
                   <Col span={20}>
-                    {dayjs(projectInfo.endTime ?? '').format('YYYY年MM月DD日 hh:mm')}
+                    {dayjs(projectInfo?.project.endTime ?? '').format('YYYY年MM月DD日 hh:mm')}
                   </Col>
                 </Row>
                 <Row className="mb-4">
                   <Col span={4}><Text strong>上次更新：</Text></Col>
                   <Col span={20}>
-                    {dayjs(projectInfo.updateTime ?? '').format('YYYY年MM月DD日 hh:mm')}
+                    {dayjs(projectInfo?.project.updateTime ?? '').format('YYYY年MM月DD日 hh:mm')}
                   </Col>
                 </Row>
               </div>

@@ -4,7 +4,7 @@ import { Button, Dropdown, Input, Table, Tabs, Tag, theme, Typography } from 'an
 import { useSetDocTitle } from '@/utils/hooks';
 import { ColumnsType } from 'antd/es/table';
 import Empty from '@/components/Empty';
-import { Project } from '@/services/api/modules/project/typings';
+import { ProjectVo } from '@/services/api/modules/project/typings';
 import { projectApi } from '@/services/api';
 import dayjs from 'dayjs';
 
@@ -39,12 +39,15 @@ const ProjectListPage: React.FC = () => {
   }, [projectListType, searchParams]);
   useSetDocTitle(`项目列表 - ${projectListType}`);
 
-  const columns: ColumnsType<Project> = [
+  const columns: ColumnsType<ProjectVo> = [
     {
       title: 'ID',
       dataIndex: 'id',
       key: 'id',
-      width: 60
+      width: 60,
+      render: (_, {project: {id}}) => (
+        <Text type="secondary"># {id}</Text>
+      )
     },
     {
       title: '项目',
@@ -52,7 +55,7 @@ const ProjectListPage: React.FC = () => {
       key: 'projectName',
       width: '25%',
       ellipsis: true,
-      render: (_, {projectName, id}) => (
+      render: (_, {project: {projectName, id}}) => (
         <Text
           className="cursor-pointer"
           style={{color: colorPrimaryText}}
@@ -67,10 +70,8 @@ const ProjectListPage: React.FC = () => {
       dataIndex: 'username',
       key: 'username',
       width: '15%',
-      render: (_, {userId}) => (
-        <>
-          破壁机
-        </>
+      render: (_, {charge: {username}}) => (
+        <Text>{username}</Text>
       )
     },
     {
@@ -78,7 +79,7 @@ const ProjectListPage: React.FC = () => {
       key: 'stat',
       dataIndex: 'stat',
       width: 150,
-      render: (_, {stat}) => (
+      render: (_, {project: {stat}}) => (
         <Tag color="green">
           进行中
         </Tag>
@@ -92,7 +93,7 @@ const ProjectListPage: React.FC = () => {
       responsive: ['xl'],
       render: (_, {}) => (
         <Text>
-          14
+
         </Text>
       )
     },
@@ -101,7 +102,7 @@ const ProjectListPage: React.FC = () => {
       key: 'startTime',
       dataIndex: 'startTime',
       ellipsis: true,
-      render: (_, {startTime, endTime}) => (
+      render: (_, {project: {startTime, endTime}}) => (
         <div className="flex flex-col">
           <Text type="secondary" ellipsis>
             {dayjs(startTime).format('YYYY年MM月DD日 hh:mm')}
@@ -118,7 +119,7 @@ const ProjectListPage: React.FC = () => {
       dataIndex: 'updateTime',
       ellipsis: true,
       responsive: ['xxl'],
-      render: (_, {updateTime}) => (
+      render: (_, {project: {updateTime}}) => (
         <Text type="secondary" ellipsis>
           {dayjs(updateTime).format('YYYY年MM月DD日 hh:mm')}
         </Text>
@@ -128,7 +129,7 @@ const ProjectListPage: React.FC = () => {
       title: <div className="!ml-2">操作</div>,
       key: 'action',
       width: 90,
-      render: (_, {id}) => (
+      render: (_, {project: {id}}) => (
         <Dropdown
           menu={{
             items: [
@@ -159,16 +160,16 @@ const ProjectListPage: React.FC = () => {
   ];
 
   // 项目列表
-  const [projectList, setProjectList] = useState<Project[]>([]);
+  const [projectList, setProjectList] = useState<ProjectVo[]>([]);
   // 星标项目列表
-  const [staredProjectList, setStaredProjectList] = useState<Project[]>([]);
+  const [staredProjectList, setStaredProjectList] = useState<ProjectVo[]>([]);
 
   // 获取项目列表
   const getProjectList = async () => {
     const {data: projectList} = await projectApi.getProjectList();
-    setProjectList((projectList ?? []).map(project => ({key: project.id, ...project})));
+    setProjectList((projectList ?? []).map(project => ({key: project.project.id, ...project})));
     const {data: starProjectList} = await projectApi.getProjectList();
-    setStaredProjectList((starProjectList ?? []).map(project => ({key: project.id, ...project})));
+    setStaredProjectList((starProjectList ?? []).map(project => ({key: project.project.id, ...project})));
   };
   useEffect(() => {
     getProjectList().then(() => {});

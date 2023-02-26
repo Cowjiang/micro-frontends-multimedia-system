@@ -4,13 +4,14 @@ import {
   Project,
   ProjectMemberVo,
   ProjectPersonnelAllocationConfig,
+  ProjectVo
 } from '@/services/api/modules/project/typings';
 
 // 获取项目列表
 async function getProjectList(
   options?: { [key: string]: any }
 ) {
-  return request<IResponseData<Project[]>>('/project/list', {
+  return request<IResponseData<ProjectVo[]>>('/project/list', {
     method: 'GET',
     ...(options || {})
   });
@@ -21,7 +22,7 @@ async function getProjectDetail(
   projectId: number,
   options?: { [key: string]: any }
 ) {
-  return request<IResponseData<Project>>(`/project/${projectId}`, {
+  return request<IResponseData<ProjectVo>>(`/project/${projectId}`, {
     method: 'GET',
     ...(options || {})
   });
@@ -172,7 +173,7 @@ async function deleteProjectMember(
 async function getStaredProjectList(
   options?: { [key: string]: any }
 ) {
-  return request<IResponseData<Project[]>>('/project/list/star', {
+  return request<IResponseData<ProjectVo[]>>('/project/list/star', {
     method: 'GET',
     ...(options || {})
   });

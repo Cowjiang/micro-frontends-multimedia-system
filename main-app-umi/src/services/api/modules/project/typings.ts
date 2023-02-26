@@ -1,6 +1,14 @@
 import { Department } from '@/services/api/modules/department/typings';
 import { UserProfile } from '@/services/api/modules/user/typings';
-import { BasePageParam, OrderItem } from '@/services/typings';
+
+/**
+ * ProjectVo
+ */
+export interface ProjectVo {
+  charge:  UserProfile;
+  creator: UserProfile;
+  project: Project;
+}
 
 /**
  * Project
