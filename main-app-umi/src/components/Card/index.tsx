@@ -9,7 +9,7 @@ const {useToken} = theme;
 const {Title, Text} = Typography;
 
 const Card: React.FC<CardProps> = (props: CardProps) => {
-  const {loadingOptions, onActionBtnClick, ...antdCardProps} = props
+  const {loadingOptions, onActionBtnClick, ...antdCardProps} = props;
   const {token} = useToken();
   const {darkTheme} = useModel('theme');
   const {

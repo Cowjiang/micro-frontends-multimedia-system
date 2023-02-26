@@ -1,3 +1,5 @@
+import { Department } from '@/services/api/modules/department/typings';
+
 export interface SimpleUserInfo {
   /**
    * 详细地址
@@ -121,3 +123,13 @@ export interface UserProfile {
    */
   username?: string;
 }
+
+/**
+ * UserSearchListVo
+ */
+export interface UserSearchListVo {
+  department?: Department;
+  sysUser?: any;
+  userProfile: UserProfile;
+}
+

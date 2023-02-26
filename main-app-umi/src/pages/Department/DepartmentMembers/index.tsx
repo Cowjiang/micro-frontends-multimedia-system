@@ -8,6 +8,7 @@ import { useSetDocTitle } from '@/utils/hooks';
 import { ColumnsType } from 'antd/es/table';
 import { useSize } from 'ahooks';
 import Empty from '@/components/Empty';
+import SearchUserDialog from '@/components/SearchUserDialog';
 
 const {Title, Text} = Typography;
 const {useToken} = theme;
@@ -207,6 +208,8 @@ const DepartmentMembersPage: React.FC = () => {
     setSelectedRowKeys(newSelectedRowKeys);
   };
 
+  const [showSearchUser, setShowSearchUser] = useState(false);
+
   return (
     <div className="department-members-page w-full h-full px-12 flex flex-col">
       <div className="w-full mt-2 flex flex-shrink-0">
@@ -249,10 +252,7 @@ const DepartmentMembersPage: React.FC = () => {
                   {
                     selectedRowKeys.length > 0 && (
                       <>
-                        <Text
-                          strong
-                          style={{color: token.colorPrimary}}
-                        >
+                        <Text strong style={{color: token.colorPrimary}}>
                           当前已选中 {selectedRowKeys.length} 人
                         </Text>
                         <Button className="mx-4" danger>
@@ -261,9 +261,20 @@ const DepartmentMembersPage: React.FC = () => {
                       </>
                     )
                   }
-                  <Button type="primary">
+                  <Button type="primary" onClick={() => setShowSearchUser(true)}>
                     新增成员
                   </Button>
+                  <SearchUserDialog
+                    open={showSearchUser}
+                    title="添加部门成员"
+                    searchType="no-department"
+                    resultAction={
+                      <Text className="ml-auto">
+                        <a style={{color: token.colorPrimary}}>添加</a>
+                      </Text>
+                    }
+                    onCancel={() => setShowSearchUser(false)}
+                  />
                 </div>
               )
             )
