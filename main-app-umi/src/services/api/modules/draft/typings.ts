@@ -1,3 +1,14 @@
+import { UserProfile } from '@/services/api/modules/user/typings';
+
+/**
+ * ProjectContributionVo
+ */
+export interface ProjectContributionVo {
+  creatorInfo: UserProfile;
+  projectContribution: ProjectContribution;
+  userInfo: UserProfile;
+}
+
 /**
  * ProjectContribution
  */

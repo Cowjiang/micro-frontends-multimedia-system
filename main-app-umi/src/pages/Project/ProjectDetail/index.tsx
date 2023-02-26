@@ -10,7 +10,7 @@ import { EChartsOption } from 'echarts';
 import { draftApi, projectApi } from '@/services/api';
 import { ProjectVo } from '@/services/api/modules/project/typings';
 import dayjs from 'dayjs';
-import { ProjectContribution } from '@/services/api/modules/draft/typings';
+import { ProjectContributionVo } from '@/services/api/modules/draft/typings';
 import { formatDraftType } from '@/utils/format';
 
 const {useToken} = theme;
@@ -45,7 +45,7 @@ const ProjectDetailPage: React.FC = () => {
   };
 
   //稿件列表
-  const [draftList, setDraftList] = useState<ProjectContribution[]>([]);
+  const [draftList, setDraftList] = useState<ProjectContributionVo[]>([]);
   // 获取稿件列表
   const getDraftList = async () => {
     if (projectId) {
@@ -286,16 +286,16 @@ const ProjectDetailPage: React.FC = () => {
                                 case 0:
                                   return draft;
                                 case 1:
-                                  return draft.type === 'ARTICLE';
+                                  return draft.projectContribution.type === 'ARTICLE';
                                 case 2:
-                                  return draft.type === 'HTML5';
+                                  return draft.projectContribution.type === 'HTML5';
                                 case 3:
-                                  return draft.type === 'MEDIA';
+                                  return draft.projectContribution.type === 'MEDIA';
                               }
                             }).map(draft => ({
-                              id: draft.id,
-                              title: draft.name,
-                              type: draft.type
+                              id: draft.projectContribution.id,
+                              title: draft.projectContribution.name,
+                              type: draft.projectContribution.type
                             }))
                           }
                           renderItem={(item) => (
