@@ -211,9 +211,7 @@ const DepartmentMembersPage: React.FC = () => {
       dataIndex: 'phone',
       key: 'phone',
       width: 180,
-      render: (_, {userProfile}) => (
-        <Text></Text>
-      )
+      render: (_, {userProfile}) => <Text>{userProfile?.phone ?? ''}</Text>
     },
     {
       title: '邮箱',
@@ -221,9 +219,7 @@ const DepartmentMembersPage: React.FC = () => {
       ellipsis: true,
       key: 'email',
       width: 200,
-      render: (_, {userProfile}) => (
-        <Text></Text>
-      )
+      render: (_, {userProfile}) => <Text>{userProfile?.email ?? ''}</Text>
     },
     {
       title: '',

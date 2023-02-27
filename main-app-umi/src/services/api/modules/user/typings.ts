@@ -98,9 +98,17 @@ export interface UserProfile {
    */
   credit?: number;
   /**
+   * 邮箱
+   */
+  email?: string;
+  /**
    * 性别:1 男 0 女
    */
   gender?: number;
+  /**
+   * 手机号
+   */
+  phone?: string;
   /**
    * 积分
    */
