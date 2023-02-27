@@ -55,11 +55,11 @@ const ProjectEditPage: React.FC = () => {
     if (projectId) {
       const {data: projectInfo} = await projectApi.getProjectDetail(Number(projectId));
       setFormValue({
-        name: projectInfo?.projectName ?? '',
-        description: projectInfo?.projectDesc ?? '',
+        name: projectInfo?.project.projectName ?? '',
+        description: projectInfo?.project.projectDesc ?? '',
         projectImageUrl: '',
-        startTime: projectInfo?.startTime,
-        endTime: projectInfo?.endTime
+        startTime: projectInfo?.project.startTime,
+        endTime: projectInfo?.project.endTime
       });
     }
   };
