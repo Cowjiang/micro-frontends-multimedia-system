@@ -38,7 +38,7 @@ const ProjectMenu: React.FC = () => {
   return (
     <Loading spinning={loading} size="large">
       <div className="project-menu w-full h-full">
-        <div className="w-full pt-2 px-8">
+        <div className="w-full pt-8 px-8">
           <Title level={3}>项目</Title>
         </div>
         <div className="w-full px-8 mt-6">

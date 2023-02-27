@@ -152,7 +152,7 @@ const ProjectMemberConfigPage: React.FC = () => {
               )
             }
           >
-            <Title level={1}>项目人员设置</Title>
+            <Title level={1} className="mt-6">项目人员设置</Title>
             <Steps
               className="!mt-12 h-full"
               current={2}
@@ -194,7 +194,7 @@ const ProjectMemberConfigPage: React.FC = () => {
               }
               style={{background: colorFillTertiary}}
             >
-              <Title level={2}>部门设置</Title>
+              <Title level={2} className="mt-6">部门设置</Title>
               <span className="text-base">这里是项目的参与部门与参与人数设置，后续仍可修改。</span>
             </div>
             <div

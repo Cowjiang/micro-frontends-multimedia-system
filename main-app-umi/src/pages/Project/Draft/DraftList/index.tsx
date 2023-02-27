@@ -244,7 +244,7 @@ const DraftListPage: React.FC = () => {
           </Breadcrumb.Item>
           <Breadcrumb.Item>稿件列表</Breadcrumb.Item>
         </Breadcrumb>
-        <Title level={3}>稿件列表</Title>
+        <Title level={3} className="mt-6">稿件列表</Title>
       </div>
       <div>
         <Tabs

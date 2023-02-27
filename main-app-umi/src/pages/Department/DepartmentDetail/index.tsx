@@ -68,7 +68,7 @@ const DepartmentDetailPage: React.FC = () => {
               )
             }
           >
-            <Title level={1}>{formValue.name ?? '部门详情'}</Title>
+            <Title level={1} className="mt-6">{formValue.name ?? '部门详情'}</Title>
             <Steps
               className="!mt-12 h-full"
               current={currentFormIndex}
@@ -108,7 +108,7 @@ const DepartmentDetailPage: React.FC = () => {
               }
               style={{background: colorFillTertiary}}
             >
-              <Title level={2}>部门信息</Title>
+              <Title level={2} className="mt-6">部门信息</Title>
               <span className="text-base">这里是部门的基本信息，包括部门名称、简介等信息。</span>
             </div>
             <div
@@ -163,7 +163,7 @@ const DepartmentDetailPage: React.FC = () => {
               }
               style={{background: colorFillTertiary}}
             >
-              <Title level={2}>人员信息</Title>
+              <Title level={2} className="mt-6">人员信息</Title>
               <span className="text-base">这里是部门的人员信息。</span>
             </div>
             <div

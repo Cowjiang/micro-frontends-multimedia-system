@@ -41,7 +41,7 @@ const SideMenuPanel: React.FC<SideMenuPanelProps> = (props) => {
         className="absolute bottom-6 w-full mt-8 px-16 flex items-center cursor-pointer opacity-[15%]"
         onClick={() => window.open('https://github.com/Cowjiang')}
       >
-        <Title className="!m-0 !mr-2" level={4}>
+        <Title className="!mr-2" level={4}>
           <i className="fi fi-brands-github" />
         </Title>
         <img

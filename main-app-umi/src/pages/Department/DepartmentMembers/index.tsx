@@ -260,7 +260,7 @@ const DepartmentMembersPage: React.FC = () => {
     <div className="department-members-page w-full h-full px-12 flex flex-col">
       <div className="w-full mt-2 flex flex-shrink-0">
         <div className="w-full mr-4 flex flex-col overflow-hidden">
-          <Title level={3}>{departmentInfo.name ?? ''}(10人)</Title>
+          <Title level={3} className="mt-6">{departmentInfo.name ?? ''}(10人)</Title>
           <Text ellipsis={true}>部门简介：{departmentInfo.description ?? ''}</Text>
         </div>
         <div className="h-full ml-auto flex flex-shrink-0 items-end">

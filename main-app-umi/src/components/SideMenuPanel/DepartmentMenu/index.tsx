@@ -35,7 +35,7 @@ const DepartmentMenu: React.FC = () => {
   return (
     <Loading spinning={loading} size="large">
       <div className="department-menu w-full h-full">
-        <div className="w-full pt-2 px-8">
+        <div className="w-full pt-8 px-8">
           <Title level={3}>部门与人员</Title>
         </div>
         <div className="w-full px-8 mt-6">

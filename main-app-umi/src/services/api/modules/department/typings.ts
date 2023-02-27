@@ -56,3 +56,22 @@ export interface UserRole {
   roleName?: string;
 }
 
+/**
+ * UserPermission
+ */
+export interface UserPermission {
+  id?: number;
+  /**
+   * 权限代码
+   */
+  permissionCode?: string;
+  /**
+   * 权限名
+   */
+  permissionName?: string;
+}
+
+export interface AddUserRole {
+  role?: UserRole;
+  userPermissions?: UserPermission[];
+}

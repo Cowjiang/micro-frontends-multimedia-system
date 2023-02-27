@@ -163,7 +163,7 @@ const ProjectPage: React.FC = () => {
   return (
     <div className="project-page w-full h-full px-12 flex flex-col">
       <div>
-        <Title level={3}>项目概览</Title>
+        <Title level={3} className="mt-6">项目概览</Title>
         <Divider />
       </div>
       <div className="w-full pb-24">

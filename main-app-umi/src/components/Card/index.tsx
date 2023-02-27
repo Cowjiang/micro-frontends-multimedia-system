@@ -45,7 +45,6 @@ const Card: React.FC<CardProps> = (props: CardProps) => {
             <div className="w-full h-[60px] px-6 flex items-center">
               <div className="card-title">
                 <Title
-                  className="!m-0"
                   level={5}
                   ellipsis
                 >

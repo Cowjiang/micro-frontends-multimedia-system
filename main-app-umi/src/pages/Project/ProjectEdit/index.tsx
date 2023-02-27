@@ -123,7 +123,7 @@ const ProjectEditPage: React.FC = () => {
               )
             }
           >
-            <Title level={1}>{projectId ? '编辑' : '新建'}项目</Title>
+            <Title level={1} className="mt-6">{projectId ? '编辑' : '新建'}项目</Title>
             <Steps
               className="!mt-12 h-full"
               current={currentFormIndex}
@@ -166,7 +166,7 @@ const ProjectEditPage: React.FC = () => {
               }
               style={{background: colorFillTertiary}}
             >
-              <Title level={2}>基本信息</Title>
+              <Title level={2} className="mt-6">基本信息</Title>
               <span className="text-base">这里是项目的基本信息，请填写并检查无误后再提交。</span>
             </div>
             <div
@@ -242,7 +242,7 @@ const ProjectEditPage: React.FC = () => {
               }
               style={{background: colorFillTertiary}}
             >
-              <Title level={2}>详细信息</Title>
+              <Title level={2} className="mt-6">详细信息</Title>
               <span className="text-base">这里是项目的详细信息，请填写并检查无误后再提交。</span>
             </div>
             <div

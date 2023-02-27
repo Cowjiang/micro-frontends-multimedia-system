@@ -146,7 +146,7 @@ const ProjectDetailPage: React.FC = () => {
         </Breadcrumb>
         <div className="w-full flex items-center">
           <div>
-            <Title level={3}>项目详情 - {projectInfo?.project.projectName}</Title>
+            <Title level={3} className="mt-6">项目详情 - {projectInfo?.project.projectName}</Title>
             {/*{*/}
             {/*  projectInfo.tags.map(status => (*/}
             {/*    <Tag color={PRIMARY_COLOR} key={status}>*/}

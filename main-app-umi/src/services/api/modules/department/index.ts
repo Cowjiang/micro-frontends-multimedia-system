@@ -1,6 +1,12 @@
 import { request } from '@@/exports';
 import { IResponseData } from '@/services/typings';
-import { DepartMemberListVo, Department, UserRole } from '@/services/api/modules/department/typings';
+import {
+  AddUserRole,
+  DepartMemberListVo,
+  Department,
+  UserPermission,
+  UserRole
+} from '@/services/api/modules/department/typings';
 
 // 获取部门列表
 async function getDepartmentList(
@@ -107,13 +113,48 @@ async function removeDepartmentUser(
   });
 }
 
-// 获取部门成员
+// 获取部门成员角色
 async function getDepartmentUserRoles(
   departmentId: string | number,
   options?: { [key: string]: any }
 ) {
   return request<IResponseData<UserRole[]>>(`/department/${departmentId}/roles`, {
     method: 'GET',
+    ...(options || {})
+  });
+}
+
+// 获取部门可分配权限
+async function getDepartmentPermissions(
+  departmentId: string | number,
+  options?: { [key: string]: any }
+) {
+  return request<IResponseData<UserPermission[]>>(`/department/${departmentId}/permission`, {
+    method: 'GET',
+    ...(options || {})
+  });
+}
+
+// 添加部门成员角色
+async function addDepartmentUserRole(
+  departmentId: string | number,
+  data: AddUserRole,
+  options?: { [key: string]: any }
+) {
+  return request<IResponseData<any>>(`/department/${departmentId}/role`, {
+    method: 'POST',
+    data,
+    ...(options || {})
+  });
+}
+
+// 移除部门成员角色
+async function removeDepartmentUserRole(
+  roleId: string | number,
+  options?: { [key: string]: any }
+) {
+  return request<IResponseData<any>>(`/department/role/${roleId}`, {
+    method: 'DELETE',
     ...(options || {})
   });
 }
@@ -127,5 +168,8 @@ export default {
   getDepartmentUser,
   addDepartmentUser,
   removeDepartmentUser,
-  getDepartmentUserRoles
+  getDepartmentUserRoles,
+  getDepartmentPermissions,
+  addDepartmentUserRole,
+  removeDepartmentUserRole
 };
