@@ -314,6 +314,14 @@ const DepartmentMembersPage: React.FC = () => {
                   <Button type="primary" onClick={() => setShowSearchUser(true)}>
                     新增成员
                   </Button>
+                  <Button
+                    className="ml-4"
+                    type="primary"
+                    ghost
+                    onClick={() => navigate(`/department/${departmentId}/roles/config`)}
+                  >
+                    部门角色编辑
+                  </Button>
                   <SearchUserDialog
                     open={showSearchUser}
                     title="添加部门成员"
