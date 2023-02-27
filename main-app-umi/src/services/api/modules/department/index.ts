@@ -1,7 +1,6 @@
 import { request } from '@@/exports';
 import { IResponseData } from '@/services/typings';
-import { Department } from '@/services/api/modules/department/typings';
-import { UserProfile } from '@/services/api/modules/user/typings';
+import { DepartMemberListVo, Department, UserRole } from '@/services/api/modules/department/typings';
 
 // 获取部门列表
 async function getDepartmentList(
@@ -71,7 +70,7 @@ async function getDepartmentUser(
   departmentId: string | number,
   options?: { [key: string]: any }
 ) {
-  return request<IResponseData<UserProfile[]>>(`/department/${departmentId}/user`, {
+  return request<IResponseData<DepartMemberListVo[]>>(`/department/${departmentId}/user`, {
     method: 'GET',
     ...(options || {})
   });
@@ -85,8 +84,11 @@ async function addDepartmentUser(
   },
   options?: { [key: string]: any }
 ) {
-  return request<IResponseData<any>>(`/department/${data.departmentId}/user/${data.userId}`, {
+  return request<IResponseData<any>>(`/department/${data.departmentId}/user`, {
     method: 'POST',
+    data: {
+      userId: data.userId
+    },
     ...(options || {})
   });
 }
@@ -105,6 +107,17 @@ async function removeDepartmentUser(
   });
 }
 
+// 获取部门成员
+async function getDepartmentUserRoles(
+  departmentId: string | number,
+  options?: { [key: string]: any }
+) {
+  return request<IResponseData<UserRole[]>>(`/department/${departmentId}/roles`, {
+    method: 'GET',
+    ...(options || {})
+  });
+}
+
 export default {
   getDepartmentList,
   getDepartmentDetail,
@@ -112,5 +125,7 @@ export default {
   updateDepartment,
   deleteDepartment,
   getDepartmentUser,
-  addDepartmentUser
+  addDepartmentUser,
+  removeDepartmentUser,
+  getDepartmentUserRoles
 };

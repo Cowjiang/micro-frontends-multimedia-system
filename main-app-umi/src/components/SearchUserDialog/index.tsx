@@ -51,7 +51,7 @@ const SearchUserDialog: React.FC<SearchUserDialogProps> = (props) => {
           itemLayout="horizontal"
           dataSource={searchResult}
           // dataSource={searchResult.filter(user => !user?.department)}
-          renderItem={(user) => (
+          renderItem={(user, index) => (
             <List.Item>
               <Skeleton avatar={{shape: 'circle'}} title paragraph={false} loading={searching} active>
                 <div className="w-full flex items-center">
@@ -59,9 +59,7 @@ const SearchUserDialog: React.FC<SearchUserDialogProps> = (props) => {
                   <Text className="ml-4">
                     {user.userProfile.username}
                   </Text>
-                  <Text className="ml-auto">
-                    <a style={{color: token.colorPrimary}}>添加</a>
-                  </Text>
+                  {resultAction && resultAction(user, index)}
                 </div>
               </Skeleton>
             </List.Item>
