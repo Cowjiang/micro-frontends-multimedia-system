@@ -7,6 +7,7 @@ import { useSize } from 'ahooks';
 import { MinusOutlined } from '@ant-design/icons';
 import { departmentApi } from '@/services/api';
 import { UserPermission, UserRole } from '@/services/api/modules/department/typings';
+import NProgress from 'nprogress';
 
 const {Title, Text} = Typography;
 const {useToken} = theme;
@@ -51,6 +52,13 @@ const DepartmentRolesConfigPage: React.FC = () => {
     if (departmentId) {
       departmentApi.getDepartmentUserRoles(departmentId).then(res => {
         setRoleList(res.data ?? []);
+        const newConfigList: typeof configList = res.data?.map(role => ({
+          id: role.id,
+          role,
+          permission: []
+        })) ?? [];
+        setConfigList(newConfigList);
+        setConfigListTemp(JSON.parse(JSON.stringify(newConfigList)));
       }).catch(err => {
         messageApi.error('获取部门角色失败');
       });
@@ -85,6 +93,77 @@ const DepartmentRolesConfigPage: React.FC = () => {
     const newConfigList = [...configList];
     newConfigList.splice(index, 1);
     setConfigList(newConfigList);
+  };
+
+  // 提交设置
+  const onSubmitConfig = () => {
+    const emptyIndex = configList.findIndex(config => !config.permission.length || !config.role.roleName);
+    if (emptyIndex !== -1) {
+      messageApi.warning('请完整填写角色或权限');
+      return;
+    }
+    let [addPromiseList, removePromiseList, updatePromiseList]: Promise<unknown>[][] = [[], [], []];
+    if (configListTemp.length) {
+      // 已有初始化设置
+      // 删除的配置列表
+      const removeConfigList = configListTemp.filter(t => {
+        return configList.every(config => t.role !== config.role);
+      });
+      if (removeConfigList.length) {
+        // 存在删除的
+        removePromiseList = removeConfigList.map(config => new Promise((resolve, reject) => {
+          departmentApi.removeDepartmentUserRole(
+            config.role?.id ?? ''
+          ).then(res => resolve(res)).catch(e => reject(e));
+        }));
+      }
+      // 修改的配置列表
+      const updateConfigList = configListTemp.filter(t => {
+        return configList.some(config => t.id === config.id && (
+          t.role.roleName !== config.role.roleName
+          || JSON.stringify(t.permission) !== JSON.stringify(config.permission)
+        ));
+      });
+      if (updateConfigList.length && departmentId) {
+        // 存在修改的
+        updatePromiseList = updateConfigList.map(config => new Promise((resolve, reject) => {
+          departmentApi.removeDepartmentUserRole(
+            config.role?.id ?? ''
+          ).then(() => {
+            departmentApi.addDepartmentUserRole(
+              departmentId,
+              {
+                role: config.role,
+                userPermissions: config.permission
+              }
+            ).then(res => resolve(res)).catch(e => reject(e));
+          }).catch(e => reject(e));
+        }));
+      }
+    }
+    // 添加的配置列表
+    const addConfigList = configList.filter(config => !config.id);
+    if (addConfigList.length && departmentId) {
+      // 存在添加的
+      addPromiseList = addConfigList.map(config => new Promise((resolve, reject) => {
+        departmentApi.addDepartmentUserRole(
+          departmentId,
+          {
+            role: config.role,
+            userPermissions: config.permission
+          }
+        ).then(res => resolve(res)).catch(e => reject(e));
+      }));
+    }
+    NProgress.start();
+    Promise.all([...addPromiseList, ...removePromiseList, ...updatePromiseList]).then(res => {
+      messageApi.success('保存成功');
+    }).catch(e => {
+      console.error(e);
+      messageApi.error('保存部门角色失败');
+    }).finally(() => {
+      NProgress.done();
+    });
   };
 
   return (
@@ -212,7 +291,7 @@ const DepartmentRolesConfigPage: React.FC = () => {
               className="ml-auto w-36 !h-14"
               type="primary"
               size="large"
-              // onClick={onSubmitConfig}
+              onClick={onSubmitConfig}
             >
               保存
             </Button>
