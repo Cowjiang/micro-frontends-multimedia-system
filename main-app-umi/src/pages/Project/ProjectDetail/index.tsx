@@ -3,7 +3,6 @@ import { Breadcrumb, Button, Col, Divider, List, Row, Tabs, TabsProps, Tag, them
 import { useModel, useNavigate, useParams } from '@@/exports';
 import Card from '@/components/Card';
 import Empty from '@/components/Empty';
-import { PRIMARY_COLOR } from '@/constants';
 import { useSetDocTitle } from '@/utils/hooks';
 import ReactECharts from 'echarts-for-react';
 import { EChartsOption } from 'echarts';
@@ -154,7 +153,7 @@ const ProjectDetailPage: React.FC = () => {
             {/*    </Tag>*/}
             {/*  ))*/}
             {/*}*/}
-            <Tag color={PRIMARY_COLOR}>
+            <Tag color={colorPrimary}>
               项目标签
             </Tag>
           </div>
@@ -163,8 +162,9 @@ const ProjectDetailPage: React.FC = () => {
               className="mr-4"
               type="primary"
               ghost
+              onClick={() => navigate(`/project/${projectId}/member/list`)}
             >
-              人员指派
+              项目成员
             </Button>
             <Button
               className="mr-4"

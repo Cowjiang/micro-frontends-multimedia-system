@@ -135,7 +135,7 @@ async function getProjectMember(
   projectId: number,
   options?: { [key: string]: any }
 ) {
-  return request<IResponseData<ProjectMemberVo>>(`/project/${projectId}/member`, {
+  return request<IResponseData<ProjectMemberVo[]>>(`/project/${projectId}/member`, {
     method: 'GET',
     ...(options || {})
   });
