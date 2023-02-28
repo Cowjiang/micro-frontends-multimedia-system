@@ -17,6 +17,7 @@ import { useModel, useNavigate, useParams } from '@@/exports';
 import { ProjectMemberVo, ProjectVo } from '@/services/api/modules/project/typings';
 import { projectApi } from '@/services/api';
 import { useSetDocTitle } from '@/utils/hooks';
+import SearchUserDialog from '@/components/SearchUserDialog';
 
 const {useToken} = theme;
 const {Title, Text} = Typography;
@@ -72,6 +73,23 @@ const ProjectMembersPage = () => {
     }
   };
 
+  // 显示搜索用户弹窗
+  const [showSearchUser, setShowSearchUser] = useState(false);
+  // 添加项目成员
+  const addProjectMember = (userId?: number) => {
+    if (userId && projectId) {
+      projectApi.addProjectMember({
+        projectId: Number(projectId),
+        userId
+      }).then(async res => {
+        messageApi.success('添加成功');
+        await getProjectMembers();
+      }).catch(err => {
+        messageApi.error('添加失败');
+      });
+    }
+  };
+
   return (
     <div className="project-detail-page w-full h-full px-12 flex flex-col">
       <div>
@@ -104,15 +122,8 @@ const ProjectMembersPage = () => {
           </Tag>
         </div>
         <div className="ml-auto flex">
-          <Button
-            className="mr-4"
-            type="primary"
-            ghost
-          >
-            新增成员
-          </Button>
-          <Button type="primary" onClick={() => setEditStatus(!editStatus)}>
-            {editStatus ? '完成' : '编辑成员'}
+          <Button type="primary" danger={editStatus} onClick={() => setEditStatus(!editStatus)}>
+            {editStatus ? '完成编辑' : '编辑成员'}
           </Button>
         </div>
       </div>
@@ -131,10 +142,10 @@ const ProjectMembersPage = () => {
                           actions={(() => {
                             const actionList = [
                               <Text type="secondary">
-                                <i className="fi fi-sr-comment-info" />
+                                <i className="fi fi-br-comment-info" />
                               </Text>,
                               <Text type="secondary">
-                                <i className="fi fi-sr-comment" />
+                                <i className="fi fi-br-comment" />
                               </Text>
                             ];
                             return editStatus
@@ -163,6 +174,46 @@ const ProjectMembersPage = () => {
                         </Card>
                       </Col>
                     ))
+                  }
+                  {
+                    editStatus && (
+                      <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={6} key="add">
+                        <div
+                          className="w-full h-[144px] flex justify-center items-center border-dashed border-2"
+                          style={{
+                            borderColor: token.colorBorderSecondary,
+                            borderRadius: token.borderRadius
+                          }}
+                        >
+                          <i
+                            className="fi fi-sr-plus text-5xl cursor-pointer"
+                            style={{color: token.colorTextDisabled}}
+                            onClick={() => setShowSearchUser(true)}
+                          />
+                        </div>
+                        <SearchUserDialog
+                          open={showSearchUser}
+                          title="添加项目成员"
+                          searchType="custom"
+                          dataFilter={
+                            (data) => data.filter(r => r.department?.id === member.department?.id)
+                          }
+                          resultAction={
+                            (user, _) => (
+                              <Text className="ml-auto">
+                                <a
+                                  style={{color: token.colorPrimary}}
+                                  onClick={() => addProjectMember(user.userProfile.userId)}
+                                >
+                                  添加
+                                </a>
+                              </Text>
+                            )
+                          }
+                          onCancel={() => setShowSearchUser(false)}
+                        />
+                      </Col>
+                    )
                   }
                 </Row>
               </div>
