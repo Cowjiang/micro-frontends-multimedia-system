@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import './index.less';
 import classNames from 'classnames';
-import { Image, Tooltip } from 'antd';
+import { Avatar, Image, Tooltip } from 'antd';
 import { NavItemConfig, SideNavBarProps } from '@/components/SideNavBar/typings';
 import { useDispatch, useNavigate, useSelector } from '@@/exports';
 import { UserModelState } from '@/models/user';
@@ -24,7 +24,7 @@ const SideNavBar: React.FC<SideNavBarProps> = (
     {name: 'file', title: '资源库', icon: 'fi fi-sr-cloud-upload'},
     {name: 'department', title: '部门信息', icon: 'fi fi-ss-users', url: '/department'},
     {name: 'chat', title: '聊天', icon: 'fi fi-sr-comment'},
-    {name: 'setting', title: '设置', icon: 'fi fi-sr-settings'},
+    {name: 'setting', title: '设置', icon: 'fi fi-sr-settings', url: '/setting'},
     {
       name: 'user',
       bottom: true,
@@ -108,10 +108,10 @@ const SideNavBar: React.FC<SideNavBarProps> = (
                           )
                         }
                       >
-                        <Image
-                          width={50}
+                        <Avatar
+                          size={50}
                           src={navItem.imgUrl}
-                          preview={false}
+                          icon={<i className="fi fi-sr-user"></i>}
                         />
                       </div>
                     ) : (

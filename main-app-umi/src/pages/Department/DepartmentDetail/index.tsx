@@ -202,6 +202,7 @@ const DepartmentDetailPage: React.FC = () => {
                   className="w-36 !h-12 !mt-2"
                   type="primary"
                   size="large"
+                  onClick={() => navigate(`/department/${departmentId}/members`)}
                 >
                   成员信息
                 </Button>

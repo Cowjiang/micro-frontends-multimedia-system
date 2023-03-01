@@ -148,6 +148,19 @@ async function addDepartmentUserRole(
   });
 }
 
+// 修改部门成员角色
+async function updateDepartmentUserRole(
+  departmentId: string | number,
+  data: AddUserRole,
+  options?: { [key: string]: any }
+) {
+  return request<IResponseData<any>>(`/department/${departmentId}/role`, {
+    method: 'PUT',
+    data,
+    ...(options || {})
+  });
+}
+
 // 移除部门成员角色
 async function removeDepartmentUserRole(
   roleId: string | number,
@@ -171,5 +184,6 @@ export default {
   getDepartmentUserRoles,
   getDepartmentPermissions,
   addDepartmentUserRole,
+  updateDepartmentUserRole,
   removeDepartmentUserRole
 };

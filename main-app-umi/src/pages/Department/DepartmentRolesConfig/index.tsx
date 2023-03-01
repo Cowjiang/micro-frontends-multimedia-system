@@ -127,17 +127,13 @@ const DepartmentRolesConfigPage: React.FC = () => {
       if (updateConfigList.length && departmentId) {
         // 存在修改的
         updatePromiseList = updateConfigList.map(config => new Promise((resolve, reject) => {
-          departmentApi.removeDepartmentUserRole(
-            config.role?.id ?? ''
-          ).then(() => {
-            departmentApi.addDepartmentUserRole(
-              departmentId,
-              {
-                role: config.role,
-                userPermissions: config.permission
-              }
-            ).then(res => resolve(res)).catch(e => reject(e));
-          }).catch(e => reject(e));
+          departmentApi.updateDepartmentUserRole(
+            departmentId,
+            {
+              role: config.role,
+              userPermissions: config.permission
+            }
+          ).then(res => resolve(res)).catch(e => reject(e));
         }));
       }
     }
