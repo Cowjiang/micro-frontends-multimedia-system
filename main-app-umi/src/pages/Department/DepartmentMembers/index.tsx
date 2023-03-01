@@ -332,7 +332,9 @@ const DepartmentMembersPage: React.FC = () => {
                   <SearchUserDialog
                     open={showSearchUser}
                     title="添加部门成员"
-                    searchType="no-department"
+                    dataFilter={
+                      (data) => data.filter(r => !r.department?.id)
+                    }
                     resultAction={
                       (user, _) => (
                         <Text className="ml-auto">

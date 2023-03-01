@@ -5,6 +5,7 @@ import { Department } from '@/services/api/modules/department/typings';
 import { departmentApi } from '@/services/api';
 import { useModel, useNavigate } from '@@/exports';
 import Loading from '@/components/Loading';
+import SearchUserDialog from '@/components/SearchUserDialog';
 
 const {Title, Text} = Typography;
 const {useToken} = theme;
@@ -32,6 +33,9 @@ const DepartmentMenu: React.FC = () => {
     });
   }, []);
 
+  // 显示搜索用户弹窗
+  const [showSearchUser, setShowSearchUser] = useState(false);
+
   return (
     <Loading spinning={loading} size="large">
       <div className="department-menu w-full h-full">
@@ -44,14 +48,34 @@ const DepartmentMenu: React.FC = () => {
               className="custom-input"
               style={{background: colorFillSecondary}}
               placeholder="搜索部门/成员..."
+              value=""
+              onClick={() => setShowSearchUser(true)}
             />
             <Button
               className="!w-[40px] ml-2"
               type="primary"
               icon={<i className="fi fi-br-search" />}
+              onClick={() => setShowSearchUser(true)}
             />
           </div>
           <div className="w-full h-6"></div>
+          <SearchUserDialog
+            open={showSearchUser}
+            title="搜索项目成员"
+            dataFilter={
+              (data) => data.filter(r => r.department?.id)
+            }
+            resultAction={
+              (user, _) => (
+                <Text className="ml-auto">
+                  <a style={{color: token.colorPrimary}}>
+                    查看
+                  </a>
+                </Text>
+              )
+            }
+            onCancel={() => setShowSearchUser(false)}
+          />
         </div>
         <div className="w-full">
           <div className="w-full px-4">

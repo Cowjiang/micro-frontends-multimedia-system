@@ -194,7 +194,6 @@ const ProjectMembersPage = () => {
                         <SearchUserDialog
                           open={showSearchUser}
                           title="添加项目成员"
-                          searchType="custom"
                           dataFilter={
                             (data) => data.filter(r => r.department?.id === member.department?.id)
                           }

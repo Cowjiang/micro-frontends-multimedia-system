@@ -34,7 +34,7 @@ const SideMenuPanel: React.FC<SideMenuPanelProps> = (props) => {
         opacity
       }}
     >
-      <div className="min-h-[80vh]">
+      <div className="content min-h-[80vh] overflow-auto">
         {props.children}
       </div>
       <div

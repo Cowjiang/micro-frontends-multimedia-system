@@ -13,7 +13,7 @@ const SearchUserDialog: React.FC<SearchUserDialogProps> = (props) => {
   const [modal, contextHolder] = Modal.useModal();
   const {token} = useToken();
 
-  const {searchType, dataFilter, resultAction, ...antdModalProps} = props;
+  const {dataFilter, resultAction, ...antdModalProps} = props;
 
   const [searchResult, setSearchResult] = useState<UserSearchListVo[]>([]);
   const [searching, setSearching] = useState(false);
@@ -21,7 +21,7 @@ const SearchUserDialog: React.FC<SearchUserDialogProps> = (props) => {
   const onSearch = async (value: string) => {
     setSearching(true);
     let {data: userList} = await userApi.searchUser({keywords: value});
-    if (props.searchType === 'custom' && dataFilter) {
+    if (dataFilter) {
       userList = dataFilter(userList ?? []);
     }
     setSearchResult(userList ?? []);
