@@ -30,11 +30,6 @@ const ProjectMenu: React.FC = () => {
     getProjectList().then(() => {});
   }, []);
 
-  // 项目点击
-  const handleProjectClick = (projectId: number) => {
-    navigate(`/project/${projectId}/detail`);
-  };
-
   return (
     <Loading spinning={loading} size="large">
       <div className="project-menu w-full h-full">
@@ -104,11 +99,12 @@ const ProjectMenu: React.FC = () => {
                           {
                             label: '项目详情',
                             key: `detail${project.project.id}`,
-                            onClick: () => handleProjectClick(project.project.id as number)
+                            onClick: () => navigate(`/project/${project.project.id}/detail`)
                           },
                           {
                             label: '稿件列表',
-                            key: `draftList${project.project.id}`
+                            key: `draftList${project.project.id}`,
+                            onClick: () => navigate(`/project/${project.project.id}/draft/list`)
                           }
                         ]
                       }))

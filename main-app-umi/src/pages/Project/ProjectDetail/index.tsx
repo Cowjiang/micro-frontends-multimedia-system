@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Breadcrumb, Button, Col, Divider, List, Row, Tabs, TabsProps, Tag, theme, Typography } from 'antd';
 import { useModel, useNavigate, useParams } from '@@/exports';
 import Card from '@/components/Card';
@@ -7,13 +7,33 @@ import { useSetDocTitle } from '@/utils/hooks';
 import ReactECharts from 'echarts-for-react';
 import { EChartsOption } from 'echarts';
 import { draftApi, projectApi } from '@/services/api';
-import { ProjectVo } from '@/services/api/modules/project/typings';
+import { ProjectMemberVo, ProjectVo } from '@/services/api/modules/project/typings';
 import dayjs from 'dayjs';
 import { ProjectContributionVo } from '@/services/api/modules/draft/typings';
 import { formatDraftType } from '@/utils/format';
 
 const {useToken} = theme;
 const {Title, Text} = Typography;
+
+// 稿件列表标签
+const draftTabsItems: TabsProps['items'] = [
+  {
+    key: '1',
+    label: `全部稿件`
+  }, {
+    key: '2',
+    label: `图文`
+  }, {
+    key: '3',
+    label: `H5`
+  }, {
+    key: '4',
+    label: `音视频`
+  }, {
+    key: '5',
+    label: `其它`
+  }
+];
 
 const ProjectDetailPage: React.FC = () => {
   const {id: projectId} = useParams();
@@ -54,13 +74,22 @@ const ProjectDetailPage: React.FC = () => {
   };
 
   useEffect(() => {
-    Promise.all([getProjectInfo(), getDraftList()]).then(() => {
+    Promise.all([getProjectInfo(), getDraftList(), getProjectMembers()]).then(() => {
       setLoading(false);
     });
   }, []);
   useSetDocTitle(`项目详情 - ${projectInfo?.project.projectName}`);
 
-  const option: EChartsOption = {
+  // 项目成员列表
+  const [projectMemberList, setProjectMemberList] = useState<ProjectMemberVo[]>();
+  const getProjectMembers = async () => {
+    if (projectId) {
+      const {data: projectMembers} = await projectApi.getProjectMember(Number(projectId));
+      setProjectMemberList(projectMembers ?? []);
+    }
+  };
+
+  const memberChartOption: EChartsOption = useMemo(() => ({
     title: {
       text: '部门参与人数',
       left: 'center',
@@ -72,15 +101,11 @@ const ProjectDetailPage: React.FC = () => {
       }
     },
     darkMode: darkTheme,
-    tooltip: {
-      trigger: 'item'
-    },
+    tooltip: {trigger: 'item'},
     legend: {
       bottom: 0,
       left: 'center',
-      textStyle: {
-        color: colorText
-      }
+      textStyle: {color: colorText}
     },
     series: [
       {
@@ -95,42 +120,14 @@ const ProjectDetailPage: React.FC = () => {
         ],
         radius: ['25%', '55%'],
         center: ['50%', '46%'],
-        label: {
-          backgroundColor: 'transparent'
-        },
-        data: [
-          {value: 1, name: '新媒体记者部'},
-          {value: 4, name: '编辑部'},
-          {value: 2, name: '策划部'},
-          {value: 3, name: '设计部'},
-          {value: 2, name: '技术与开发部'}
-        ]
+        label: {backgroundColor: 'transparent'},
+        data: projectMemberList?.map(d => ({
+          name: d.department?.name ?? '',
+          value: d.userProfileList?.length ?? 0
+        }))
       }
     ]
-  };
-
-  const items: TabsProps['items'] = [
-    {
-      key: '1',
-      label: `全部稿件`
-    },
-    {
-      key: '2',
-      label: `图文`
-    },
-    {
-      key: '3',
-      label: `H5`
-    },
-    {
-      key: '4',
-      label: `音视频`
-    },
-    {
-      key: '5',
-      label: `其它`
-    }
-  ];
+  }), [projectMemberList]);
 
   return (
     <div className="project-detail-page w-full h-full px-12 flex flex-col">
@@ -247,13 +244,13 @@ const ProjectDetailPage: React.FC = () => {
               <div className="w-full h-[300px] overflow-y-auto flex">
                 <div className="w-full flex-grow">
                   <ReactECharts
-                    option={option}
+                    option={memberChartOption}
                   />
                 </div>
                 <div className="w-12 flex-shrink-0"></div>
                 <div className="w-full flex-grow">
                   <ReactECharts
-                    option={option}
+                    option={memberChartOption}
                   />
                 </div>
               </div>
@@ -276,7 +273,7 @@ const ProjectDetailPage: React.FC = () => {
                   className="!h-auto"
                   defaultActiveKey="1"
                   items={
-                    items.map((item, index) => ({
+                    draftTabsItems.map((item, index) => ({
                       ...item,
                       children: (
                         <List
@@ -327,7 +324,7 @@ const ProjectDetailPage: React.FC = () => {
               loadingOptions={{paragraph: {rows: 6}}}
             >
               <div className="w-full h-[300px] flex flex-col overflow-y-auto">
-                <Tabs className="!h-auto" defaultActiveKey="1" items={items} />
+                <Tabs className="!h-auto" defaultActiveKey="1" items={draftTabsItems} />
                 <List
                   dataSource={[]}
                   locale={{
