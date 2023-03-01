@@ -300,7 +300,12 @@ const DraftListPage: React.FC = () => {
             right: (
               <div className="flex">
                 <Input.Search placeholder="搜索稿件..." enterButton />
-                <Button className="ml-4" type="primary" icon={<PlusOutlined />}>
+                <Button
+                  className="ml-4"
+                  type="primary"
+                  icon={<PlusOutlined />}
+                  onClick={() => navigate(`/project/${projectId}/draft/new`)}
+                >
                   新建稿件
                 </Button>
                 <Button className="ml-4" type="primary" ghost onClick={changeEditStatus}>
