@@ -11,8 +11,8 @@
     "start": "npm run dev"
   },
   "dependencies": {
-    "@ant-design/cssinjs": "^1.5.6",
-    "@ant-design/icons": "^4.7.0",
+    "@ant-design/cssinjs": "^1.6.1",
+    "@ant-design/icons": "^4.8.0",
     "@ant-design/pro-components": "^2.0.1",
     "@flaticon/flaticon-uicons": "^2.0.1",
     "@tinymce/tinymce-react": "^4.3.0",
@@ -20,7 +20,7 @@
     "@umijs/max": "^4.0.52",
     "ahooks": "^3.7.2",
     "animate.css": "^4.1.1",
-    "antd": "^5.1.6",
+    "antd": "^5.2.3",
     "classnames": "^2.3.2",
     "dayjs": "^1.11.7",
     "echarts": "^5.4.1",
