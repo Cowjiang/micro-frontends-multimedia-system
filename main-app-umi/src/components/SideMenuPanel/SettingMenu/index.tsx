@@ -49,14 +49,17 @@ const SettingMenu: React.FC = () => {
                   {
                     label: '账号设置',
                     key: 'account-setting',
+                    onClick: () => navigate('/settings/personal', {replace: true})
                   },
                   {
                     label: '隐私设置',
                     key: 'private-setting',
+                    onClick: () => navigate('/settings/personal', {replace: true})
                   },
                   {
                     label: '安全设置',
                     key: 'secure-setting',
+                    onClick: () => navigate('/settings/personal', {replace: true})
                   }
                 ]
               },
@@ -69,14 +72,17 @@ const SettingMenu: React.FC = () => {
                   {
                     label: '外观设置',
                     key: 'appearance-setting',
+                    onClick: () => navigate('/settings/general', {replace: true})
                   },
                   {
                     label: '通知设置',
                     key: 'notification-setting',
+                    onClick: () => navigate('/settings/general', {replace: true})
                   },
                   {
                     label: '语言设置',
                     key: 'language-setting',
+                    onClick: () => navigate('/settings/general', {replace: true})
                   }
                 ]
               },
