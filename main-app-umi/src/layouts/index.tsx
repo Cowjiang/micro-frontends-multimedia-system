@@ -8,9 +8,11 @@ import ChatDialog from '@/components/ChatDialog';
 import { NavItem } from '@/components/SideNavBar/typings';
 import { UserModelState } from '@/models/user';
 import TabsLayout from '@/layouts/tabs';
+import { PRIMARY_COLOR } from '@/constants';
 
 export default () => {
   const {loading, setLoading} = useModel('global');
+  const {primaryColor} = useModel('theme');
   const navigate = useNavigate();
   const routes = useSelectedRoutes();
   const lastRoute = routes.at(-1); //当前路由
@@ -81,6 +83,9 @@ export default () => {
   return (
     <ConfigProvider
       theme={{
+        token: {
+          colorPrimary: primaryColor
+        },
         algorithm: darkTheme ? theme.darkAlgorithm : theme.defaultAlgorithm
       }}
     >

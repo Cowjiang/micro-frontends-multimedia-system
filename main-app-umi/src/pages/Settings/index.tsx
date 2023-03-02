@@ -9,14 +9,15 @@ import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { darkThemeImage, lightThemeImage } from '@/assets/images/svg/themeSvg';
 import { UserProfileDto, UserProfileExtVo } from '@/services/api/modules/user/typings';
 import { userApi } from '@/services/api';
+import { PRIMARY_COLOR } from '@/constants';
 
 const {Title, Text} = Typography;
 const {useToken} = theme;
 
-const colorList = ['#4c8045', '#4994c4', '#ba79b1', '#d23918', '#8d7bea'];
+const colorList = [PRIMARY_COLOR, '#4c8045', '#1e90ff', '#ff6b81', '#d23918', '#8d7bea'];
 
 const SettingsPage = () => {
-  const {darkTheme, setDarkTheme} = useModel('theme');
+  const {darkTheme, setDarkTheme, primaryColor, setPrimaryColor} = useModel('theme');
   const {messageApi} = useModel('messageApi');
   const dispatch = useDispatch();
   const {token} = useToken();
@@ -351,19 +352,16 @@ const SettingsPage = () => {
                   <div className="w-full flex flex-col mt-6">
                     <Title level={5}>主题颜色</Title>
                     <div className="flex mt-2">
-                      <div
-                        className="w-[42px] h-[42px] flex justify-center items-center mr-4 rounded-full"
-                        style={{background: colorPrimary}}
-                      >
-                        <i className="fi fi-br-check text-xl" />
-                      </div>
                       {
                         colorList.map(background => (
                           <div
-                            className="w-[42px] h-[42px] flex justify-center items-center mr-4 rounded-full"
+                            className="w-[42px] h-[42px] flex justify-center items-center mr-4 rounded-full cursor-pointer"
                             style={{background}}
                             key={background}
-                          ></div>
+                            onClick={() => setPrimaryColor(background)}
+                          >
+                            {primaryColor === background && <i className="fi fi-br-check text-white text-xl" />}
+                          </div>
                         ))
                       }
                     </div>

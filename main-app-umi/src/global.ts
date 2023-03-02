@@ -2,6 +2,11 @@
 //
 // eruda.init();
 
+import { PRIMARY_COLOR } from '@/constants';
+
+const localPrimaryColor = localStorage.getItem('PRIMARY_COLOR') ?? PRIMARY_COLOR;
+document.documentElement.style.setProperty('--primary-color', localPrimaryColor);
+
 import WujieReact from 'wujie-react';
 import { vuetifyConfig } from '@/config/vuetify';
 import { message } from 'antd';
