@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import './index.less';
 import { Button, Input, Menu, theme, Typography } from 'antd';
-import { useModel, useNavigate } from '@@/exports';
+import { useDispatch, useModel, useNavigate } from '@@/exports';
 
 const {Title, Text} = Typography;
 const {useToken} = theme;
 
 const SettingMenu: React.FC = () => {
+  const dispatch = useDispatch();
   const {messageApi} = useModel('messageApi');
   const navigate = useNavigate();
   const {darkTheme} = useModel('theme');
@@ -99,7 +100,10 @@ const SettingMenu: React.FC = () => {
                   {
                     label: '退出登录',
                     key: 'logout',
-                    danger: true
+                    danger: true,
+                    onClick: () => {
+                      dispatch({type: 'user/logout'})
+                    }
                   }
                 ]
               }

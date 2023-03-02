@@ -235,3 +235,61 @@ export interface MedalVo {
   stat?: number;
   style?: string;
 }
+
+/**
+ * UserProfileDto
+ */
+export interface UserProfileDto {
+  /**
+   * 详细地址
+   */
+  addressDetails?: string;
+  /**
+   * 行政区代码
+   */
+  areaCode?: string;
+  /**
+   * 头像
+   */
+  avgPath?: string;
+  /**
+   * 生日 yyyy-MM-dd
+   */
+  birthday?: Date;
+  /**
+   * 封面图片
+   */
+  coverUrl?: string;
+  /**
+   * 邮箱
+   */
+  email?: string;
+  /**
+   * 性别:1 男 0 女
+   */
+  gender?: number;
+  /**
+   * 手机号
+   */
+  phone?: string;
+  /**
+   * 真实姓名
+   */
+  realName?: string;
+  /**
+   * 学校id
+   */
+  schoolId?: number;
+  /**
+   * 个人简介
+   */
+  signature?: string;
+  /**
+   * 用户id
+   */
+  userId: number;
+  /**
+   * 用户名
+   */
+  username?: string;
+}

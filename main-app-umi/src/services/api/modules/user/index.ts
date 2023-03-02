@@ -1,6 +1,6 @@
 import { request } from '@@/exports';
 import { IResponseData } from '@/services/typings';
-import { UserProfileExtVo, UserSearchListVo } from '@/services/api/modules/user/typings';
+import { UserProfileDto, UserProfileExtVo, UserSearchListVo } from '@/services/api/modules/user/typings';
 
 // 获取当前用户信息
 async function getCurrentUserInfo(
@@ -26,7 +26,20 @@ async function searchUser(
   });
 }
 
+// 修改用户信息
+async function updateUserInfo(
+  data: UserProfileDto,
+  options?: { [key: string]: any }
+) {
+  return request<IResponseData<any>>('/user/profile', {
+    method: 'PUT',
+    data,
+    ...(options || {})
+  });
+}
+
 export default {
   getCurrentUserInfo,
-  searchUser
+  searchUser,
+  updateUserInfo
 };

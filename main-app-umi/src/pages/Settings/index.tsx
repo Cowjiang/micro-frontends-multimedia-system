@@ -1,12 +1,14 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './index.less';
 import classNames from 'classnames';
 import { Avatar, Button, Input, Radio, Select, Switch, theme, Typography, Upload } from 'antd';
-import { useLocation, useModel, useSelector } from '@@/exports';
+import { useDispatch, useLocation, useModel, useSelector } from '@@/exports';
 import { useSize } from 'ahooks';
 import { UserModelState } from '@/models/user';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { darkThemeImage, lightThemeImage } from '@/assets/images/svg/themeSvg';
+import { UserProfileDto, UserProfileExtVo } from '@/services/api/modules/user/typings';
+import { userApi } from '@/services/api';
 
 const {Title, Text} = Typography;
 const {useToken} = theme;
@@ -16,6 +18,7 @@ const colorList = ['#4c8045', '#4994c4', '#ba79b1', '#d23918', '#8d7bea'];
 const SettingsPage = () => {
   const {darkTheme, setDarkTheme} = useModel('theme');
   const {messageApi} = useModel('messageApi');
+  const dispatch = useDispatch();
   const {token} = useToken();
   const {
     colorFillQuaternary,
@@ -42,6 +45,29 @@ const SettingsPage = () => {
   const uploadButton = <div>{imgUploading ? <LoadingOutlined /> : <PlusOutlined />}</div>;
 
   const {userInfo}: UserModelState = useSelector((state: any) => state.user);
+  const [userInfoForm, setUserInfoForm] = useState<UserProfileExtVo>();
+  useEffect(() => {
+    setUserInfoForm(userInfo);
+  }, [userInfo]);
+
+  // 更新用户信息
+  const updateUserInfo = (updateValue: Partial<UserProfileDto>) => {
+    userApi.updateUserInfo({
+      userId: userInfo.userId as number,
+      ...updateValue
+    }).then(res => {
+      dispatch({
+        type: 'user/setUserInfo',
+        payload: {
+          ...userInfo,
+          ...updateValue
+        }
+      });
+      messageApi.success('修改成功');
+    }).catch(e => {
+      messageApi.error('修改失败');
+    });
+  };
 
   return (
     <div className="settings-page w-full h-full px-16 flex justify-center">
@@ -82,8 +108,11 @@ const SettingsPage = () => {
                           style={{background: darkTheme ? colorFillSecondary : '#fff'}}
                           size="large"
                           placeholder="我的用户名"
-                          value={userInfo.username}
-                          // onChange={(e) => setFormValue({...formValue, name: e.target.value})}
+                          value={userInfoForm?.username ?? ''}
+                          onChange={({target: {value}}) => setUserInfoForm({...userInfoForm, username: value})}
+                          onBlur={({target: {value}}) => {
+                            value !== userInfo?.username && updateUserInfo({username: value});
+                          }}
                         />
                       </div>
                       <div className="w-full flex flex-col mt-4">
@@ -92,8 +121,10 @@ const SettingsPage = () => {
                           className="!mt-2"
                           buttonStyle="solid"
                           size="large"
-                          value={[0, 1].includes(userInfo.gender as number) ? userInfo.gender : 1}
-                          // onChange={onChange}
+                          value={[0, 1].includes(userInfoForm?.gender as number) ? userInfoForm?.gender : 1}
+                          onChange={({target: {value}}) => {
+                            updateUserInfo({gender: value});
+                          }}
                         >
                           <Radio.Button
                             value={1}
@@ -156,8 +187,11 @@ const SettingsPage = () => {
                       autoSize={{minRows: 2, maxRows: 3}}
                       size="large"
                       placeholder="我的个人简介"
-                      value={userInfo?.signature ?? ''}
-                      // onChange={(e) => setFormValue({...formValue, description: e.target.value})}
+                      value={userInfoForm?.signature ?? ''}
+                      onChange={({target: {value}}) => setUserInfoForm({...userInfoForm, signature: value})}
+                      onBlur={({target: {value}}) => {
+                        value !== userInfo?.signature && updateUserInfo({signature: value});
+                      }}
                     />
                   </div>
                   <div className="w-full mt-6">
@@ -167,8 +201,11 @@ const SettingsPage = () => {
                       style={{background: darkTheme ? colorFillSecondary : '#fff'}}
                       size="large"
                       placeholder="我的手机号"
-                      value={userInfo.phone}
-                      // onChange={(e) => setFormValue({...formValue, name: e.target.value})}
+                      value={userInfoForm?.phone ?? ''}
+                      onChange={({target: {value}}) => setUserInfoForm({...userInfoForm, phone: value})}
+                      onBlur={({target: {value}}) => {
+                        value !== userInfo?.phone && updateUserInfo({phone: value});
+                      }}
                     />
                   </div>
                   <div className="w-full mt-6">
@@ -178,8 +215,11 @@ const SettingsPage = () => {
                       style={{background: darkTheme ? colorFillSecondary : '#fff'}}
                       size="large"
                       placeholder="我的电子邮箱"
-                      value={userInfo.email}
-                      // onChange={(e) => setFormValue({...formValue, name: e.target.value})}
+                      value={userInfoForm?.email ?? ''}
+                      onChange={({target: {value}}) => setUserInfoForm({...userInfoForm, email: value})}
+                      onBlur={({target: {value}}) => {
+                        value !== userInfo?.email && updateUserInfo({email: value});
+                      }}
                     />
                   </div>
                 </div>
@@ -200,12 +240,9 @@ const SettingsPage = () => {
                   <span className="text-base">这里是隐私设置，可以设置保护自己的隐私。</span>
                 </div>
                 <div
-                  className={
-                    classNames(
-                      'w-3/5 min-h-[300px] p-12 flex flex-col',
-                      {'!w-full !p-10': containerSize?.width && containerSize.width < 800}
-                    )
-                  }
+                  className={classNames('w-3/5 min-h-[300px] p-12 flex flex-col',
+                    {'!w-full !p-10': containerSize?.width && containerSize.width < 800}
+                  )}
                   style={{background: colorFillQuaternary}}
                 >
                   <div className="w-full flex flex-col">
