@@ -1,7 +1,7 @@
 import { Effect, Reducer } from '@@/plugin-dva/types';
 import { authApi, userApi } from '@/services/api';
 import { getDvaApp } from '@@/exports';
-import { SimpleUserInfo } from '@/services/api/modules/user/typings';
+import { UserProfileExtVo } from '@/services/api/modules/user/typings';
 import { message } from 'antd';
 
 export interface UserModelState {
@@ -9,7 +9,7 @@ export interface UserModelState {
     accessToken: string,
     expireTime: number
   };
-  userInfo: SimpleUserInfo;
+  userInfo: UserProfileExtVo;
 }
 
 export interface UserModelType {

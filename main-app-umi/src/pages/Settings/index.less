@@ -1,0 +1,40 @@
+.settings-page {
+  .custom-input {
+    height: 60px;
+    border-width: 2px !important;
+
+    &:not(&:focus) {
+      border-color: transparent !important;
+    }
+  }
+
+  .ant-radio-button-wrapper {
+    border-color: transparent !important;
+  }
+
+  .ant-upload-select {
+    border: unset !important;
+    width: 100px !important;
+    height: 100px !important;
+
+    .ant-avatar {
+      background: unset;
+    }
+  }
+}
+
+.light {
+  .settings-page {
+    .ant-upload-select {
+      background: #fff !important;
+    }
+  }
+}
+
+.dark {
+  .settings-page {
+    .ant-upload-select {
+      background: #383838 !important;
+    }
+  }
+}

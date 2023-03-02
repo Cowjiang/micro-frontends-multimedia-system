@@ -50,7 +50,12 @@ const routes = [
       {path: '/department/:id/members', component: '@/pages/Department/DepartmentMembers', title: '部门成员'},
       {path: '/department/:id/roles/config', component: '@/pages/Department/DepartmentRolesConfig', title: '部门角色设置'},
     ]
-  }
+  },
+  {
+    path: '/settings',
+    title: '设置中心',
+    component: '@/pages/Settings/index'
+  },
 ]
 
 export default routes;

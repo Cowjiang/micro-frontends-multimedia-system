@@ -24,7 +24,7 @@ const SideNavBar: React.FC<SideNavBarProps> = (
     {name: 'file', title: '资源库', icon: 'fi fi-sr-cloud-upload'},
     {name: 'department', title: '部门信息', icon: 'fi fi-ss-users', url: '/department'},
     {name: 'chat', title: '聊天', icon: 'fi fi-sr-comment'},
-    {name: 'setting', title: '设置', icon: 'fi fi-sr-settings', url: '/setting'},
+    {name: 'settings', title: '设置', icon: 'fi fi-sr-settings', url: '/settings'},
     {
       name: 'user',
       bottom: true,

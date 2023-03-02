@@ -9,6 +9,7 @@ import IndexPage from '@/pages/Index';
 import { AppModelState } from '@/models/app';
 import DepartmentMenu from '@/components/SideMenuPanel/DepartmentMenu';
 import ProjectMenu from '@/components/SideMenuPanel/ProjectMenu';
+import SettingMenu from '@/components/SideMenuPanel/SettingMenu';
 import { useSize } from 'ahooks';
 
 const {useToken} = theme;
@@ -156,6 +157,8 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
       sideMenuPanelContent = <DepartmentMenu />;
     } else if (activeTabKey.includes('project')) {
       sideMenuPanelContent = <ProjectMenu />;
+    } else if (activeTabKey.includes('setting')){
+      sideMenuPanelContent = <SettingMenu />;
     } else {
       sideMenuPanelContent = <></>;
     }

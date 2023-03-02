@@ -133,6 +133,89 @@ export interface UserProfile {
 }
 
 /**
+ * UserProfileExtVo
+ */
+export interface UserProfileExtVo {
+  /**
+   * 详细地址
+   */
+  addressDetails?: string;
+  /**
+   * 行政区代码
+   */
+  areaCode?: string;
+  /**
+   * 关注
+   */
+  attentions?: number;
+  /**
+   * 头像
+   */
+  avgPath?: string;
+  /**
+   * 生日
+   */
+  birthday?: Date;
+  /**
+   * 封面图片
+   */
+  coverUrl?: string;
+  /**
+   * 信用积分
+   */
+  credit?: number;
+  /**
+   * 邮箱
+   */
+  email?: string;
+  /**
+   * 粉丝
+   */
+  fans?: number;
+  /**
+   * 性别:1 男 0 女
+   */
+  gender?: number;
+  /**
+   * 是否被关注
+   */
+  isConcerned?: boolean;
+  /**
+   * 是否关注
+   */
+  isFriend?: boolean;
+  /**
+   * 勋章
+   */
+  medals?: MedalVo[];
+  /**
+   * 手机号
+   */
+  phone?: string;
+  /**
+   * 积分
+   */
+  point?: number;
+  /**
+   * 姓名
+   */
+  realName?: string;
+  /**
+   * 个性签名
+   */
+  signature?: string;
+  /**
+   * 修改时间
+   */
+  updatedTime?: number;
+  userId?: number;
+  /**
+   * 用户名
+   */
+  username?: string;
+}
+
+/**
  * UserSearchListVo
  */
 export interface UserSearchListVo {
@@ -141,3 +224,14 @@ export interface UserSearchListVo {
   userProfile: UserProfile;
 }
 
+/**
+ * MedalVo
+ */
+export interface MedalVo {
+  createdTime?: number;
+  desc?: string;
+  id?: number;
+  name?: string;
+  stat?: number;
+  style?: string;
+}

@@ -1,12 +1,12 @@
 import { request } from '@@/exports';
 import { IResponseData } from '@/services/typings';
-import { SimpleUserInfo, UserSearchListVo } from '@/services/api/modules/user/typings';
+import { UserProfileExtVo, UserSearchListVo } from '@/services/api/modules/user/typings';
 
 // 获取当前用户信息
 async function getCurrentUserInfo(
   options?: { [key: string]: any }
 ) {
-  return request<IResponseData<SimpleUserInfo>>('/user/current/info', {
+  return request<IResponseData<UserProfileExtVo>>('/user/current/info', {
     method: 'GET',
     ...(options || {})
   });

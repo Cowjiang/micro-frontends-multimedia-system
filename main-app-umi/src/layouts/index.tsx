@@ -40,7 +40,7 @@ export default () => {
 
   // 导航栏点击事件
   const handleNavItemClick = (e: NavItem) => {
-    if (['home', 'project', 'file', 'department', 'setting'].includes(e.value.name)) {
+    if (['home', 'project', 'file', 'department', 'settings'].includes(e.value.name)) {
       dispatch({
         type: 'app/setActiveNavIndex',
         payload: {
@@ -67,6 +67,8 @@ export default () => {
       activeNavIndex = 1;
     } else if (currentPath.includes('department')) {
       activeNavIndex = 3;
+    } else if (currentPath.includes('settings')) {
+      activeNavIndex = 5;
     } else {
       activeNavIndex = 0;
     }
