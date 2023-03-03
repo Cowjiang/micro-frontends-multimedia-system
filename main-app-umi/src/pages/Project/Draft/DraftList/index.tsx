@@ -1,10 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams, useSearchParams } from '@@/exports';
 import { Breadcrumb, Button, Dropdown, Input, Skeleton, Table, Tabs, Tag, theme, Typography } from 'antd';
 import { useSetDocTitle } from '@/utils/hooks';
 import { ColumnsType } from 'antd/es/table';
 import Empty from '@/components/Empty';
 import { PlusOutlined } from '@ant-design/icons';
+import { ProjectVo } from '@/services/api/modules/project/typings';
+import { draftApi, projectApi } from '@/services/api';
+import { DraftType, ProjectContributionVo } from '@/services/api/modules/draft/typings';
+import { formatDate, formatDraftType } from '@/utils/format';
 
 const {useToken} = theme;
 const {Title, Text, Paragraph} = Typography;
@@ -16,13 +20,6 @@ const draftListTypes: { [key: string]: string } = {
   media: '音视频',
   others: '其它'
 };
-
-interface ProjectListDataType {
-  id: number;
-  draftName: string;
-  username: string;
-  status: string[];
-}
 
 const DraftListPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -44,25 +41,53 @@ const DraftListPage: React.FC = () => {
       }
     }
   }, [draftListType, searchParams]);
-  const projectInfo = {
-    projectName: '大美中国科技之美'
-  };
-  useSetDocTitle(`稿件 - ${projectInfo.projectName}`);
 
-  const columns: ColumnsType<ProjectListDataType> = [
+  // 表格加载状态
+  const [tableLoading, setTableLoading] = useState(true);
+  // 项目信息
+  const [projectInfo, setProjectInfo] = useState<ProjectVo>();
+  // 获取项目信息
+  const getProjectInfo = async () => {
+    if (projectId) {
+      const {data: projectInfo} = await projectApi.getProjectDetail(Number(projectId));
+      setProjectInfo(projectInfo ?? undefined);
+    }
+  };
+
+  //稿件列表
+  const [draftList, setDraftList] = useState<ProjectContributionVo[]>([]);
+  // 获取稿件列表
+  const getDraftList = async () => {
+    if (projectId) {
+      const {data: draftList} = await draftApi.getProjectDraftList(projectId);
+      setDraftList((draftList ?? []).map(draft => ({key: draft.projectContribution.id, ...draft})));
+    }
+  };
+
+  useEffect(() => {
+    Promise.all([getProjectInfo(), getDraftList()]).then(() => {
+      setTableLoading(false);
+    });
+  }, []);
+  useSetDocTitle(`稿件 - ${projectInfo?.project.projectName}`);
+
+  const columns: ColumnsType<ProjectContributionVo> = [
     {
       title: '编号',
       dataIndex: 'draftId',
       key: 'draftId',
       width: 60,
-      ellipsis: true
+      ellipsis: true,
+      render: (_, {projectContribution: {id}}) => (
+        <Text># {id}</Text>
+      )
     },
     {
       title: '缩略图',
       dataIndex: 'draftImg',
       key: 'draftImg',
       width: 120,
-      render: () => (
+      render: (_, {projectContribution: {imgUrl}}) => (
         <Skeleton.Node active className="!w-[80px] !h-[80px]">
           <i className="fi fi-br-picture text-xl opacity-50"></i>
         </Skeleton.Node>
@@ -72,10 +97,10 @@ const DraftListPage: React.FC = () => {
       title: '类型',
       dataIndex: 'draftType',
       key: 'draftType',
-      width: 70,
-      render: () => (
-        <Tag color="#93ce47">
-          H5
+      width: 100,
+      render: (_, {projectContribution: {type}}) => (
+        <Tag color={formatDraftType(type ?? '').color}>
+          {formatDraftType(type ?? '').tag}
         </Tag>
       )
     },
@@ -84,9 +109,9 @@ const DraftListPage: React.FC = () => {
       dataIndex: 'draftName',
       key: 'draftName',
       width: '60%',
-      render: (_, {draftName, id}) => (
+      render: (_, {projectContribution: {name, channels}}) => (
         <div className="flex flex-col">
-          <Paragraph ellipsis={{rows: 2}}>{draftName}</Paragraph>
+          <Paragraph className="cursor-pointer" ellipsis={{rows: 2}}>{name}</Paragraph>
           <div className="mt-auto flex flex-wrap">
             <Tag className="!mt-1" color="purple">客户端</Tag>
             <Tag className="!mt-1" color="green">微信</Tag>
@@ -101,7 +126,10 @@ const DraftListPage: React.FC = () => {
       dataIndex: 'username',
       key: 'username',
       width: '25%',
-      ellipsis: true
+      ellipsis: true,
+      render: (_, {creatorInfo: {username}}) => (
+        <Text>{username}</Text>
+      )
     },
     {
       title: '稿件状态',
@@ -109,19 +137,19 @@ const DraftListPage: React.FC = () => {
       dataIndex: 'status',
       width: 120,
       ellipsis: true,
-      render: (_, {status}) => (
+      render: (_, {projectContribution: {stat}}) => (
         <>
-          {status.map((tag) => {
-            let color = tag !== '已发送' ? 'geekblue' : 'green';
-            if (tag === '审核不通过') {
-              color = 'red';
-            }
-            return (
-              <Tag color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
+          {/*{status.map((tag) => {*/}
+          {/*  let color = tag !== '已发送' ? 'geekblue' : 'green';*/}
+          {/*  if (tag === '审核不通过') {*/}
+          {/*    color = 'red';*/}
+          {/*  }*/}
+          {/*  return (*/}
+          {/*    <Tag color={color} key={tag}>*/}
+          {/*      {tag.toUpperCase()}*/}
+          {/*    </Tag>*/}
+          {/*  );*/}
+          {/*})}*/}
         </>
       )
     },
@@ -130,14 +158,20 @@ const DraftListPage: React.FC = () => {
       key: 'resourceCount',
       dataIndex: 'resourceCount',
       width: 100,
-      ellipsis: true
+      ellipsis: true,
+      render: (_, {projectContribution: {materialNum}}) => (
+        <Text>{materialNum}</Text>
+      )
     },
     {
       title: '更新时间',
       key: 'updateTime',
       dataIndex: 'updateTime',
       width: '25%',
-      ellipsis: true
+      ellipsis: true,
+      render: (_, {projectContribution: {updatedTime}}) => (
+        <Text>{formatDate(updatedTime ?? '')}</Text>
+      )
     },
     {
       title: <div className="!ml-2">操作</div>,
@@ -177,45 +211,6 @@ const DraftListPage: React.FC = () => {
     }
   ];
 
-  const data: ProjectListDataType[] = [
-    {
-      id: 0,
-      draftName: '大美湾区科技之美大美湾区科技之美大美湾区科技之美大美湾区科技之美',
-      username: '破壁机',
-      status: ['已发送']
-    },
-    {
-      id: 1,
-      draftName: '大美湾区科技之美',
-      username: '破壁机',
-      status: ['审核不通过']
-    },
-    {
-      id: 2,
-      draftName: '大美湾区科技之美',
-      username: '破壁机',
-      status: ['已结束']
-    },
-    {
-      id: 3,
-      draftName: '大美湾区科技之美',
-      username: '破壁机',
-      status: ['已结束']
-    },
-    {
-      id: 4,
-      draftName: '大美湾区科技之美',
-      username: '破壁机',
-      status: ['已结束']
-    },
-    {
-      id: 5,
-      draftName: '大美湾区科技之美',
-      username: '破壁机',
-      status: ['已结束']
-    }
-  ];
-
   const handleTabsChange = (newTabKey: string) => {
     setSearchParams({type: newTabKey});
   };
@@ -229,9 +224,39 @@ const DraftListPage: React.FC = () => {
     setSelectedRowKeys([]);
   };
   // 表格行多选更改事件
-  const onSelectChange = (newSelectedRowKeys: React.Key[], selectedRows: ProjectListDataType[]) => {
+  const onSelectChange = (newSelectedRowKeys: React.Key[], selectedRows: ProjectContributionVo[]) => {
     setSelectedRowKeys(newSelectedRowKeys);
   };
+
+  const tableContext = useMemo(() => (
+    (filter?: (draft: ProjectContributionVo[]) => ProjectContributionVo[]) => (
+      <Table
+        className="mt-4"
+        columns={columns}
+        dataSource={filter ? filter(draftList) : draftList}
+        scroll={{x: 1200}}
+        loading={{
+          size: 'large',
+          spinning: tableLoading
+        }}
+        locale={{
+          emptyText: () => (
+            <div className="w-full my-48">
+              <Empty />
+            </div>
+          )
+        }}
+        {
+          ...{
+            rowSelection: editStatus ? {
+              selectedRowKeys,
+              onChange: onSelectChange
+            } : undefined
+          }
+        }
+      />
+    )
+  ), [draftListType, tableLoading]);
 
   return (
     <div className="draft-list-page w-full h-full px-12 flex flex-col">
@@ -239,7 +264,7 @@ const DraftListPage: React.FC = () => {
         <Breadcrumb className="!mt-2">
           <Breadcrumb.Item>
             <a onClick={() => navigate(`/project/${projectId}/detail`)}>
-              {projectInfo.projectName}
+              {projectInfo?.project.projectName}
             </a>
           </Breadcrumb.Item>
           <Breadcrumb.Item>稿件列表</Breadcrumb.Item>
@@ -255,45 +280,33 @@ const DraftListPage: React.FC = () => {
             {
               key: 'all',
               label: `全部稿件`,
-              children: (
-                <Table
-                  className="mt-4"
-                  columns={columns}
-                  dataSource={data}
-                  scroll={{x: 1200}}
-                  locale={{
-                    emptyText: () => (
-                      <div className="w-full my-48">
-                        <Empty />
-                      </div>
-                    )
-                  }}
-                  {
-                    ...{
-                      rowSelection: editStatus ? {
-                        selectedRowKeys,
-                        onChange: onSelectChange
-                      } : undefined
-                    }
-                  }
-                />
-              )
+              children: tableContext()
             },
             {
               key: 'article',
-              label: `图文`
+              label: `图文`,
+              children: tableContext(
+                draftList => draftList.filter(draft => draft.projectContribution.type === DraftType.ARTICLE)
+              )
             },
             {
               key: 'h5',
-              label: `H5`
+              label: `H5`,
+              children: tableContext(
+                draftList => draftList.filter(draft => draft.projectContribution.type === DraftType.HTML5)
+              )
             },
             {
               key: 'media',
-              label: `音视频`
+              label: `音视频`,
+              children: tableContext(
+                draftList => draftList.filter(draft => draft.projectContribution.type === DraftType.MEDIA)
+              )
             },
             {
               key: 'others',
-              label: `其它`
+              label: `其它`,
+              children: tableContext(() => [])
             }
           ]}
           tabBarExtraContent={{

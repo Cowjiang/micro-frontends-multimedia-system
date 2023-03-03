@@ -14,6 +14,10 @@ export interface ProjectContributionVo {
  */
 export interface ProjectContribution {
   /**
+   * 渠道
+   */
+  channels?: string;
+  /**
    * 稿件内容
    */
   content?: string;
@@ -21,11 +25,19 @@ export interface ProjectContribution {
    * 创建时间
    */
   createdTime?: string;
+  /**
+   * 创建人id
+   */
+  creatorId?: number;
   id?: number;
   /**
    * 封面url
    */
   imgUrl?: string;
+  /**
+   * 素材数
+   */
+  materialNum?: number;
   /**
    * 媒体文件url(音视频)
    */
@@ -41,13 +53,23 @@ export interface ProjectContribution {
   /**
    * 状态
    */
-  state?: number;
+  stat?: number;
   /**
    * 稿件类型 ARTICLE MEDIA HTML5
    */
-  type?: string;
+  type?: DraftType | string;
   /**
    * 更新时间
    */
   updatedTime?: string;
+  /**
+   * 负责人id
+   */
+  userId?: number;
+}
+
+export enum DraftType {
+  ARTICLE = 'ARTICLE',
+  MEDIA = 'MEDIA',
+  HTML5 = 'HTML5'
 }

@@ -283,16 +283,16 @@ const ProjectDetailPage: React.FC = () => {
                                 case 0:
                                   return draft;
                                 case 1:
-                                  return draft.projectContribution.type === 'ARTICLE';
+                                  return draft.projectContribution?.type === 'ARTICLE';
                                 case 2:
-                                  return draft.projectContribution.type === 'HTML5';
+                                  return draft.projectContribution?.type === 'HTML5';
                                 case 3:
-                                  return draft.projectContribution.type === 'MEDIA';
+                                  return draft.projectContribution?.type === 'MEDIA';
                               }
                             }).map(draft => ({
-                              id: draft.projectContribution.id,
-                              title: draft.projectContribution.name,
-                              type: draft.projectContribution.type
+                              id: draft.projectContribution?.id,
+                              title: draft.projectContribution?.name,
+                              type: draft.projectContribution?.type
                             }))
                           }
                           renderItem={(item) => (
