@@ -5,9 +5,13 @@ import { UserProfile } from '@/services/api/modules/user/typings';
  * ProjectVo
  */
 export interface ProjectVo {
-  charge:  UserProfile;
-  creator: UserProfile;
-  project: Project;
+  charge: UserProfile;
+  /**
+   * 稿件数
+   */
+  contributionNum?: number;
+  creator:         UserProfile;
+  project:         Project;
 }
 
 /**

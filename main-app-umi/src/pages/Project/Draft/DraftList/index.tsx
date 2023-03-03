@@ -30,9 +30,7 @@ const DraftListPage: React.FC = () => {
   const {token} = useToken();
   const {colorPrimaryText} = token;
 
-  const [draftListType, setDraftListType] = useState(
-    draftListTypes[searchParams.get('type') ?? '']
-  );
+  const [draftListType, setDraftListType] = useState(draftListTypes[searchParams.get('type') ?? '']);
   useEffect(() => {
     if (/\/project\/+[a-zA-Z0-9]+\/draft\/list/.test(location.pathname)) {
       setDraftListType(draftListTypes[searchParams.get('type') ?? '']);
@@ -79,7 +77,7 @@ const DraftListPage: React.FC = () => {
       width: 60,
       ellipsis: true,
       render: (_, {projectContribution: {id}}) => (
-        <Text># {id}</Text>
+        <Text type="secondary"># {id}</Text>
       )
     },
     {

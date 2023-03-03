@@ -9,7 +9,7 @@ import { EChartsOption } from 'echarts';
 import { draftApi, projectApi } from '@/services/api';
 import { ProjectMemberVo, ProjectVo } from '@/services/api/modules/project/typings';
 import dayjs from 'dayjs';
-import { ProjectContributionVo } from '@/services/api/modules/draft/typings';
+import { DraftType, ProjectContributionVo } from '@/services/api/modules/draft/typings';
 import { formatDraftType } from '@/utils/format';
 
 const {useToken} = theme;
@@ -89,9 +89,8 @@ const ProjectDetailPage: React.FC = () => {
     }
   };
 
-  const memberChartOption: EChartsOption = useMemo(() => ({
+  const chartBaseOption: EChartsOption = {
     title: {
-      text: '部门参与人数',
       left: 'center',
       top: 0,
       textStyle: {
@@ -106,6 +105,14 @@ const ProjectDetailPage: React.FC = () => {
       bottom: 0,
       left: 'center',
       textStyle: {color: colorText}
+    }
+  };
+
+  const memberChartOption: EChartsOption = useMemo(() => ({
+    ...chartBaseOption,
+    title: {
+      ...chartBaseOption.title,
+      text: '部门参与人数'
     },
     series: [
       {
@@ -127,7 +134,35 @@ const ProjectDetailPage: React.FC = () => {
         }))
       }
     ]
-  }), [projectMemberList]);
+  }), [projectMemberList, token]);
+
+  const draftChartOption: EChartsOption = useMemo(() => ({
+    ...chartBaseOption,
+    title: {
+      ...chartBaseOption.title,
+      text: '稿件构成'
+    },
+    series: [
+      {
+        name: '稿件数',
+        type: 'pie',
+        color: [
+          colorPrimary,
+          colorPrimaryActive,
+          colorPrimaryBgHover,
+          colorPrimaryBorder,
+          colorPrimaryBorderHover
+        ],
+        radius: ['25%', '55%'],
+        center: ['50%', '46%'],
+        label: {backgroundColor: 'transparent'},
+        data: [DraftType.ARTICLE, DraftType.HTML5, DraftType.MEDIA].map(draftType => ({
+          name: formatDraftType(draftType).tag,
+          value: draftList.filter(draft => draft.projectContribution?.type === draftType).length
+        }))
+      }
+    ]
+  }), [draftList, token]);
 
   return (
     <div className="project-detail-page w-full h-full px-12 flex flex-col">
@@ -250,7 +285,7 @@ const ProjectDetailPage: React.FC = () => {
                 <div className="w-12 flex-shrink-0"></div>
                 <div className="w-full flex-grow">
                   <ReactECharts
-                    option={memberChartOption}
+                    option={draftChartOption}
                   />
                 </div>
               </div>

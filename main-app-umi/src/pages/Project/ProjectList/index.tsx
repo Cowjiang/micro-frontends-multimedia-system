@@ -87,13 +87,13 @@ const ProjectListPage: React.FC = () => {
     },
     {
       title: '稿件数',
-      dataIndex: 'username',
-      key: 'username',
+      dataIndex: 'contributionNum',
+      key: 'contributionNum',
       width: 100,
       responsive: ['xl'],
-      render: (_, {}) => (
+      render: (_, {contributionNum}) => (
         <Text>
-
+          {contributionNum ?? 0}
         </Text>
       )
     },
