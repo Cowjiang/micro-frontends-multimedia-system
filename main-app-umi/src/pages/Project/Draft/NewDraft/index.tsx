@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Col, Row, theme, Typography } from 'antd';
-import { useModel } from '@@/exports';
+import { useModel, useNavigate, useParams } from '@@/exports';
 
 const {useToken} = theme;
 const {Title, Text} = Typography;
@@ -8,15 +8,18 @@ const {Title, Text} = Typography;
 const draftTypeList = [
   {
     title: '新建H5',
-    icon: <i className="fi fi-rr-link-alt" />
+    icon: <i className="fi fi-rr-link-alt" />,
+    type: 'h5'
   },
   {
     title: '新建图文',
-    icon: <i className="fi fi-rr-document" />
+    icon: <i className="fi fi-rr-document" />,
+    type: 'article'
   },
   {
     title: '新建音视频',
-    icon: <i className="fi fi-rr-play-alt" />
+    icon: <i className="fi fi-rr-play-alt" />,
+    type: 'media'
   },
   {
     title: '文本草稿',
@@ -25,6 +28,9 @@ const draftTypeList = [
 ]
 
 const NewDraftPage: React.FC = () => {
+  const navigate = useNavigate();
+  const {id: projectId} = useParams();
+
   const {token} = useToken();
   const {darkTheme} = useModel('theme');
 
@@ -50,6 +56,7 @@ const NewDraftPage: React.FC = () => {
                   </div>
                 }
                 bodyStyle={{background: darkTheme ? '#333' : '#f3f5f6'}}
+                onClick={() => navigate(`/project/${projectId}/draft/new/${type.type}`)}
               >
                 <div className="w-full py-2 text-center">
                   <Text>

@@ -1,0 +1,51 @@
+.draft-edit-page {
+  .custom-input {
+    height: 60px;
+    border-width: 2px !important;
+
+    &:not(&:focus) {
+      border-color: transparent !important;
+    }
+  }
+
+  .ant-upload-select {
+    border: unset !important;
+  }
+
+  .ant-select {
+    .ant-select-selector {
+      min-height: 60px !important;
+      border-width: 2px !important;
+
+      .ant-select-selection-item, .ant-select-selection-placeholder {
+        //line-height: 54px !important;
+      }
+    }
+
+    &:not(.ant-select-focused) {
+      .ant-select-selector {
+        border-color: transparent !important;
+      }
+    }
+  }
+
+  .ant-radio-button-wrapper {
+    border-color: transparent !important;
+  }
+}
+
+.light {
+  .draft-edit-page {
+    .ant-upload-select {
+      background: #fff !important;
+    }
+  }
+}
+
+.dark {
+  .draft-edit-page {
+    .ant-upload-select {
+      background: #383838 !important;
+    }
+  }
+}
