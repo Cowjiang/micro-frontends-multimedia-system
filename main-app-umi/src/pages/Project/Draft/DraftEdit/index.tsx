@@ -9,6 +9,7 @@ import { Affix, Button, Input, Radio, Select, Steps, theme, Typography, Upload }
 import classNames from 'classnames';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { useSize } from 'ahooks';
+import { DRAFT_RELEASE_CHANNEL } from '@/constants';
 
 const {Title, Text} = Typography;
 const {useToken} = theme;
@@ -258,8 +259,8 @@ const DraftEditPage: React.FC = () => {
                   mode="multiple"
                   size="large"
                   placeholder="选择发布渠道"
+                  options={DRAFT_RELEASE_CHANNEL}
                   // onChange={handleChange}
-                  // options={options}
                 />
               </div>
               <div className="w-full flex flex-col mt-6">

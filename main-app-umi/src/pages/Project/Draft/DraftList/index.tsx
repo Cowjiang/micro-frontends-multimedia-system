@@ -9,6 +9,7 @@ import { ProjectVo } from '@/services/api/modules/project/typings';
 import { draftApi, projectApi } from '@/services/api';
 import { DraftType, ProjectContributionVo } from '@/services/api/modules/draft/typings';
 import { formatDate, formatDraftType } from '@/utils/format';
+import { DRAFT_RELEASE_CHANNEL } from '@/constants';
 
 const {useToken} = theme;
 const {Title, Text, Paragraph} = Typography;
@@ -28,7 +29,7 @@ const DraftListPage: React.FC = () => {
   const {id: projectId} = useParams();
 
   const {token} = useToken();
-  const {colorPrimaryText} = token;
+  const {colorPrimary} = token;
 
   const [draftListType, setDraftListType] = useState(draftListTypes[searchParams.get('type') ?? '']);
   useEffect(() => {
@@ -111,10 +112,19 @@ const DraftListPage: React.FC = () => {
         <div className="flex flex-col">
           <Paragraph className="cursor-pointer" ellipsis={{rows: 2}}>{name}</Paragraph>
           <div className="mt-auto flex flex-wrap">
-            <Tag className="!mt-1" color="purple">客户端</Tag>
-            <Tag className="!mt-1" color="green">微信</Tag>
-            <Tag className="!mt-1" color="red">新浪</Tag>
-            <Tag className="!mt-1" color="cyan">百家号</Tag>
+            {
+              JSON.parse(channels ?? '').map((channel: string) => {
+                const defaultChannel = DRAFT_RELEASE_CHANNEL.find(c => c.value === channel)
+                return (
+                  <Tag
+                  className="!mt-1"
+                  color={defaultChannel?.color ?? colorPrimary}
+                >
+                  {defaultChannel?.label ?? channel}
+                </Tag>
+                )
+              })
+            }
           </div>
         </div>
       )

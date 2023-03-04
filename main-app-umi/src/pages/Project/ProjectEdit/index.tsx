@@ -116,12 +116,9 @@ const ProjectEditPage: React.FC = () => {
       <div className="min-w-[500px] w-full max-w-[1200px] flex" ref={containerRef}>
         <Affix offsetTop={30} target={() => document.querySelector('.ant-tabs-content') as HTMLElement | null}>
           <div
-            className={
-              classNames(
-                'min-w-[250px] h-[250px] mt-16',
-                {'min-w-[200px]': containerSize?.width && containerSize.width < 800}
-              )
-            }
+            className={classNames('min-w-[250px] h-[250px] mt-16',
+              {'min-w-[200px]': containerSize?.width && containerSize.width < 800}
+            )}
           >
             <Title level={1} className="mt-6">{projectId ? '编辑' : '新建'}项目</Title>
             <Steps
@@ -148,36 +145,27 @@ const ProjectEditPage: React.FC = () => {
         </Affix>
         <div className="flex-grow ml-[3vw]">
           <div
-            className={
-              classNames(
-                'w-full mt-20 flex rounded-lg overflow-hidden',
-                {'flex-col': containerSize?.width && containerSize.width < 800}
-              )
-            }
+            className={classNames('w-full mt-20 flex rounded-lg overflow-hidden',
+              {'flex-col': containerSize?.width && containerSize.width < 800}
+            )}
           >
             {/*基本信息*/}
             <div
               ref={formRefList[0]}
-              className={
-                classNames(
-                  'w-2/5 min-w-[40%] p-10 pt-2',
-                  {'!w-full': containerSize?.width && containerSize.width < 800}
-                )
-              }
+              className={classNames('w-2/5 min-w-[40%] p-10 pt-2',
+                {'!w-full': containerSize?.width && containerSize.width < 800}
+              )}
               style={{background: colorFillTertiary}}
             >
               <Title level={2} className="mt-6">基本信息</Title>
               <span className="text-base">这里是项目的基本信息，请填写并检查无误后再提交。</span>
             </div>
             <div
-              className={
-                classNames(
-                  'w-3/5 min-h-[300px] p-12 flex flex-col',
-                  {'!w-full !p-10': containerSize?.width && containerSize.width < 800}
-                )
-              }
+              className={classNames('w-3/5 min-h-[300px] p-12 flex flex-col',
+                {'!w-full !p-10': containerSize?.width && containerSize.width < 800}
+              )}
               style={{background: colorFillQuaternary}}
-            >
+            >q
               {/*基本信息*/}
               <div className="w-full">
                 <Text type="secondary" strong>项目名称</Text>
@@ -226,32 +214,23 @@ const ProjectEditPage: React.FC = () => {
           {/*详细信息*/}
           <div
             ref={formRefList[1]}
-            className={
-              classNames(
-                'w-full mt-10 flex rounded-lg overflow-hidden',
-                {'flex-col': containerSize?.width && containerSize.width < 800}
-              )
-            }
+            className={classNames('w-full mt-10 flex rounded-lg overflow-hidden',
+              {'flex-col': containerSize?.width && containerSize.width < 800}
+            )}
           >
             <div
-              className={
-                classNames(
-                  'w-2/5 min-w-[40%] p-10 pt-2',
-                  {'!w-full': containerSize?.width && containerSize.width < 800}
-                )
-              }
+              className={classNames('w-2/5 min-w-[40%] p-10 pt-2',
+                {'!w-full': containerSize?.width && containerSize.width < 800}
+              )}
               style={{background: colorFillTertiary}}
             >
               <Title level={2} className="mt-6">详细信息</Title>
               <span className="text-base">这里是项目的详细信息，请填写并检查无误后再提交。</span>
             </div>
             <div
-              className={
-                classNames(
-                  'w-3/5 min-h-[300px] p-12 flex flex-col',
-                  {'!w-full !p-10': containerSize?.width && containerSize.width < 800}
-                )
-              }
+              className={classNames('w-3/5 min-h-[300px] p-12 flex flex-col',
+                {'!w-full !p-10': containerSize?.width && containerSize.width < 800}
+              )}
               style={{background: colorFillQuaternary}}
             >
               <div className="w-full flex flex-col">
