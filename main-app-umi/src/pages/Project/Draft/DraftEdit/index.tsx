@@ -1,26 +1,76 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './index.less';
-import type { Editor } from 'tinymce';
-import { Editor as TinymceEditor } from '@tinymce/tinymce-react';
-import { getTinymce } from '@tinymce/tinymce-react/lib/es2015/main/ts/TinyMCE';
-import Loading from '@/components/Loading';
-import { useModel, useNavigate, useParams } from '@@/exports';
-import { Affix, Button, Input, Radio, Select, Steps, theme, Typography, Upload } from 'antd';
 import classNames from 'classnames';
+import { useModel, useNavigate, useParams } from '@@/exports';
+import { Affix, Button, Input, Radio, Select, Steps, Tag, theme, Typography, Upload } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { useSize } from 'ahooks';
 import { DRAFT_RELEASE_CHANNEL } from '@/constants';
+import ArticleEdit from '@/pages/Project/Draft/DraftEdit/Article';
+import { useSetDocTitle } from '@/utils/hooks';
+import { draftApi } from '@/services/api';
+import { DraftType, ProjectContribution } from '@/services/api/modules/draft/typings';
 
 const {Title, Text} = Typography;
 const {useToken} = theme;
 
+const draftTypeLabel: { [key: string]: { label: string; type: DraftType } } = {
+  'article': {label: '图文', type: DraftType.ARTICLE},
+  'h5': {label: 'H5', type: DraftType.HTML5},
+  'media': {label: '音视频', type: DraftType.MEDIA}
+};
+
 const DraftEditPage: React.FC = () => {
   const navigate = useNavigate();
-  const {projectId} = useParams();
+  const {messageApi} = useModel('messageApi');
 
   const {darkTheme} = useModel('theme');
   const {token} = useToken();
   const {colorFillQuaternary, colorFillSecondary, colorFillTertiary} = token;
+
+  const {projectId, editAction, draftType, draftId} = useParams();
+  useEffect(() => {
+    if (editAction === 'edit') {
+      getDraftDetail();
+    }
+  }, [editAction, draftType, draftId]);
+  useSetDocTitle(`${editAction === 'new' ? '新建' : '编辑'}${draftTypeLabel[draftType ?? ''].label ?? ''}稿件`);
+
+  // 稿件详情
+  const [draftDetail, setDraftDetail] = useState<ProjectContribution>();
+  const [draftDetailTemp, setDraftDetailTemp] = useState<ProjectContribution>();
+  // 获取稿件详情
+  const getDraftDetail = () => {
+    if (draftId) {
+      draftApi.getDraftDetail(draftId).then((res) => {
+        setDraftDetail(res.data?.projectContribution);
+        setDraftDetailTemp(res.data?.projectContribution);
+      });
+    }
+  };
+
+  // 提交保存稿件
+  const submitDraft = () => {
+    if (editAction === 'edit') {
+      draftApi.updateDraft(draftDetail as ProjectContribution).then(res => {
+        messageApi.success('保存成功');
+      }).catch(() => {
+        messageApi.error('保存失败');
+      });
+    } else if (projectId) {
+      draftApi.addDraft({
+        projectId,
+        name: draftDetail?.name ?? '',
+        content: draftDetail?.content ?? '',
+        channels: draftDetail?.channels ?? '',
+        type: draftTypeLabel[draftType ?? ''].type ?? 'others'
+      }).then(res => {
+        messageApi.success('新建成功');
+      }).catch(() => {
+        messageApi.error('新建失败');
+      });
+    }
+  };
 
   const [imgUploading, setImgUploading] = useState(false);
   const uploadButton = <div>{imgUploading ? <LoadingOutlined /> : <PlusOutlined />}</div>;
@@ -29,15 +79,14 @@ const DraftEditPage: React.FC = () => {
 
   const containerRef = useRef(null);
   const containerSize = useSize(containerRef);
-  const editorRef = useRef<Editor | null>(null);
-
-  const [loading, setLoading] = useState(true);
-  const initValue = '';
-  const [disabled, setDisabled] = useState(false);
 
   const headerContext = useMemo(() => (
     <>
-      <Title level={1} className="mt-6">新建图文稿件</Title>
+      <Title level={1} className="mt-6">
+        {editAction === 'new' ? '新建' : '编辑'}
+        {draftTypeLabel[draftType ?? ''].label ?? ''}
+        稿件
+      </Title>
       <Steps
         className={classNames('h-full',
           containerSize?.width && containerSize.width >= 800 ? '!mt-8' : '!mt-2'
@@ -121,8 +170,8 @@ const DraftEditPage: React.FC = () => {
                   style={{background: darkTheme ? colorFillSecondary : '#fff'}}
                   size="large"
                   placeholder="请填写稿件名称"
-                  // value={formValue.name}
-                  // onChange={(e) => setFormValue({...formValue, name: e.target.value})}
+                  value={draftDetail?.name ?? ''}
+                  onChange={(e) => setDraftDetail({...draftDetail, name: e.target.value})}
                 />
               </div>
               <div className="w-full mt-6">
@@ -159,64 +208,14 @@ const DraftEditPage: React.FC = () => {
               {'hidden': currentFormIndex !== 1}
             )}
           >
-            <Loading
-              spinning={loading}
-              size="large"
-            >
-              <div className="h-[75vh]">
-                <TinymceEditor
-                  key={darkTheme ? 'dark' : 'light'}
-                  tinymceScriptSrc="/tinymce/tinymce.min.js"
-                  apiKey="7r39ggx9nkeyq2y3o5scbv5en93047bmpy3221wg2tnmr3qv"
-                  onInit={(evt, editor) => {
-                    editorRef.current = editor;
-                    setLoading(false);
-                  }}
-                  disabled={disabled}
-                  initialValue={initValue}
-                  init={{
-                    height: '100%',
-                    language: 'zh-Hans',
-                    skin: darkTheme ? 'oxide-dark' : 'oxide',
-                    content_css: darkTheme ? 'dark' : 'default',
-                    plugins: [
-                      'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-                      'anchor', 'searchreplace', 'visualblocks', 'code',
-                      'insertdatetime', 'media', 'table', 'help', 'wordcount'
-                    ],
-                    toolbar: 'undo redo | blocks | ' +
-                      'bold italic forecolor underline | alignleft aligncenter ' +
-                      'alignright alignjustify | bullist numlist outdent indent | ' +
-                      'removeformat | help',
-                    menu: {
-                      file: {title: 'File', items: ''},
-                      edit: {title: 'Edit', items: 'undo redo | cut copy paste pastetext | selectall | searchreplace'},
-                      view: {
-                        title: 'View',
-                        items: 'code | visualaid visualchars visualblocks | spellchecker | preview fullscreen | showcomments'
-                      },
-                      insert: {
-                        title: 'Insert',
-                        items: 'image link addcomment pageembed template codesample inserttable | charmap emoticons hr | pagebreak nonbreaking anchor tableofcontents | insertdatetime'
-                      },
-                      format: {
-                        title: 'Format',
-                        items: 'bold italic underline strikethrough superscript subscript codeformat | styles blocks fontfamily fontsize align lineheight | forecolor backcolor | language | removeformat'
-                      },
-                      tools: {title: 'Tools', items: 'spellchecker spellcheckerlanguage | a11ycheck code wordcount'},
-                      table: {
-                        title: 'Table',
-                        items: 'inserttable | cell row column | advtablesort | tableprops deletetable'
-                      },
-                      help: {title: 'Help', items: 'help'}
-                    },
-                    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-                    statusbar: false,
-                    resize: false
-                  }}
+            {
+              draftType === 'article' && (
+                <ArticleEdit
+                  initialValue={draftDetailTemp?.content ?? ''}
+                  onValueChange={value => setDraftDetail({...draftDetail, content: value})}
                 />
-              </div>
-            </Loading>
+              )
+            }
           </div>
           <div
             className={classNames('w-full mt-12 flex rounded-lg overflow-hidden',
@@ -260,7 +259,12 @@ const DraftEditPage: React.FC = () => {
                   size="large"
                   placeholder="选择发布渠道"
                   options={DRAFT_RELEASE_CHANNEL}
-                  // onChange={handleChange}
+                  value={
+                    JSON.parse(draftDetail?.channels ?? '[]')?.map((channel: string) =>
+                      DRAFT_RELEASE_CHANNEL.find(c => c.value === channel)?.value ?? '')
+                    ?? []
+                  }
+                  onChange={value => setDraftDetail({...draftDetail, channels: JSON.stringify(value)})}
                 />
               </div>
               <div className="w-full flex flex-col mt-6">
@@ -302,9 +306,15 @@ const DraftEditPage: React.FC = () => {
               className="ml-auto w-36 !h-14"
               type="primary"
               size="large"
-              onClick={() => setCurrentFormIndex(currentFormIndex + 1)}
+              onClick={() => {
+                if (currentFormIndex === 2) {
+                  submitDraft();
+                } else {
+                  setCurrentFormIndex(currentFormIndex + 1);
+                }
+              }}
             >
-              下一步
+              {currentFormIndex === 2 ? '保存稿件' : '下一步'}
             </Button>
           </div>
           {/*底部*/}

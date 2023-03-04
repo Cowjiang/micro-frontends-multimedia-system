@@ -113,16 +113,16 @@ const DraftListPage: React.FC = () => {
           <Paragraph className="cursor-pointer" ellipsis={{rows: 2}}>{name}</Paragraph>
           <div className="mt-auto flex flex-wrap">
             {
-              JSON.parse(channels ?? '').map((channel: string) => {
-                const defaultChannel = DRAFT_RELEASE_CHANNEL.find(c => c.value === channel)
+              JSON.parse(channels ?? '[]').map((channel: string) => {
+                const defaultChannel = DRAFT_RELEASE_CHANNEL.find(c => c.value === channel);
                 return (
                   <Tag
-                  className="!mt-1"
-                  color={defaultChannel?.color ?? colorPrimary}
-                >
-                  {defaultChannel?.label ?? channel}
-                </Tag>
-                )
+                    className="!mt-1"
+                    color={defaultChannel?.color ?? colorPrimary}
+                  >
+                    {defaultChannel?.label ?? channel}
+                  </Tag>
+                );
               })
             }
           </div>
@@ -185,7 +185,7 @@ const DraftListPage: React.FC = () => {
       title: <div className="!ml-2">操作</div>,
       key: 'action',
       width: 90,
-      render: () => (
+      render: (_, {projectContribution: {id, type}}) => (
         <Dropdown
           menu={{
             items: [
@@ -195,7 +195,8 @@ const DraftListPage: React.FC = () => {
               },
               {
                 label: '编辑稿件',
-                key: '2'
+                key: '2',
+                onClick: () => navigate(`/project/${projectId}/draft/edit/${formatDraftType(type ?? '').value}/${id}`)
               },
               {
                 label: '操作记录',
