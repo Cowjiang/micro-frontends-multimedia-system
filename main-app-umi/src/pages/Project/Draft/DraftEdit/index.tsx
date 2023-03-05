@@ -2,12 +2,12 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './index.less';
 import classNames from 'classnames';
 import { useModel, useNavigate, useParams } from '@@/exports';
-import { Affix, Button, Input, Radio, Select, Steps, Tag, theme, Typography, Upload } from 'antd';
+import { Affix, Button, Input, Radio, Select, Steps, theme, Typography, Upload } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { useSize } from 'ahooks';
 import { DRAFT_RELEASE_CHANNEL } from '@/constants';
 import ArticleEdit from '@/pages/Project/Draft/DraftEdit/Article';
-import { useSetDocTitle } from '@/utils/hooks';
+// import { useSetDocTitle } from '@/utils/hooks';
 import { draftApi } from '@/services/api';
 import { DraftType, ProjectContribution } from '@/services/api/modules/draft/typings';
 
@@ -34,7 +34,14 @@ const DraftEditPage: React.FC = () => {
       getDraftDetail();
     }
   }, [editAction, draftType, draftId]);
-  useSetDocTitle(`${editAction === 'new' ? '新建' : '编辑'}${draftTypeLabel[draftType ?? ''].label ?? ''}稿件`);
+  const title = useMemo(() => {
+    if (editAction && draftTypeLabel && draftType) {
+      return `${editAction === 'new' ? '新建' : '编辑'}${draftTypeLabel[draftType ?? '']?.label ?? ''}稿件`;
+    } else {
+      return '新建稿件';
+    }
+  }, [editAction, draftTypeLabel, draftType]);
+  // useSetDocTitle(title)
 
   // 稿件详情
   const [draftDetail, setDraftDetail] = useState<ProjectContribution>();
@@ -82,11 +89,7 @@ const DraftEditPage: React.FC = () => {
 
   const headerContext = useMemo(() => (
     <>
-      <Title level={1} className="mt-6">
-        {editAction === 'new' ? '新建' : '编辑'}
-        {draftTypeLabel[draftType ?? ''].label ?? ''}
-        稿件
-      </Title>
+      <Title level={1} className="mt-6">{title}</Title>
       <Steps
         className={classNames('h-full',
           containerSize?.width && containerSize.width >= 800 ? '!mt-8' : '!mt-2'
