@@ -7,7 +7,6 @@ const RichTextEditor: React.FC<IAllProps> = (props) => {
 
   return (
     <TinymceEditor
-      {...props}
       key={darkTheme ? 'dark' : 'light'}
       tinymceScriptSrc="/tinymce/tinymce.min.js"
       apiKey="7r39ggx9nkeyq2y3o5scbv5en93047bmpy3221wg2tnmr3qv"
@@ -51,6 +50,7 @@ const RichTextEditor: React.FC<IAllProps> = (props) => {
         statusbar: false,
         resize: false
       }}
+      {...props}
     />
   );
 };

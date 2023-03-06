@@ -1,3 +1,5 @@
+import { DraftType } from '@/services/api/modules/draft/typings';
+
 /**
  * 全局主要颜色
  */
@@ -45,3 +47,9 @@ export const DRAFT_RELEASE_CHANNEL = [
     color: 'purple'
   }
 ];
+
+export const DRAFT_TYPE_LABEL: { [key: string]: { label: string; type: DraftType } } = {
+  'article': {label: '图文', type: DraftType.ARTICLE},
+  'h5': {label: 'H5', type: DraftType.HTML5},
+  'media': {label: '音视频', type: DraftType.MEDIA}
+};

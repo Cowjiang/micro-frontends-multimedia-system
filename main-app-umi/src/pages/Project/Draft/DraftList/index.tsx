@@ -108,9 +108,15 @@ const DraftListPage: React.FC = () => {
       dataIndex: 'draftName',
       key: 'draftName',
       width: '60%',
-      render: (_, {projectContribution: {name, channels}}) => (
+      render: (_, {projectContribution: {name, channels, id, type}}) => (
         <div className="flex flex-col">
-          <Paragraph className="cursor-pointer" ellipsis={{rows: 2}}>{name}</Paragraph>
+          <Paragraph
+            className="cursor-pointer"
+            ellipsis={{rows: 2}}
+            onClick={() => navigate(`/project/${projectId}/draft/detail/${formatDraftType(type ?? '').value}/${id}`)}
+          >
+            {name}
+          </Paragraph>
           <div className="mt-auto flex flex-wrap">
             {
               JSON.parse(channels ?? '[]').map((channel: string) => {
@@ -191,7 +197,8 @@ const DraftListPage: React.FC = () => {
             items: [
               {
                 label: '查看稿件',
-                key: '1'
+                key: '1',
+                onClick: () => navigate(`/project/${projectId}/draft/detail/${formatDraftType(type ?? '').value}/${id}`)
               },
               {
                 label: '编辑稿件',

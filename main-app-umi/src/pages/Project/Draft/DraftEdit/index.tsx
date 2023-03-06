@@ -1,29 +1,24 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './index.less';
 import classNames from 'classnames';
-import { useModel, useNavigate, useParams } from '@@/exports';
+import { useLocation, useModel, useNavigate, useParams } from '@@/exports';
 import { Affix, Button, Input, Radio, Select, Steps, theme, Typography, Upload } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { useSize } from 'ahooks';
-import { DRAFT_RELEASE_CHANNEL } from '@/constants';
+import { DRAFT_RELEASE_CHANNEL, DRAFT_TYPE_LABEL } from '@/constants';
 import ArticleEdit from '@/pages/Project/Draft/DraftEdit/Article';
-// import { useSetDocTitle } from '@/utils/hooks';
 import { draftApi } from '@/services/api';
-import { DraftType, ProjectContribution } from '@/services/api/modules/draft/typings';
+import { ProjectContribution } from '@/services/api/modules/draft/typings';
 import H5Edit from '@/pages/Project/Draft/DraftEdit/H5';
 import MediaEdit from '@/pages/Project/Draft/DraftEdit/Media';
+// import { useSetDocTitle } from '@/utils/hooks';
 
 const {Title, Text} = Typography;
 const {useToken} = theme;
 
-const draftTypeLabel: { [key: string]: { label: string; type: DraftType } } = {
-  'article': {label: '图文', type: DraftType.ARTICLE},
-  'h5': {label: 'H5', type: DraftType.HTML5},
-  'media': {label: '音视频', type: DraftType.MEDIA}
-};
-
 const DraftEditPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const {messageApi} = useModel('messageApi');
 
   const {darkTheme} = useModel('theme');
@@ -32,17 +27,19 @@ const DraftEditPage: React.FC = () => {
 
   const {projectId, editAction, draftType, draftId} = useParams();
   useEffect(() => {
-    if (editAction === 'edit') {
-      getDraftDetail();
+    if (location.pathname.includes('/draft/edit/') || location.pathname.includes('/draft/new/')) {
+      if (editAction === 'edit') {
+        getDraftDetail();
+      }
     }
   }, [editAction, draftType, draftId]);
   const title = useMemo(() => {
-    if (editAction && draftTypeLabel && draftType) {
-      return `${editAction === 'new' ? '新建' : '编辑'}${draftTypeLabel[draftType ?? '']?.label ?? ''}稿件`;
+    if (editAction && DRAFT_TYPE_LABEL && draftType) {
+      return `${editAction === 'new' ? '新建' : '编辑'}${DRAFT_TYPE_LABEL[draftType ?? '']?.label ?? ''}稿件`;
     } else {
       return '新建稿件';
     }
-  }, [editAction, draftTypeLabel, draftType]);
+  }, [editAction, DRAFT_TYPE_LABEL, draftType]);
   // useSetDocTitle(title)
 
   // 稿件详情
@@ -50,7 +47,7 @@ const DraftEditPage: React.FC = () => {
   const [draftDetailTemp, setDraftDetailTemp] = useState<ProjectContribution>();
   // 获取稿件详情
   const getDraftDetail = () => {
-    if (draftId) {
+    if (draftId && !draftDetailTemp) {
       draftApi.getDraftDetail(draftId).then((res) => {
         setDraftDetail(res.data?.projectContribution);
         setDraftDetailTemp(res.data?.projectContribution);
@@ -72,7 +69,7 @@ const DraftEditPage: React.FC = () => {
         name: draftDetail?.name ?? '',
         content: draftDetail?.content ?? '',
         channels: draftDetail?.channels ?? '',
-        type: draftTypeLabel[draftType ?? ''].type ?? 'others'
+        type: DRAFT_TYPE_LABEL[draftType ?? ''].type ?? 'others'
       }).then(res => {
         messageApi.success('新建成功');
       }).catch(() => {
