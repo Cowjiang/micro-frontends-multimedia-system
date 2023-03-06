@@ -23,7 +23,8 @@ const draftTypeList = [
   },
   {
     title: '文本草稿',
-    icon: <i className="fi fi-rr-box" />
+    icon: <i className="fi fi-rr-box" />,
+    type: 'article'
   }
 ]
 
