@@ -45,6 +45,7 @@ const routes = [
       {path: '/project/:projectId/draft/:editAction/:draftType', component: '@/pages/Project/Draft/DraftEdit/index', title: '新建稿件'},
       {path: '/project/:projectId/draft/:editAction/:draftType/:draftId', component: '@/pages/Project/Draft/DraftEdit/index', title: '修改稿件'},
       {path: '/project/:projectId/draft/detail/:draftType/:draftId', component: '@/pages/Project/Draft/DraftDetail/index', title: '稿件详情'},
+      {path: '/project/:projectId/draft/comment/:draftType/:draftId', component: '@/pages/Project/Draft/DraftComment/index', title: '稿件审批'},
     ]
   },
   {
