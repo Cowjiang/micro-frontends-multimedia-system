@@ -78,7 +78,7 @@
                     {{ chat.name }}
                   </span>
                   <span class="ml-auto flex-shrink-0 text-caption text-grey-lighten-1">
-                    {{ chat.createTime }}
+                    {{ chat.createdTime }}
                   </span>
                 </div>
                 <div class="d-flex overflow-hidden">

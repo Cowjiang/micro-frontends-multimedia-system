@@ -264,7 +264,7 @@ const ProjectDetailPage: React.FC = () => {
                 <Row className="mb-4">
                   <Col span={4}><Text strong>上次更新：</Text></Col>
                   <Col span={20}>
-                    {dayjs(projectInfo?.project.updateTime ?? '').format('YYYY年MM月DD日 hh:mm')}
+                    {dayjs(projectInfo?.project.updatedTime ?? '').format('YYYY年MM月DD日 hh:mm')}
                   </Col>
                 </Row>
               </div>

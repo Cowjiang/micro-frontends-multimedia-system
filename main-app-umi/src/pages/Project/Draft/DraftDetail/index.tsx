@@ -12,7 +12,7 @@ import Loading from '@/components/Loading';
 import Card from '@/components/Card';
 import Empty from '@/components/Empty';
 
-const {Title, Text, Paragraph} = Typography;
+const {Title, Text} = Typography;
 const {useToken} = theme;
 
 const DraftDetailPage: React.FC = () => {
@@ -22,7 +22,7 @@ const DraftDetailPage: React.FC = () => {
 
   const {darkTheme} = useModel('theme');
   const {token} = useToken();
-  const {colorPrimary, colorFillQuaternary, colorFillSecondary, colorFillTertiary} = token;
+  const {colorPrimary} = token;
 
   // 项目信息
   const [projectInfo, setProjectInfo] = useState<ProjectVo>();
@@ -106,6 +106,7 @@ const DraftDetailPage: React.FC = () => {
                 className="mr-4"
                 type="primary"
                 ghost
+                onClick={() => navigate(`/project/${projectId}/draft/comment/${draftType}/${draftId}`)}
               >
                 稿件批注
               </Button>

@@ -95,13 +95,13 @@ const ProjectPage: React.FC = () => {
     },
     {
       title: '更新时间',
-      key: 'updateTime',
-      dataIndex: 'updateTime',
+      key: 'updatedTime',
+      dataIndex: 'updatedTime',
       ellipsis: true,
       responsive: ['xxl'],
-      render: (_, {project: {updateTime}}) => (
+      render: (_, {project: {updatedTime}}) => (
         <Text type="secondary" ellipsis>
-          {dayjs(updateTime).format('YYYY年MM月DD日 hh:mm')}
+          {dayjs(updatedTime).format('YYYY年MM月DD日 hh:mm')}
         </Text>
       )
     },
@@ -179,7 +179,7 @@ const ProjectPage: React.FC = () => {
                 <Table
                   columns={
                     columns.filter((column) => (
-                      !['startTime', 'updateTime'].includes(column.key as string)
+                      !['startTime', 'updatedTime'].includes(column.key as string)
                     ))
                   }
                   pagination={false}

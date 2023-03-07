@@ -1,6 +1,11 @@
 import { request } from '@@/exports';
 import { IResponseData } from '@/services/typings';
-import { DraftType, ProjectContribution, ProjectContributionVo } from '@/services/api/modules/draft/typings';
+import {
+  DraftType,
+  ProjectContribution,
+  ProjectContributionCommentVo,
+  ProjectContributionVo
+} from '@/services/api/modules/draft/typings';
 
 // 获取稿件列表
 async function getProjectDraftList(
@@ -55,9 +60,33 @@ async function updateDraft(
   });
 }
 
+// 获取稿件批注列表
+async function getDraftCommentList(
+  draftId: number | string,
+  options?: { [key: string]: any }
+) {
+  return request<IResponseData<ProjectContributionCommentVo[]>>(`/project/contribution/${draftId}/comment`, {
+    method: 'GET',
+    ...(options || {})
+  });
+}
+
+// 获取稿件批注
+async function getDraftComment(
+  commentId: number | string,
+  options?: { [key: string]: any }
+) {
+  return request<IResponseData<ProjectContributionCommentVo>>(`/project/contribution/comment/${commentId}`, {
+    method: 'GET',
+    ...(options || {})
+  });
+}
+
 export default {
   getProjectDraftList,
   getDraftDetail,
   addDraft,
-  updateDraft
+  updateDraft,
+  getDraftCommentList,
+  getDraftComment
 };

@@ -154,7 +154,7 @@ export interface ChatGroup {
   /**
    * 创建时间
    */
-  createTime?: number;
+  createdTime?: number;
   /**
    * 创建者id
    */

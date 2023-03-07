@@ -165,7 +165,7 @@ const ProjectEditPage: React.FC = () => {
                 {'!w-full !p-10': containerSize?.width && containerSize.width < 800}
               )}
               style={{background: colorFillQuaternary}}
-            >q
+            >
               {/*基本信息*/}
               <div className="w-full">
                 <Text type="secondary" strong>项目名称</Text>

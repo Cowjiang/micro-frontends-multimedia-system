@@ -73,3 +73,38 @@ export enum DraftType {
   MEDIA = 'MEDIA',
   HTML5 = 'HTML5'
 }
+
+/**
+ * ProjectContributionCommentVo
+ */
+export interface ProjectContributionCommentVo {
+  projectContributionComment?: ProjectContributionComment;
+  userProfile?: UserProfile;
+}
+
+/**
+ * ProjectContributionComment
+ */
+export interface ProjectContributionComment {
+  /**
+   * 评论内容
+   */
+  content?: string;
+  /**
+   * 稿件id
+   */
+  contributionId?: number;
+  /**
+   * 创建时间
+   */
+  createdTime?: string;
+  id?: number;
+  /**
+   * 状态 讨论中  已解决
+   */
+  state?: string;
+  /**
+   * 用户id
+   */
+  userId?: number;
+}

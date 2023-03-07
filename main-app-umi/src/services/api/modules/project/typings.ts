@@ -18,7 +18,7 @@ export interface ProjectVo {
  * Project
  */
 export interface Project {
-  createTime?: number;
+  createdTime?: number;
   createUserId?: number;
   endTime?: number;
   groupId?: number;
@@ -28,7 +28,7 @@ export interface Project {
   projectName?: string;
   startTime?: number;
   stat?: string;
-  updateTime?: number;
+  updatedTime?: number;
   userId?: number;
 }
 

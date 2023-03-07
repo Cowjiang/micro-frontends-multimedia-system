@@ -179,8 +179,8 @@ const DraftListPage: React.FC = () => {
     },
     {
       title: '更新时间',
-      key: 'updateTime',
-      dataIndex: 'updateTime',
+      key: 'updatedTime',
+      dataIndex: 'updatedTime',
       width: '25%',
       ellipsis: true,
       render: (_, {projectContribution: {updatedTime}}) => (
