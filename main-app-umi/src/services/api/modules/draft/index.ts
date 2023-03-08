@@ -2,7 +2,7 @@ import { request } from '@@/exports';
 import { IResponseData } from '@/services/typings';
 import {
   DraftType,
-  ProjectContribution,
+  ProjectContribution, ProjectContributionComment,
   ProjectContributionCommentVo,
   ProjectContributionVo
 } from '@/services/api/modules/draft/typings';
@@ -82,11 +82,57 @@ async function getDraftComment(
   });
 }
 
+// 添加稿件批注
+async function addDraftComment(
+  data: {
+    content: string;
+    contributionId: string | number;
+  },
+  options?: { [key: string]: any }
+) {
+  return request<IResponseData<ProjectContributionComment>>(`/project/contribution/comment`, {
+    method: 'POST',
+    data,
+    ...(options || {})
+  });
+}
+
+// 更新稿件批注
+async function updateDraftComment(
+  data: {
+    id: number;
+    content: string;
+    contributionId: string | number;
+    state?: string;
+  },
+  options?: { [key: string]: any }
+) {
+  return request<IResponseData<ProjectContributionComment>>(`/project/contribution/comment`, {
+    method: 'PUT',
+    data,
+    ...(options || {})
+  });
+}
+
+// 删除稿件批注
+async function removeDraftComment(
+  commentId: number | string,
+  options?: { [key: string]: any }
+) {
+  return request<IResponseData<any>>(`/project/contribution/comment/${commentId}`, {
+    method: 'DELETE',
+    ...(options || {})
+  });
+}
+
 export default {
   getProjectDraftList,
   getDraftDetail,
   addDraft,
   updateDraft,
   getDraftCommentList,
-  getDraftComment
+  getDraftComment,
+  addDraftComment,
+  updateDraftComment,
+  removeDraftComment
 };
