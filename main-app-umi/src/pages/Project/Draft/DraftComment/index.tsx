@@ -261,7 +261,7 @@ const DraftCommentPage: React.FC = () => {
       </div>
       <Row gutter={[16, 16]}>
         <Col span={14}>
-          <Card>
+          <Card wrapperStyle={{height: '100%'}}>
             {
               draftType === 'article' && (
                 <Loading
@@ -292,9 +292,27 @@ const DraftCommentPage: React.FC = () => {
                 </Loading>
               )
             }
+            {
+              draftType === 'media' && (
+                <div className="w-full h-[60vh] flex justify-center items-center">
+                  <i className="fi fi-sr-play text-6xl" style={{color: colorPrimary}} />
+                  <div className="ml-6 flex flex-col items-center">
+                    <Text type="secondary">共一个音视频文件</Text>
+                    <div className="w-full flex justify-between mt-2">
+                      <Text>
+                        <a href={draftDetail?.projectContribution.mediaUrl} style={{color: colorPrimary}}>
+                          查看
+                        </a>
+                      </Text>
+                      <Text style={{color: colorPrimary}}>下载文件</Text>
+                    </div>
+                  </div>
+                </div>
+              )
+            }
           </Card>
         </Col>
-        <Col span={10}>
+        <Col span={10} className="!flex flex-col">
           <Card title="审批管理">
             <div className="py-4">
               <Button type="primary" size="large" onClick={() => setTourOpen(true)}>
@@ -306,7 +324,7 @@ const DraftCommentPage: React.FC = () => {
             </div>
           </Card>
           <div className="h-4"></div>
-          <Card title="批注列表">
+          <Card title="批注列表" wrapperStyle={{flexGrow: 1}}>
             <div className="h-[45vh] overflow-auto">
               <List
                 dataSource={commentList}
