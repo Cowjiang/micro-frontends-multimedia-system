@@ -167,14 +167,13 @@ const ProjectDetailPage: React.FC = () => {
   return (
     <div className="project-detail-page w-full h-full px-12 flex flex-col">
       <div>
-        <Breadcrumb className="!mt-2">
-          <Breadcrumb.Item>
-            <a onClick={() => navigate(`/project/list`)}>
-              项目列表
-            </a>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item>{projectInfo?.project.projectName}</Breadcrumb.Item>
-        </Breadcrumb>
+        <Breadcrumb
+          className="!mt-2"
+          items={[
+            {title: <a onClick={() => navigate(`/project/list`)}>项目列表</a>},
+            {title: projectInfo?.project.projectName}
+          ]}
+        />
         <div className="w-full flex items-center">
           <div>
             <Title level={3} className="mt-6">项目详情 - {projectInfo?.project.projectName}</Title>
@@ -331,7 +330,10 @@ const ProjectDetailPage: React.FC = () => {
                             }))
                           }
                           renderItem={(item) => (
-                            <List.Item className="!px-0">
+                            <List.Item
+                              className="!px-0"
+                              onClick={() => navigate(`/project/${projectId}/draft/detail/${formatDraftType(item.type ?? '').value}/${item.id}`)}
+                            >
                               <div className="w-full flex">
                                 <Tag color={formatDraftType(item.type ?? '').color}>
                                   {formatDraftType(item.type ?? '').tag}

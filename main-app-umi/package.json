@@ -20,7 +20,7 @@
     "@umijs/max": "^4.0.52",
     "ahooks": "^3.7.2",
     "animate.css": "^4.1.1",
-    "antd": "^5.2.3",
+    "antd": "^5.3.0",
     "classnames": "^2.3.2",
     "dayjs": "^1.11.7",
     "echarts": "^5.4.1",

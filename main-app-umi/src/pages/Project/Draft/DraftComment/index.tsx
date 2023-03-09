@@ -199,22 +199,27 @@ const DraftCommentPage: React.FC = () => {
   return (
     <div className="draft-comment-page w-full h-full px-16 flex flex-col">
       <div>
-        <Breadcrumb className="!mt-2">
-          <Breadcrumb.Item>
-            <a onClick={() => navigate(`/project/${projectId}/detail`)}>
-              {projectInfo?.project.projectName ?? ''}
-            </a>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item>
-            <a onClick={() => navigate(`/project/${projectId}/draft/list`)}>稿件</a>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item>
-            <a onClick={() => navigate(`/project/${projectId}/draft/detail/${draftType}/${draftId}`)}>
-              {draftDetail?.projectContribution?.name ?? ''}
-            </a>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item>审批</Breadcrumb.Item>
-        </Breadcrumb>
+        <Breadcrumb
+          className="!mt-2"
+          items={[
+            {
+              title: (
+                <a onClick={() => navigate(`/project/${projectId}/detail`)}>
+                  {projectInfo?.project.projectName ?? ''}
+                </a>
+              )
+            },
+            {title: <a onClick={() => navigate(`/project/${projectId}/draft/list`)}>稿件</a>},
+            {
+              title: (
+                <a onClick={() => navigate(`/project/${projectId}/draft/detail/${draftType}/${draftId}`)}>
+                  {draftDetail?.projectContribution?.name ?? ''}
+                </a>
+              )
+            },
+            {title: '审批'}
+          ]}
+        />
         <div className="w-full flex items-center">
           <div className="flex flex-col">
             <Title level={3} className="mt-6">

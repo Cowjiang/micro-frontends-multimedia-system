@@ -260,13 +260,14 @@ const DepartmentMembersPage: React.FC = () => {
     <div className="department-members-page w-full h-full px-12 flex flex-col">
       <div className="w-full mt-2 flex flex-shrink-0">
         <div className="w-full mr-4 flex flex-col overflow-hidden">
-          <Breadcrumb className="!mt-2">
-            <Breadcrumb.Item>
-              部门列表
-            </Breadcrumb.Item>
-            <Breadcrumb.Item>{departmentInfo.name ?? ''}</Breadcrumb.Item>
-            <Breadcrumb.Item>部门成员</Breadcrumb.Item>
-          </Breadcrumb>
+          <Breadcrumb
+            className="!mt-2"
+            items={[
+              {title: '部门列表'},
+              {title: departmentInfo.name ?? ''},
+              {title: '部门成员'}
+            ]}
+          />
           <Title level={3} className="mt-6">{departmentInfo.name ?? ''}(10人)</Title>
           <Text ellipsis={true}>部门简介：{departmentInfo.description ?? ''}</Text>
         </div>

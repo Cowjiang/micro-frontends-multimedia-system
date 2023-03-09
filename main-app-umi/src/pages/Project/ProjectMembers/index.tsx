@@ -93,19 +93,14 @@ const ProjectMembersPage = () => {
   return (
     <div className="project-detail-page w-full h-full px-12 flex flex-col">
       <div>
-        <Breadcrumb className="!mt-2">
-          <Breadcrumb.Item>
-            <a onClick={() => navigate(`/project/list`)}>
-              项目列表
-            </a>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item>
-            <a onClick={() => navigate(`/project/${projectId}/detail`)}>
-              {projectInfo?.project.projectName}
-            </a>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item>成员</Breadcrumb.Item>
-        </Breadcrumb>
+        <Breadcrumb
+          className="!mt-2"
+          items={[
+            {title: <a onClick={() => navigate(`/project/list`)}>项目列表</a>},
+            {title: <a onClick={() => navigate(`/project/${projectId}/detail`)}>{projectInfo?.project.projectName}</a>},
+            {title: '成员'}
+          ]}
+        />
       </div>
       <div className="w-full flex items-center">
         <div>

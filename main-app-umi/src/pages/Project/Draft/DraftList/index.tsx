@@ -277,14 +277,13 @@ const DraftListPage: React.FC = () => {
   return (
     <div className="draft-list-page w-full h-full px-12 flex flex-col">
       <div>
-        <Breadcrumb className="!mt-2">
-          <Breadcrumb.Item>
-            <a onClick={() => navigate(`/project/${projectId}/detail`)}>
-              {projectInfo?.project.projectName}
-            </a>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item>稿件列表</Breadcrumb.Item>
-        </Breadcrumb>
+        <Breadcrumb
+          className="!mt-2"
+          items={[
+            {title: <a onClick={() => navigate(`/project/${projectId}/detail`)}>{projectInfo?.project.projectName}</a>},
+            {title: '稿件列表'}
+          ]}
+        />
         <Title level={3} className="mt-6">稿件列表</Title>
       </div>
       <div>

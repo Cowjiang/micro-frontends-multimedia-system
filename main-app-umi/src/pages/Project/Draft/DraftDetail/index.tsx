@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ProjectContribution, ProjectContributionVo } from '@/services/api/modules/draft/typings';
 import { draftApi, projectApi } from '@/services/api';
 import { useLocation, useModel, useNavigate, useParams } from '@@/exports';
-import { Avatar, Breadcrumb, Button, Card as AntdCard, Divider, Tag, theme, Typography } from 'antd';
+import { Avatar, Breadcrumb, Button, Card as AntdCard, Divider, QRCode, Tag, theme, Typography } from 'antd';
 import { ProjectVo } from '@/services/api/modules/project/typings';
 import { DRAFT_RELEASE_CHANNEL } from '@/constants';
 import { formatDate, formatDraftType } from '@/utils/format';
@@ -59,19 +59,20 @@ const DraftDetailPage: React.FC = () => {
   return (
     <div className="draft-detail-page w-full h-full px-16 flex flex-col">
       <div>
-        <Breadcrumb className="!mt-2">
-          <Breadcrumb.Item>
-            <a onClick={() => navigate(`/project/${projectId}/detail`)}>
-              {projectInfo?.project.projectName ?? ''}
-            </a>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item>
-            <a onClick={() => navigate(`/project/${projectId}/draft/list`)}>
-              稿件
-            </a>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item>{draftDetail?.projectContribution?.name ?? ''}</Breadcrumb.Item>
-        </Breadcrumb>
+        <Breadcrumb
+          className="!mt-2"
+          items={[
+            {
+              title: (
+                <a onClick={() => navigate(`/project/${projectId}/detail`)}>
+                  {projectInfo?.project.projectName ?? ''}
+                </a>
+              )
+            },
+            {title: <a onClick={() => navigate(`/project/${projectId}/draft/list`)}>稿件</a>},
+            {title: draftDetail?.projectContribution?.name ?? ''}
+          ]}
+        />
         <div className="w-full flex items-center">
           <div className="flex flex-col">
             <Title level={3} className="mt-6">
@@ -163,18 +164,54 @@ const DraftDetailPage: React.FC = () => {
           {
             draftType === 'media' && (
               <div className="w-full h-[30vh] flex justify-center items-center">
-                <i className="fi fi-sr-play text-6xl" style={{color: colorPrimary}} />
+                <i className="fi fi-sr-play text-7xl" style={{color: colorPrimary}} />
                 <div className="ml-6 flex flex-col items-center">
                   <Text type="secondary">共一个音视频文件</Text>
                   <div className="w-full flex justify-between mt-2">
                     <Text>
-                      <a href={draftDetail?.projectContribution.mediaUrl} style={{color: colorPrimary}}>
-                        查看
-                      </a>
+                      <a href={draftDetail?.projectContribution.mediaUrl} style={{color: colorPrimary}}>查看</a>
                     </Text>
                     <Text style={{color: colorPrimary}}>下载文件</Text>
                   </div>
                 </div>
+                {
+                  draftDetail?.projectContribution.mediaUrl && (<>
+                    <Divider type="vertical" className="!h-24 !mx-12" />
+                    <QRCode
+                      value={draftDetail.projectContribution.mediaUrl}
+                      size={110}
+                      bordered={false}
+                      color={colorPrimary}
+                    />
+                  </>)
+                }
+              </div>
+            )
+          }
+          {
+            draftType === 'h5' && (
+              <div className="w-full h-[30vh] flex justify-center items-center">
+                <i className="fi fi-br-link-alt text-7xl" style={{color: colorPrimary}} />
+                <div className="ml-6 flex flex-col items-center">
+                  <Text type="secondary">共一个 H5 项目文件</Text>
+                  <div className="w-full flex justify-between mt-2">
+                    <Text>
+                      <a href={draftDetail?.projectContribution.mediaUrl} style={{color: colorPrimary}}>预览</a>
+                    </Text>
+                    <Text style={{color: colorPrimary}}>下载源码</Text>
+                  </div>
+                </div>
+                {
+                  draftDetail?.projectContribution.mediaUrl && (<>
+                    <Divider type="vertical" className="!h-24 !mx-12" />
+                    <QRCode
+                      value={draftDetail.projectContribution.mediaUrl}
+                      size={110}
+                      bordered={false}
+                      color={colorPrimary}
+                    />
+                  </>)
+                }
               </div>
             )
           }
