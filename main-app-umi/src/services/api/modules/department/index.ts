@@ -53,7 +53,7 @@ async function updateDepartment(
   },
   options?: { [key: string]: any }
 ) {
-  return request<IResponseData<any>>('/department/update', {
+  return request<IResponseData<any>>('/department/updatedTime', {
     method: 'PUT',
     data,
     ...(options || {})

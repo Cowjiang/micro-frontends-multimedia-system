@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useReducer, useState } from 'react';
 import './tabs.less';
 import classNames from 'classnames';
 import { TabsLayoutProps } from '@/layouts/typings';
@@ -11,6 +11,8 @@ import DepartmentMenu from '@/components/SideMenuPanel/DepartmentMenu';
 import ProjectMenu from '@/components/SideMenuPanel/ProjectMenu';
 import SettingMenu from '@/components/SideMenuPanel/SettingMenu';
 import { useSize } from 'ahooks';
+import { render } from 'react-dom';
+import Loading from '@/components/Loading';
 
 const {useToken} = theme;
 
@@ -104,6 +106,9 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
 
   // 移除其它标签
   const removeOtherTabs = (currentTabKey: string) => {
+    const newTabsList = tabsList.filter(item => ['/index', currentTabKey].includes(item.key));
+    dispatch({type: 'app/setTabsList', payload: {tabsList: newTabsList}});
+    dispatch({type: 'app/setActiveTabKey', payload: {activeTabKey: currentTabKey}});
   };
 
   // 移除全部标签
@@ -113,13 +118,15 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
     dispatch({type: 'app/setActiveTabKey', payload: {activeTabKey: '/index'}});
   };
 
+  // 当前正在刷新的标签页key
+  const [refreshKey, setRefreshKey] = useState('');
   // 刷新标签页
   const refreshTabs = (targetKey: React.MouseEvent | React.KeyboardEvent | string) => {
-    dispatch({
-      type: 'app/refreshTab',
-      payload: {targetKey}
-    });
-  }
+    setRefreshKey(targetKey as string);
+    setTimeout(() => {
+      setRefreshKey('');
+    }, 250);
+  };
 
   // 标签编辑
   const onTabEdit = (
@@ -163,7 +170,7 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
       sideMenuPanelContent = <DepartmentMenu />;
     } else if (activeTabKey.includes('project')) {
       sideMenuPanelContent = <ProjectMenu />;
-    } else if (activeTabKey.includes('setting')){
+    } else if (activeTabKey.includes('setting')) {
       sideMenuPanelContent = <SettingMenu />;
     } else {
       sideMenuPanelContent = <></>;
@@ -204,7 +211,18 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
       >
         <Tabs
           type="editable-card"
-          items={tabsList}
+          items={
+            tabsList.map(tab => ({
+              ...tab,
+              children: refreshKey === tab.key
+                ? (
+                  <Loading spinning size="large">
+                    <div className="w-full h-[80vh]"></div>
+                  </Loading>
+                )
+                : tab.children
+            }))
+          }
           activeKey={activeTabKey}
           tabBarGutter={0}
           tabPosition="top"
@@ -248,7 +266,8 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
                           {
                             label: '刷新',
                             key: 'refresh',
-                            icon: <div></div>
+                            icon: <i className="fi fi-br-rotate-right" />,
+                            disabled: activeTabKey !== node.key
                           },
                           {
                             label: '关闭',
