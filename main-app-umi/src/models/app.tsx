@@ -13,6 +13,8 @@ export interface AppModelState {
   activeTabKey: string;
   // 当前激活的导航栏项Index
   activeNavIndex: number;
+  // 聊天子应用配置
+  chatAppConfig: { open: boolean; url: string; };
 }
 
 export interface AppModelType {
@@ -39,6 +41,8 @@ export interface AppModelType {
     setActiveTabKey: Reducer<AppModelState>;
     // 设置当前激活的导航栏项Index
     setActiveNavIndex: Reducer<AppModelState>;
+    // 设置聊天子应用配置
+    setChatAppConfig: Reducer<AppModelState>;
   };
 }
 
@@ -48,7 +52,11 @@ const appModel: AppModelType = {
     socket: null,
     tabsList: [],
     activeTabKey: '',
-    activeNavIndex: 0
+    activeNavIndex: 0,
+    chatAppConfig: {
+      open: false,
+      url: 'http://localhost:3000/chat/home'
+    }
   },
   effects: {
     * connectSocket({payload}, {put, call}) {
@@ -144,6 +152,12 @@ const appModel: AppModelType = {
       return {
         ...state,
         activeNavIndex
+      };
+    },
+    setChatAppConfig(state, {payload: {chatAppConfig}}) {
+      return {
+        ...state,
+        chatAppConfig
       };
     }
   }

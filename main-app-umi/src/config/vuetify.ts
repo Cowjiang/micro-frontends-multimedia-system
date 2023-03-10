@@ -4,7 +4,7 @@ import { PRIMARY_COLOR } from '@/constants';
 
 const {defaultAlgorithm, darkAlgorithm, defaultSeed} = theme;
 const token: SeedToken = Object.assign(defaultSeed, {
-  colorPrimary: PRIMARY_COLOR
+  colorPrimary: localStorage.getItem('PRIMARY_COLOR') ?? PRIMARY_COLOR
 });
 const themePack = {
   light: defaultAlgorithm(token),

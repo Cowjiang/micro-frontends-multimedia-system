@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Breadcrumb, Button, Col, Divider, List, Row, Tabs, TabsProps, Tag, theme, Typography } from 'antd';
-import { useModel, useNavigate, useParams } from '@@/exports';
+import { useDispatch, useModel, useNavigate, useParams } from '@@/exports';
 import Card from '@/components/Card';
 import Empty from '@/components/Empty';
 import { useSetDocTitle } from '@/utils/hooks';
@@ -38,6 +38,7 @@ const draftTabsItems: TabsProps['items'] = [
 const ProjectDetailPage: React.FC = () => {
   const {id: projectId} = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const {darkTheme} = useModel('theme');
   const [loading, setLoading] = useState(true);
@@ -206,6 +207,17 @@ const ProjectDetailPage: React.FC = () => {
             </Button>
             <Button
               type="primary"
+              onClick={() => {
+                dispatch({
+                  type: 'app/setChatAppConfig',
+                  payload: {
+                    chatAppConfig: {
+                      url: `http://localhost:3000/chat/home/chat/group/${projectInfo?.project.groupId}`,
+                      open: true
+                    }
+                  }
+                });
+              }}
             >
               进入群聊
             </Button>
@@ -240,7 +252,7 @@ const ProjectDetailPage: React.FC = () => {
                     {/*  ))*/}
                     {/*}*/}
                     <Tag color="green">
-                      {projectInfo?.project.stat}
+                      {projectInfo?.project.stat ?? '进行中'}
                     </Tag>
                   </Col>
                 </Row>

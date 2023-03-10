@@ -14,7 +14,7 @@ import { SocketMessageType } from '@/services/socket/typings';
 const ChatDialog: React.FC<ChatDialogProps> = (props) => {
   const [loading, setLoading] = useState(true);
   const [modal, contextHolder] = Modal.useModal();
-  const {socket}: AppModelState = useSelector((state: any) => state.app);
+  const {socket, chatAppConfig}: AppModelState = useSelector((state: any) => state.app);
   const {bus} = WujieReact;
 
   useEffect(() => {
@@ -34,9 +34,9 @@ const ChatDialog: React.FC<ChatDialogProps> = (props) => {
         name="chat"
         width="75vw"
         height="75vh"
-        url={`http://localhost:3000/chat/home`}
+        url={chatAppConfig.url}
         // alive={true}
-        // sync={true}
+        sync
         props={{
           ...wujieDefaultProps
         }}
@@ -63,7 +63,7 @@ const ChatDialog: React.FC<ChatDialogProps> = (props) => {
         }}
       />
     );
-  }, []);
+  }, [chatAppConfig]);
 
   return (
     <Modal

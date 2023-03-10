@@ -22,7 +22,7 @@ const DraftDetailPage: React.FC = () => {
 
   const {darkTheme} = useModel('theme');
   const {token} = useToken();
-  const {colorPrimary} = token;
+  const {colorPrimary, colorFillQuaternary} = token;
 
   // 项目信息
   const [projectInfo, setProjectInfo] = useState<ProjectVo>();
@@ -182,6 +182,7 @@ const DraftDetailPage: React.FC = () => {
                       size={110}
                       bordered={false}
                       color={colorPrimary}
+                      style={{background: darkTheme ? colorFillQuaternary : '#fff'}}
                     />
                   </>)
                 }

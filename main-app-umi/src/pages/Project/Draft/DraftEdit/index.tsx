@@ -11,6 +11,7 @@ import { draftApi } from '@/services/api';
 import { ProjectContribution } from '@/services/api/modules/draft/typings';
 import H5Edit from '@/pages/Project/Draft/DraftEdit/H5';
 import MediaEdit from '@/pages/Project/Draft/DraftEdit/Media';
+import { formatDraftType } from '@/utils/format';
 // import { useSetDocTitle } from '@/utils/hooks';
 
 const {Title, Text} = Typography;
@@ -60,6 +61,7 @@ const DraftEditPage: React.FC = () => {
     if (editAction === 'edit') {
       draftApi.updateDraft(draftDetail as ProjectContribution).then(res => {
         messageApi.success('保存成功');
+        navigate(`/project/${projectId}/draft/detail/${draftType}/${draftId}`, {replace: true});
       }).catch(() => {
         messageApi.error('保存失败');
       });
@@ -72,6 +74,7 @@ const DraftEditPage: React.FC = () => {
         type: DRAFT_TYPE_LABEL[draftType ?? ''].type ?? 'others'
       }).then(res => {
         messageApi.success('新建成功');
+        res.data?.id && navigate(`/project/${projectId}/draft/detail/${draftType}/${res.data.id}`, {replace: true});
       }).catch(() => {
         messageApi.error('新建失败');
       });

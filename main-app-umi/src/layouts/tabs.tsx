@@ -104,9 +104,6 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
 
   // 移除其它标签
   const removeOtherTabs = (currentTabKey: string) => {
-    const newTabsList = tabsList.filter(item => ['/index', currentTabKey].includes(item.key));
-    dispatch({type: 'app/setTabsList', payload: {tabsList: newTabsList}});
-    dispatch({type: 'app/setActiveTabKey', payload: {activeTabKey: currentTabKey}});
   };
 
   // 移除全部标签
@@ -115,6 +112,14 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
     dispatch({type: 'app/setTabsList', payload: {tabsList: newTabsList}});
     dispatch({type: 'app/setActiveTabKey', payload: {activeTabKey: '/index'}});
   };
+
+  // 刷新标签页
+  const refreshTabs = (targetKey: React.MouseEvent | React.KeyboardEvent | string) => {
+    dispatch({
+      type: 'app/refreshTab',
+      payload: {targetKey}
+    });
+  }
 
   // 标签编辑
   const onTabEdit = (
@@ -138,6 +143,7 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
       // 标签页右键
       menuItemKey === 'closeCurrent' && removeTab(tabKey);
       menuItemKey === 'closeOthers' && removeOtherTabs(tabKey);
+      menuItemKey === 'refresh' && refreshTabs(tabKey);
     } else {
       // 更多按钮右键
       menuItemKey === 'backHome' && activeTabKey !== '/index' && navigate('/index');
@@ -239,6 +245,11 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
                     <Dropdown
                       menu={{
                         items: [
+                          {
+                            label: '刷新',
+                            key: 'refresh',
+                            icon: <div></div>
+                          },
                           {
                             label: '关闭',
                             key: 'closeCurrent',

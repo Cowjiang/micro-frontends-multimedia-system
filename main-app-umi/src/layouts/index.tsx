@@ -7,8 +7,8 @@ import SideNavBar from '@/components/SideNavBar';
 import ChatDialog from '@/components/ChatDialog';
 import { NavItem } from '@/components/SideNavBar/typings';
 import { UserModelState } from '@/models/user';
+import { AppModelState } from '@/models/app';
 import TabsLayout from '@/layouts/tabs';
-import { PRIMARY_COLOR } from '@/constants';
 
 export default () => {
   const {loading, setLoading} = useModel('global');
@@ -17,6 +17,7 @@ export default () => {
   const routes = useSelectedRoutes();
   const lastRoute = routes.at(-1); //当前路由
 
+  const chatAppConfig: AppModelState['chatAppConfig'] = useSelector((state: any) => state.app.chatAppConfig);
   const {userInfo}: UserModelState = useSelector((state: any) => state.user);
   const dispatch = useDispatch();
   useEffect(() => {
@@ -51,14 +52,19 @@ export default () => {
       });
     }
     if (e.value.name === 'chat') {
-      setChatDialogDisplay(true);
+      dispatch({
+        type: 'app/setChatAppConfig',
+        payload: {
+          chatAppConfig: {
+            ...chatAppConfig,
+            open: true
+          }
+        }
+      });
     }
     const url = e.value.url ?? '';
     url && navigate(url);
   };
-
-  // 是否显示聊天弹窗子应用
-  const [chatDialogDisplay, setChatDialogDisplay] = useState(false);
 
   useEffect(() => {
     const currentPath = lastRoute?.pathname ?? '';
@@ -137,8 +143,18 @@ export default () => {
           }
           {contextHolder}
           <ChatDialog
-            open={chatDialogDisplay}
-            onCancel={() => setChatDialogDisplay(false)}
+            open={chatAppConfig.open}
+            onCancel={() => {
+              dispatch({
+                type: 'app/setChatAppConfig',
+                payload: {
+                  chatAppConfig: {
+                    ...chatAppConfig,
+                    open: false
+                  }
+                }
+              });
+            }}
           />
         </Loading>
       </Layout>

@@ -13,7 +13,7 @@ import {
   theme,
   Typography
 } from 'antd';
-import { useModel, useNavigate, useParams } from '@@/exports';
+import { useDispatch, useModel, useNavigate, useParams } from '@@/exports';
 import { ProjectMemberVo, ProjectVo } from '@/services/api/modules/project/typings';
 import { projectApi } from '@/services/api';
 import { useSetDocTitle } from '@/utils/hooks';
@@ -25,6 +25,7 @@ const {Title, Text} = Typography;
 const ProjectMembersPage = () => {
   const {id: projectId} = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const {token} = useToken();
   const {messageApi} = useModel('messageApi');
@@ -139,7 +140,17 @@ const ProjectMembersPage = () => {
                               <Text type="secondary">
                                 <i className="fi fi-br-comment-info" />
                               </Text>,
-                              <Text type="secondary">
+                              <Text type="secondary" onClick={() => {
+                                dispatch({
+                                  type: 'app/setChatAppConfig',
+                                  payload: {
+                                    chatAppConfig: {
+                                      url: `http://localhost:3000/chat/home/chat/private/${user.userId}`,
+                                      open: true
+                                    }
+                                  }
+                                });
+                              }}>
                                 <i className="fi fi-br-comment" />
                               </Text>
                             ];
