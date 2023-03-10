@@ -3,7 +3,7 @@ import { IResponseData } from '@/services/typings';
 import { SocketMessage, SocketMessageType } from '@/services/socket/typings';
 import { ChatType } from '@/components/ChatDialog/typings';
 
-export const wsBaseUrl = 'http://localhost:8888';
+export const wsBaseUrl = 'https://test.school.assistant.nanxicloud.xyz';
 
 // 连接Socket
 export const connectSocket = () => {

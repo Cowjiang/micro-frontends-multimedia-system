@@ -13,7 +13,8 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: 'http://localhost:8887/service/',
+        // target: 'http://localhost:8887/service/',
+        target: 'https://test.school.assistant.nanxicloud.xyz/cowjiang/service/',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }

@@ -1,6 +1,7 @@
 export default {
   '/api': {
-    target: 'http://localhost:8887/service/',
+    // target: 'http://localhost:8887/service/',
+    target: 'https://test.school.assistant.nanxicloud.xyz/cowjiang/service/',
     changeOrigin: true,
     pathRewrite: {
       '^/api': ''
