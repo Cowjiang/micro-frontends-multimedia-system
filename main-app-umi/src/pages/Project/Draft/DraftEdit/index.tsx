@@ -12,6 +12,7 @@ import { ProjectContribution } from '@/services/api/modules/draft/typings';
 import H5Edit from '@/pages/Project/Draft/DraftEdit/H5';
 import MediaEdit from '@/pages/Project/Draft/DraftEdit/Media';
 import { formatDraftType } from '@/utils/format';
+import { uploadFile } from '@/utils';
 // import { useSetDocTitle } from '@/utils/hooks';
 
 const {Title, Text} = Typography;
@@ -199,9 +200,16 @@ const DraftEditPage: React.FC = () => {
                   listType="picture-card"
                   style={{background: darkTheme ? colorFillSecondary : '#fff'}}
                   showUploadList={false}
-                  // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                  // beforeUpload={beforeUpload}
-                  // onChange={handleChange}
+                  maxCount={1}
+                  // customRequest={({file}) => {
+                  //   let fileForm = new window.FormData();
+                  //   fileForm.append('file', file);
+                  //   uploadFile(fileForm, `private/${userInfo.userId}/${Date.now()}`).then(res => {
+                  //     updateUserInfo({
+                  //       avgPath: res.url
+                  //     });
+                  //   });
+                  // }}
                 >
                   {uploadButton}
                 </Upload>

@@ -12,7 +12,7 @@ export const uploadFile = async (fileFormData: FormData, urlSuffix: string) => {
       fileFormData.append('token', signData.token);
       return await request(`http://${signData.uploadDomain}`, {
         method: 'POST',
-        fileFormData,
+        data: fileFormData,
         ...{headers: {'Content-Type': 'multipart/form-data'}}
       });
     } else {

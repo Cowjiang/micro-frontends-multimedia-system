@@ -10,6 +10,7 @@ import { darkThemeImage, lightThemeImage } from '@/assets/images/svg/themeSvg';
 import { UserProfileDto, UserProfileExtVo } from '@/services/api/modules/user/typings';
 import { userApi } from '@/services/api';
 import { PRIMARY_COLOR } from '@/constants';
+import { uploadFile } from '@/utils';
 
 const {Title, Text} = Typography;
 const {useToken} = theme;
@@ -156,9 +157,16 @@ const SettingsPage = () => {
                         listType="picture-circle"
                         style={{background: darkTheme ? colorFillSecondary : '#fff'}}
                         showUploadList={false}
-                        // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                        // beforeUpload={beforeUpload}
-                        // onChange={handleChange}
+                        maxCount={1}
+                        customRequest={({file}) => {
+                          let fileForm = new window.FormData();
+                          fileForm.append('file', file);
+                          uploadFile(fileForm, `private/${userInfo.userId}/${Date.now()}`).then(res => {
+                            updateUserInfo({
+                              avgPath: res.url
+                            });
+                          });
+                        }}
                       >
                         {
                           userInfo.avgPath

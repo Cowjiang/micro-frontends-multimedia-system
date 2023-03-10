@@ -52,11 +52,15 @@ const DepartmentRolesConfigPage: React.FC = () => {
     if (departmentId) {
       departmentApi.getDepartmentUserRoles(departmentId).then(res => {
         setRoleList(res.data ?? []);
-        const newConfigList: typeof configList = res.data?.map(role => ({
+        const newConfigList: typeof configList = res.data?.length ? res.data?.map(role => ({
           id: role.id,
           role,
           permission: []
-        })) ?? [];
+        })) ?? [] : [{
+          id: 0,
+          role: {},
+          permission: []
+        }];
         setConfigList(newConfigList);
         setConfigListTemp(JSON.parse(JSON.stringify(newConfigList)));
       }).catch(err => {
@@ -73,7 +77,7 @@ const DepartmentRolesConfigPage: React.FC = () => {
   // 表单数据更新
   const onFormValueChange = (col: 'role' | 'permission', index: number, value: any) => {
     const newConfigList = [...configList];
-    if (col === 'role' && value) {
+    if (col === 'role') {
       newConfigList[index].role = {
         departmentId: Number(departmentId),
         roleName: value
