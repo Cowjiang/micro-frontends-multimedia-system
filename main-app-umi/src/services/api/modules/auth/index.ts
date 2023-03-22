@@ -1,6 +1,6 @@
 import { request } from '@@/exports';
 import type { IResponseData } from '@/services/typings';
-import { OSSTokenVo } from '@/services/api/modules/auth/typings';
+import { OSSTokenVo, TargetTypeName } from '@/services/api/modules/auth/typings';
 
 // 使用账号登陆
 async function loginByAccount(
@@ -49,7 +49,7 @@ async function refreshToken(
 // 获取OSS上传凭证
 async function getUploadSignature(
   params: {
-    targetTypeName: 'mfms-chat' | 'mfms-material',
+    targetTypeName: TargetTypeName,
   },
   options?: { [key: string]: any }
 ) {

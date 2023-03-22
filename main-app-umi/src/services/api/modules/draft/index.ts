@@ -38,6 +38,7 @@ async function addDraft(
     channels: string;
     type: DraftType;
     mediaUrl?: string;
+    imgUrl?: string;
   },
   options?: { [key: string]: any }
 ) {

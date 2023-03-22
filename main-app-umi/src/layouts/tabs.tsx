@@ -90,18 +90,12 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
 
   // 新增标签
   const addTab = (children: React.ReactNode = <IndexPage />, title?: string, key?: string) => {
-    dispatch({
-      type: 'app/addTab',
-      payload: {children, title, key}
-    });
+    dispatch({type: 'app/addTab', payload: {children, title, key}});
   };
 
   // 移除指定标签
   const removeTab = (targetKey: React.MouseEvent | React.KeyboardEvent | string) => {
-    dispatch({
-      type: 'app/removeTab',
-      payload: {targetKey}
-    });
+    dispatch({type: 'app/removeTab', payload: {targetKey}});
   };
 
   // 移除其它标签

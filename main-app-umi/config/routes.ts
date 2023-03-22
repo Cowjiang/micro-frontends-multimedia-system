@@ -60,7 +60,7 @@ const routes = [
   {
     path: '/settings',
     title: '设置中心',
-    redirect: '/settings/personal',
+    component: '@/pages/Settings/index',
     routes: [
       {path: '/settings/personal', component: '@/pages/Settings/index', title: '个人设置'},
       {path: '/settings/general', component: '@/pages/Settings/index', title: '通用设置'},

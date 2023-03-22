@@ -161,7 +161,11 @@ const SettingsPage = () => {
                         customRequest={({file}) => {
                           let fileForm = new window.FormData();
                           fileForm.append('file', file);
-                          uploadFile(fileForm, `private/${userInfo.userId}/${Date.now()}`).then(res => {
+                          uploadFile(
+                            fileForm,
+                            'mfms-chat',
+                            `private/${userInfo.userId}/${Date.now()}`
+                          ).then(res => {
                             updateUserInfo({
                               avgPath: res.url
                             });

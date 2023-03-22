@@ -26,6 +26,21 @@ async function searchUser(
   });
 }
 
+
+// 获取用户信息
+async function getUserInfo(
+  params: {
+    userId: number
+  },
+  options?: { [key: string]: any }
+) {
+  return request<IResponseData<UserProfileExtVo>>('/user/simple/info', {
+    method: 'GET',
+    params,
+    ...(options || {})
+  });
+}
+
 // 修改用户信息
 async function updateUserInfo(
   data: UserProfileDto,
@@ -41,5 +56,6 @@ async function updateUserInfo(
 export default {
   getCurrentUserInfo,
   searchUser,
+  getUserInfo,
   updateUserInfo
 };

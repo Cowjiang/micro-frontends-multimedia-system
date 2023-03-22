@@ -1,16 +1,19 @@
 import React from 'react';
 import { useModel } from '@@/exports';
 import { theme, Typography, Upload } from 'antd';
-import type { UploadProps } from 'antd';
 import { RcFile } from 'antd/es/upload/interface';
+import { uploadFile } from '@/utils';
+import { H5EditProps } from '@/pages/Project/Draft/DraftEdit/H5/typings';
 
 const {Text} = Typography;
 const {useToken} = theme;
 
-const H5Edit: React.FC<UploadProps> = (props: UploadProps) => {
+const H5Edit: React.FC<H5EditProps> = (props: H5EditProps) => {
   const {messageApi} = useModel('messageApi');
   const {token} = useToken();
   const {colorPrimary} = token;
+
+  const {uploadUrlSuffix, ...uploadProps} = props;
 
   const beforeUpload = (file: RcFile) => {
     const isZip = file.type === 'application/x-zip-compressed';
@@ -23,9 +26,17 @@ const H5Edit: React.FC<UploadProps> = (props: UploadProps) => {
   return (
     <div className="pt-6">
       <Upload.Dragger
-        {...props}
+        {...uploadProps}
         name="file"
-        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+        customRequest={async ({file, onSuccess, onError}) => {
+          let fileForm = new window.FormData();
+          fileForm.append('file', file);
+          uploadFile(fileForm, 'mfms-material', `${uploadUrlSuffix}/${Date.now()}.zip`).then((res) => {
+            onSuccess && onSuccess(res);
+          }).catch(err => {
+            onError && onError(err);
+          });
+        }}
         multiple={false}
         maxCount={1}
         beforeUpload={beforeUpload}

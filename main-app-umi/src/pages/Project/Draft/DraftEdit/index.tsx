@@ -72,6 +72,8 @@ const DraftEditPage: React.FC = () => {
         name: draftDetail?.name ?? '',
         content: draftDetail?.content ?? '',
         channels: draftDetail?.channels ?? '',
+        mediaUrl: draftDetail?.mediaUrl ?? '',
+        imgUrl: draftDetail?.imgUrl ?? '',
         type: DRAFT_TYPE_LABEL[draftType ?? ''].type ?? 'others'
       }).then(res => {
         messageApi.success('新建成功');
@@ -232,19 +234,12 @@ const DraftEditPage: React.FC = () => {
             {
               draftType === 'h5' && (
                 <H5Edit
+                  uploadUrlSuffix={`project/${projectId}/draft/${editAction === 'edit' ? draftId : 'temp'}/h5`}
                   onChange={(info) => {
-                    const {status} = info.file;
-                    if (status !== 'uploading') {
-                      console.log(info.file, info.fileList);
-                    }
+                    const {status, response} = info.file;
                     if (status === 'done') {
-                      // message.success(`${info.file.name} file uploaded successfully.`);
-                    } else if (status === 'error') {
-                      // message.error(`${info.file.name} file upload failed.`);
+                      setDraftDetail({...draftDetail, mediaUrl: response?.url ?? ''})
                     }
-                  }}
-                  onDrop={(e) => {
-                    console.log('Dropped files', e.dataTransfer.files);
                   }}
                 />
               )
@@ -252,15 +247,11 @@ const DraftEditPage: React.FC = () => {
             {
               draftType === 'media' && (
                 <MediaEdit
+                  uploadUrlSuffix={`project/${projectId}/draft/${editAction === 'edit' ? draftId : 'temp'}/media`}
                   onChange={(info) => {
-                    const {status} = info.file;
-                    if (status !== 'uploading') {
-                      console.log(info.file, info.fileList);
-                    }
+                    const {status, response} = info.file;
                     if (status === 'done') {
-                      // message.success(`${info.file.name} file uploaded successfully.`);
-                    } else if (status === 'error') {
-                      // message.error(`${info.file.name} file upload failed.`);
+                      setDraftDetail({...draftDetail, mediaUrl: response?.url ?? ''})
                     }
                   }}
                   onDrop={(e) => {

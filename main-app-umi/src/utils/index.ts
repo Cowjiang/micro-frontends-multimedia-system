@@ -1,11 +1,12 @@
 import { authApi } from '@/services/api';
 import { request } from '@@/exports';
+import { TargetTypeName } from '@/services/api/modules/auth/typings';
 
 // 上传文件
-export const uploadFile = async (fileFormData: FormData, urlSuffix: string) => {
+export const uploadFile = async (fileFormData: FormData, type: TargetTypeName, urlSuffix: string) => {
   try {
     const {data: signData} = await authApi.getUploadSignature({
-      targetTypeName: 'mfms-chat'
+      targetTypeName: type
     });
     if (signData) {
       fileFormData.append('key', `${signData.keyPrefix}${urlSuffix}`);

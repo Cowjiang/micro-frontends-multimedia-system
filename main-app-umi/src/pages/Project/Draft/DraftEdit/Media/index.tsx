@@ -2,21 +2,33 @@ import React from 'react';
 import { useModel } from '@@/exports';
 import { theme, Typography, Upload } from 'antd';
 import type { UploadProps } from 'antd';
+import { MediaEditProps } from '@/pages/Project/Draft/DraftEdit/Media/typings';
+import { uploadFile } from '@/utils';
 
 const {Text} = Typography;
 const {useToken} = theme;
 
-const MediaEdit: React.FC<UploadProps> = (props: UploadProps) => {
+const MediaEdit: React.FC<MediaEditProps> = (props: MediaEditProps) => {
   const {messageApi} = useModel('messageApi');
   const {token} = useToken();
   const {colorPrimary} = token;
 
+  const {uploadUrlSuffix, ...uploadProps} = props;
+
   return (
     <div className="pt-6">
       <Upload.Dragger
-        {...props}
+        {...uploadProps}
         name="file"
-        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+        customRequest={async ({file, onSuccess, onError}) => {
+          let fileForm = new window.FormData();
+          fileForm.append('file', file);
+          uploadFile(fileForm, 'mfms-material', `${uploadUrlSuffix}/${Date.now()}`).then((res) => {
+            onSuccess && onSuccess(res);
+          }).catch(err => {
+            onError && onError(err);
+          });
+        }}
         multiple
       >
         <div className="h-24"></div>

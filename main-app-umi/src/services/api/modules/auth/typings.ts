@@ -4,3 +4,5 @@ export interface OSSTokenVo {
   uploadDomain: string;
   keyPrefix: string;
 }
+
+export type TargetTypeName = 'mfms-chat' | 'mfms-material' | 'mfms-temp';
