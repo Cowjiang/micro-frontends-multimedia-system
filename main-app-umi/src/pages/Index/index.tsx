@@ -98,6 +98,18 @@ const IndexPage: React.FC = () => {
             >
               稿件列表
             </Button>
+            <Button
+              type="primary"
+              onClick={() => navigate('./a')}
+            >
+              404
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => navigate('/403')}
+            >
+              403
+            </Button>
           </Space>
         </Row>
         <Row>

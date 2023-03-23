@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { TabsLayoutProps } from '@/layouts/typings';
 import { Drawer, Dropdown, Tabs, theme } from 'antd';
 import SideMenuPanel from '@/components/SideMenuPanel';
-import { useDispatch, useLocation, useModel, useNavigate, useSelectedRoutes, useSelector } from '@@/exports';
+import { useDispatch, useLocation, useMatch, useModel, useNavigate, useSelectedRoutes, useSelector } from '@@/exports';
 import IndexPage from '@/pages/Index';
 import { AppModelState } from '@/models/app';
 import DepartmentMenu from '@/components/SideMenuPanel/DepartmentMenu';
@@ -49,8 +49,10 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
         key: location.pathname
       });
       dispatch({type: 'app/setActiveTabKey', payload: {activeTabKey: location.pathname}});
-    } else {
+    } else if (location.pathname === '/index') {
       dispatch({type: 'app/setActiveTabKey', payload: {activeTabKey: '/index'}});
+    } else {
+      navigate('/404', {replace: true});
     }
     dispatch({type: 'app/setTabsList', payload: {tabsList: initTabsList}});
   }, []);
@@ -62,7 +64,7 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
         dispatch({type: 'app/setActiveTabKey', payload: {activeTabKey: prevTab.key}});
       }
     }
-    if (props.children.props.context.path !== '/index') {
+    if (props.children.props.context.path !== '/index' && currentRoute?.path !== '/*') {
       if (props.children.props.context.action === 'REPLACE') {
         const newTabsList = tabsList.filter(tab => tab.key !== activeTabKey);
         dispatch({type: 'app/setTabsList', payload: {tabsList: newTabsList}});
@@ -72,6 +74,8 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
         props.children.props.context.title,
         props.children.props.context.path
       );
+    } else if (currentRoute?.path === '/*') {
+      navigate('/404', {replace: true});
     } else {
       dispatch({type: 'app/setActiveTabKey', payload: {activeTabKey: '/index'}});
     }

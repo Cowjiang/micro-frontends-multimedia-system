@@ -1,10 +1,4 @@
-import DraftDetailPage from '@/pages/Project/Draft/DraftDetail';
-
 const routes = [
-  {
-    path: '/*',
-    redirect: '/index'
-  },
   {
     path: '/',
     redirect: '/index'
@@ -65,6 +59,22 @@ const routes = [
       {path: '/settings/personal', component: '@/pages/Settings/index', title: '个人设置'},
       {path: '/settings/general', component: '@/pages/Settings/index', title: '通用设置'},
     ]
+  },
+  {
+    path: '/404',
+    title: '404 Not Found',
+    component: '@/pages/404',
+    layout: false
+  },
+  {
+    path: '/403',
+    title: '403 Forbidden',
+    component: '@/pages/403',
+    layout: false
+  },
+  {
+    path: '/*',
+    component: '@/pages/404',
   },
 ]
 
