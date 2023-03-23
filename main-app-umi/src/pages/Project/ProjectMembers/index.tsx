@@ -18,6 +18,8 @@ import { ProjectMemberVo, ProjectVo } from '@/services/api/modules/project/typin
 import { projectApi } from '@/services/api';
 import { useSetDocTitle } from '@/utils/hooks';
 import SearchUserDialog from '@/components/SearchUserDialog';
+import UserInfoDialog from '@/components/UserInfoDialog';
+import { UserInfoDialogProps } from '@/components/UserInfoDialog/typings';
 
 const {useToken} = theme;
 const {Title, Text} = Typography;
@@ -91,6 +93,11 @@ const ProjectMembersPage = () => {
     }
   };
 
+  const [userProfileDialogProps, setUserProfileDialogProps] = useState<UserInfoDialogProps>({
+    open: false,
+    userId: 0
+  });
+
   return (
     <div className="project-detail-page w-full h-full px-12 flex flex-col">
       <div>
@@ -137,18 +144,18 @@ const ProjectMembersPage = () => {
                         <Card
                           actions={(() => {
                             const actionList = [
-                              <Text type="secondary">
+                              <Text type="secondary" onClick={() => {
+                                user.userId && setUserProfileDialogProps({
+                                  open: true,
+                                  userId: user.userId
+                                });
+                              }}>
                                 <i className="fi fi-br-comment-info" />
                               </Text>,
                               <Text type="secondary" onClick={() => {
-                                dispatch({
-                                  type: 'app/setChatAppConfig',
-                                  payload: {
-                                    chatAppConfig: {
-                                      url: `http://localhost:3000/chat/home/chat/private/${user.userId}`,
-                                      open: true
-                                    }
-                                  }
+                                user.userId && setUserProfileDialogProps({
+                                  open: true,
+                                  userId: user.userId
                                 });
                               }}>
                                 <i className="fi fi-br-comment" />
@@ -226,6 +233,11 @@ const ProjectMembersPage = () => {
           ))
         }
       </div>
+      <UserInfoDialog
+        {...userProfileDialogProps}
+        destroyOnClose
+        onCancel={() => setUserProfileDialogProps({open: false, userId: 0})}
+      />
     </div>
   );
 };

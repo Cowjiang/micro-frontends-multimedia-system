@@ -304,7 +304,7 @@ const DraftEditPage: React.FC = () => {
                   placeholder="选择发布渠道"
                   options={DRAFT_RELEASE_CHANNEL}
                   value={
-                    JSON.parse(draftDetail?.channels ?? '[]')?.map((channel: string) =>
+                    JSON.parse(draftDetail?.channels || '[]')?.map((channel: string) =>
                       DRAFT_RELEASE_CHANNEL.find(c => c.value === channel)?.value ?? '')
                     ?? []
                   }

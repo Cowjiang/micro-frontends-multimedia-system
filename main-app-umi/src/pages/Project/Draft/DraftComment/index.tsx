@@ -234,7 +234,7 @@ const DraftCommentPage: React.FC = () => {
             <Text type="secondary">
               发布渠道：
               {
-                JSON.parse(draftDetail?.projectContribution?.channels ?? '[]').map((channel: string) => {
+                JSON.parse(draftDetail?.projectContribution?.channels || '[]').map((channel: string) => {
                   const defaultChannel = DRAFT_RELEASE_CHANNEL.find(c => c.value === channel);
                   return (
                     <Tag

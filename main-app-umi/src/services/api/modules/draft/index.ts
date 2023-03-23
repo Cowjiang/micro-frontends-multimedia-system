@@ -61,6 +61,17 @@ async function updateDraft(
   });
 }
 
+// 删除稿件
+async function deleteDraft(
+  id: number | string,
+  options?: { [key: string]: any }
+) {
+  return request<IResponseData<any>>(`/project/contribution/${id}`, {
+    method: 'DELETE',
+    ...(options || {})
+  });
+}
+
 // 获取稿件批注列表
 async function getDraftCommentList(
   draftId: number | string,
@@ -142,6 +153,7 @@ export default {
   getDraftDetail,
   addDraft,
   updateDraft,
+  deleteDraft,
   getDraftCommentList,
   getDraftComment,
   addDraftComment,

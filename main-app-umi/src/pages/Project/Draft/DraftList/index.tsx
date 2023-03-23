@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useLocation, useNavigate, useParams, useSearchParams } from '@@/exports';
+import { useLocation, useModel, useNavigate, useParams, useSearchParams } from '@@/exports';
 import { Breadcrumb, Button, Dropdown, Input, Skeleton, Table, Tabs, Tag, theme, Typography } from 'antd';
 import { useSetDocTitle } from '@/utils/hooks';
 import { ColumnsType } from 'antd/es/table';
@@ -27,6 +27,7 @@ const DraftListPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const {id: projectId} = useParams();
+  const {messageApi} = useModel('messageApi');
 
   const {token} = useToken();
   const {colorPrimary} = token;
@@ -60,6 +61,19 @@ const DraftListPage: React.FC = () => {
     if (projectId) {
       const {data: draftList} = await draftApi.getProjectDraftList(projectId);
       setDraftList((draftList ?? []).map(draft => ({key: draft.projectContribution.id, ...draft})));
+    }
+  };
+
+  // 删除稿件
+  const deleteDraftList = async (draftId?: number | string) => {
+    if (draftId) {
+      try {
+        await draftApi.deleteDraft(draftId);
+        messageApi.success('删除成功');
+      } catch (e) {
+        messageApi.error('删除失败');
+      }
+      await getDraftList();
     }
   };
 
@@ -119,7 +133,7 @@ const DraftListPage: React.FC = () => {
           </Paragraph>
           <div className="mt-auto flex flex-wrap">
             {
-              JSON.parse(channels ?? '[]').map((channel: string) => {
+              JSON.parse(channels || '[]').map((channel: string) => {
                 const defaultChannel = DRAFT_RELEASE_CHANNEL.find(c => c.value === channel);
                 return (
                   <Tag
@@ -212,7 +226,8 @@ const DraftListPage: React.FC = () => {
               {
                 label: '删除稿件',
                 key: '4',
-                danger: true
+                danger: true,
+                onClick: () => deleteDraftList(id)
               }
             ]
           }}
@@ -272,7 +287,7 @@ const DraftListPage: React.FC = () => {
         }
       />
     )
-  ), [draftListType, tableLoading]);
+  ), [draftList, draftListType, tableLoading]);
 
   return (
     <div className="draft-list-page w-full h-full px-12 flex flex-col">

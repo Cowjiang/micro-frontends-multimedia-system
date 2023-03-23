@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Avatar, Input, List, Modal, Skeleton, Image, Typography, theme, Button } from 'antd';
 import Empty from '@/components/Empty';
-import { userApi } from '@/services/api';
+import { chatApi, userApi } from '@/services/api';
 import { UserProfileExtVo } from '@/services/api/modules/user/typings';
 import { UserInfoDialogProps } from '@/components/UserInfoDialog/typings';
+import { useDispatch, useModel } from '@@/exports';
 
 const {Text, Title} = Typography;
 const {useToken} = theme;
@@ -11,6 +12,8 @@ const {useToken} = theme;
 const UserInfoDialog: React.FC<UserInfoDialogProps> = (props) => {
   const [modal, contextHolder] = Modal.useModal();
   const {token} = useToken();
+  const dispatch = useDispatch();
+  const {messageApi} = useModel('messageApi');
 
   const {userId, ...antdModalProps} = props;
 
@@ -30,6 +33,33 @@ const UserInfoDialog: React.FC<UserInfoDialogProps> = (props) => {
       getUserInfo();
     }
   }, [props.open, userId]);
+
+  // 发起私聊
+  const handleChatOpen = async () => {
+    if (userInfo.userId) {
+      try {
+        const {success, message} = await chatApi.sendPrivateMessage({
+          receiverId: userInfo.userId,
+          content: '你好~',
+          type: 'text'
+        });
+        if (!success) {
+          await Promise.reject(message);
+        }
+        dispatch({
+          type: 'app/setChatAppConfig',
+          payload: {
+            chatAppConfig: {
+              url: `http://localhost:3000/chat/home/chat/private/${userId}`,
+              open: true
+            }
+          }
+        });
+      } catch (e) {
+        messageApi.error('发起私聊失败');
+      }
+    }
+  };
 
   return (
     <Modal
@@ -69,7 +99,7 @@ const UserInfoDialog: React.FC<UserInfoDialogProps> = (props) => {
           </Text>
         </div>
         <div className="mt-8 flex justify-end">
-          <Button type="primary">
+          <Button type="primary" onClick={handleChatOpen}>
             发起私信
           </Button>
           <Button className="ml-4" danger>

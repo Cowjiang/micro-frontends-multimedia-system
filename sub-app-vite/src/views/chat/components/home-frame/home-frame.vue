@@ -203,7 +203,7 @@
     }
     currentNavItemIndex.value = index;
     if (index === -1) {
-      router.replace('/chat/home');
+      // router.replace('/chat/home');
     } else {
       if (props.chatType === ChatType.PRIVATE) {
         const {id, friendId, friendInfo} = privateChatList.value[currentNavItemIndex.value];
@@ -297,7 +297,7 @@
             return;
           }
         }
-        router.replace('/chat/home');
+        // router.replace('/chat/home');
       }
     }
   );
