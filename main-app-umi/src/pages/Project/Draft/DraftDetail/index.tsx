@@ -11,6 +11,7 @@ import { Editor } from 'tinymce';
 import Loading from '@/components/Loading';
 import Card from '@/components/Card';
 import Empty from '@/components/Empty';
+import messageApi from '@/models/messageApi';
 
 const {Title, Text} = Typography;
 const {useToken} = theme;
@@ -19,6 +20,7 @@ const DraftDetailPage: React.FC = () => {
   const {projectId, draftType, draftId} = useParams();
   const location = useLocation();
   const navigate = useNavigate();
+  const {messageApi} = useModel('messageApi');
 
   const {darkTheme} = useModel('theme');
   const {token} = useToken();
@@ -55,6 +57,18 @@ const DraftDetailPage: React.FC = () => {
 
   const editorRef = useRef<Editor | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // 部署H5
+  const handleDeployH5 = () => {
+    setLoading(true);
+    draftId && draftApi.deployPreviewH5(draftId).then(() => {
+      messageApi.success('正在部署，请等待一分钟后刷新');
+    }).catch(err => {
+      messageApi.error('部署失败');
+    }).finally(() => {
+      setLoading(false);
+    });
+  };
 
   return (
     <div className="draft-detail-page w-full h-full px-16 flex flex-col">
@@ -197,20 +211,32 @@ const DraftDetailPage: React.FC = () => {
                   <Text type="secondary">共一个 H5 项目文件</Text>
                   <div className="w-full flex justify-between mt-2">
                     <Text>
-                      <a href={draftDetail?.projectContribution.mediaUrl} style={{color: colorPrimary}}>预览</a>
+                      <a href={draftDetail?.projectContribution.content} style={{color: colorPrimary}}>预览</a>
                     </Text>
-                    <Text style={{color: colorPrimary}}>下载源码</Text>
+                    <Text style={{color: colorPrimary}}>
+                      <a href={draftDetail?.projectContribution.mediaUrl} style={{color: colorPrimary}}>下载源码</a>
+                    </Text>
                   </div>
                 </div>
                 {
                   draftDetail?.projectContribution.mediaUrl && (<>
                     <Divider type="vertical" className="!h-24 !mx-12" />
-                    <QRCode
-                      value={draftDetail.projectContribution.mediaUrl}
-                      size={110}
-                      bordered={false}
-                      color={colorPrimary}
-                    />
+                    {
+                      draftDetail?.projectContribution.content
+                        ? <QRCode
+                          value={draftDetail.projectContribution.content}
+                          size={110}
+                          bordered={false}
+                          color={colorPrimary}
+                        />
+                        : <Button
+                          type="primary"
+                          size="large"
+                          onClick={handleDeployH5}
+                        >
+                          生成预览链接
+                        </Button>
+                    }
                   </>)
                 }
               </div>
@@ -220,7 +246,6 @@ const DraftDetailPage: React.FC = () => {
         <div className="h-4"></div>
         <Card
           title="稿件作者"
-          // loading
           loadingOptions={{avatar: true}}
         >
           <AntdCard.Meta

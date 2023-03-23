@@ -126,6 +126,17 @@ async function removeDraftComment(
   });
 }
 
+// 部署预览H5
+async function deployPreviewH5(
+  draftId: string | number,
+  options?: { [key: string]: any }
+) {
+  return request<IResponseData<any>>(`/project/contribution/publish/h5/${draftId}`, {
+    method: 'POST',
+    ...(options || {})
+  });
+}
+
 export default {
   getProjectDraftList,
   getDraftDetail,
@@ -135,5 +146,6 @@ export default {
   getDraftComment,
   addDraftComment,
   updateDraftComment,
-  removeDraftComment
+  removeDraftComment,
+  deployPreviewH5
 };
