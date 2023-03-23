@@ -9,6 +9,8 @@ import { NavItem } from '@/components/SideNavBar/typings';
 import { UserModelState } from '@/models/user';
 import { AppModelState } from '@/models/app';
 import TabsLayout from '@/layouts/tabs';
+import UserInfoDialog from '@/components/UserInfoDialog';
+import { UserInfoDialogProps } from '@/components/UserInfoDialog/typings';
 
 export default () => {
   const {loading, setLoading} = useModel('global');
@@ -61,6 +63,11 @@ export default () => {
           }
         }
       });
+    } else if (e.value.name === 'user') {
+      userInfo?.userId && setUserProfileDialogProps({
+        open: true,
+        userId: userInfo.userId
+      });
     }
     const url = e.value.url ?? '';
     url && navigate(url);
@@ -85,6 +92,11 @@ export default () => {
       payload: {activeNavIndex}
     });
   }, [lastRoute]);
+
+  const [userProfileDialogProps, setUserProfileDialogProps] = useState<UserInfoDialogProps>({
+    open: false,
+    userId: 0
+  });
 
   return (
     <ConfigProvider
@@ -155,6 +167,11 @@ export default () => {
                 }
               });
             }}
+          />
+          <UserInfoDialog
+            {...userProfileDialogProps}
+            destroyOnClose
+            onCancel={() => setUserProfileDialogProps({open: false, userId: 0})}
           />
         </Loading>
       </Layout>
