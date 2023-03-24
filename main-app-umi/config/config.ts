@@ -2,7 +2,7 @@ import { defineConfig } from '@umijs/max';
 import routes from './routes';
 import proxy from './proxy';
 
-const {MOCK} = process.env;
+const {MOCK, OSS_BASE_URL} = process.env;
 
 export default defineConfig({
   locale: {antd: true},
@@ -14,7 +14,8 @@ export default defineConfig({
   proxy,
   define: {
     'process.env': {
-      SERVICE_BASE_URL: MOCK ? '/mock' : '/api'
+      SERVICE_BASE_URL: MOCK ? '/mock' : '/api',
+      OSS_BASE_URL
     }
   },
   routes,

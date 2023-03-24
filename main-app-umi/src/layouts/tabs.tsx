@@ -13,6 +13,7 @@ import SettingMenu from '@/components/SideMenuPanel/SettingMenu';
 import { useSize } from 'ahooks';
 import { render } from 'react-dom';
 import Loading from '@/components/Loading';
+import ResourceMenu from '@/components/SideMenuPanel/ResourceMenu';
 
 const {useToken} = theme;
 
@@ -164,11 +165,13 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
   // 侧边栏组件
   const sideMenuPanel = useMemo(() => {
     let sideMenuPanelContent: React.ReactNode;
-    if (activeTabKey.includes('department')) {
+    if (activeTabKey.includes('/department')) {
       sideMenuPanelContent = <DepartmentMenu />;
-    } else if (activeTabKey.includes('project')) {
+    } else if (activeTabKey.includes('/project')) {
       sideMenuPanelContent = <ProjectMenu />;
-    } else if (activeTabKey.includes('setting')) {
+    } else if (activeTabKey.includes('/resource')) {
+      sideMenuPanelContent = <ResourceMenu />;
+    } else if (activeTabKey.includes('/setting')) {
       sideMenuPanelContent = <SettingMenu />;
     } else {
       sideMenuPanelContent = <></>;

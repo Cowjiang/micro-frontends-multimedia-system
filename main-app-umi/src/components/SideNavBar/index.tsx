@@ -21,7 +21,7 @@ const SideNavBar: React.FC<SideNavBarProps> = (
   const navItemList = useMemo((): NavItemConfig[] => ([
     {name: 'home', title: '主页', icon: 'fi fi-sr-house-blank', url: '/index'},
     {name: 'project', title: '项目', icon: 'fi fi-sr-apps', url: '/project'},
-    {name: 'file', title: '资源库', icon: 'fi fi-sr-cloud-upload'},
+    {name: 'resource', title: '资源库', icon: 'fi fi-sr-cloud-upload', url: '/resource'},
     {name: 'department', title: '部门信息', icon: 'fi fi-ss-users', url: '/department'},
     {name: 'chat', title: '聊天', icon: 'fi fi-sr-comment'},
     {name: 'settings', title: '设置', icon: 'fi fi-sr-settings', url: '/settings'},

@@ -28,18 +28,18 @@ const routes = [
     component: '@/pages/Project/index',
     title: '项目概览',
     routes: [
-      {path: '/project/edit/new', component: '@/pages/Project/ProjectEdit/index', title: '新建项目'},
-      {path: '/project/edit/:id', component: '@/pages/Project/ProjectEdit/index', title: '编辑项目'},
-      {path: '/project/:id/detail', component: '@/pages/Project/ProjectDetail/index', title: '项目详情'},
-      {path: '/project/list', component: '@/pages/Project/ProjectList/index', title: '项目列表'},
-      {path: '/project/:id/member/list', component: '@/pages/Project/ProjectMembers/index', title: '项目人员'},
-      {path: '/project/:id/member/config', component: '@/pages/Project/ProjectMemberConfig/index', title: '项目人员设置'},
-      {path: '/project/:id/draft/list', component: '@/pages/Project/Draft/DraftList/index', title: '稿件列表'},
-      {path: '/project/:id/draft/new', component: '@/pages/Project/Draft/NewDraft/index', title: '新建稿件'},
-      {path: '/project/:projectId/draft/:editAction/:draftType', component: '@/pages/Project/Draft/DraftEdit/index', title: '新建稿件'},
-      {path: '/project/:projectId/draft/:editAction/:draftType/:draftId', component: '@/pages/Project/Draft/DraftEdit/index', title: '修改稿件'},
-      {path: '/project/:projectId/draft/detail/:draftType/:draftId', component: '@/pages/Project/Draft/DraftDetail/index', title: '稿件详情'},
-      {path: '/project/:projectId/draft/comment/:draftType/:draftId', component: '@/pages/Project/Draft/DraftComment/index', title: '稿件审批'},
+      {path: '/project/edit/new', component: '@/pages/Project/ProjectEdit', title: '新建项目'},
+      {path: '/project/edit/:id', component: '@/pages/Project/ProjectEdit', title: '编辑项目'},
+      {path: '/project/:id/detail', component: '@/pages/Project/ProjectDetail', title: '项目详情'},
+      {path: '/project/list', component: '@/pages/Project/ProjectList', title: '项目列表'},
+      {path: '/project/:id/member/list', component: '@/pages/Project/ProjectMembers', title: '项目人员'},
+      {path: '/project/:id/member/config', component: '@/pages/Project/ProjectMemberConfig', title: '项目人员设置'},
+      {path: '/project/:id/draft/list', component: '@/pages/Project/Draft/DraftList', title: '稿件列表'},
+      {path: '/project/:id/draft/new', component: '@/pages/Project/Draft/NewDraft', title: '新建稿件'},
+      {path: '/project/:projectId/draft/:editAction/:draftType', component: '@/pages/Project/Draft/DraftEdit', title: '新建稿件'},
+      {path: '/project/:projectId/draft/:editAction/:draftType/:draftId', component: '@/pages/Project/Draft/DraftEdit', title: '修改稿件'},
+      {path: '/project/:projectId/draft/detail/:draftType/:draftId', component: '@/pages/Project/Draft/DraftDetail', title: '稿件详情'},
+      {path: '/project/:projectId/draft/comment/:draftType/:draftId', component: '@/pages/Project/Draft/DraftComment', title: '稿件审批'},
     ]
   },
   {
@@ -49,6 +49,15 @@ const routes = [
       {path: '/department/:id/detail', component: '@/pages/Department/DepartmentDetail', title: '部门详情'},
       {path: '/department/:id/members', component: '@/pages/Department/DepartmentMembers', title: '部门成员'},
       {path: '/department/:id/roles/config', component: '@/pages/Department/DepartmentRolesConfig', title: '部门角色设置'},
+    ]
+  },
+  {
+    path: '/resource',
+    title: '资源素材库',
+    component: '@/pages/Resource',
+    routes: [
+      {path: '/resource/list/:targetType', component: '@/pages/Resource/ResourceList', title: '资源列表'},
+      {path: '/resource/list/:targetType/:prefix', component: '@/pages/Resource/ResourceList', title: '资源列表'},
     ]
   },
   {

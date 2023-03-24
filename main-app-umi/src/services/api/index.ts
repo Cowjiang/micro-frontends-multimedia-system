@@ -9,3 +9,5 @@ export { default as projectApi } from './modules/project';
 export { default as draftApi } from './modules/draft';
 
 export { default as chatApi } from './modules/chat';
+
+export { default as resourceApi } from './modules/resource';

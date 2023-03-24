@@ -23,3 +23,13 @@ export const uploadFile = async (fileFormData: FormData, type: TargetTypeName, u
     return Promise.reject(e);
   }
 };
+
+// 复制文本到剪贴板
+export const setClipboard = (content: string): void => {
+  let elem = document.createElement('input')
+  elem.setAttribute('value', content)
+  document.body.appendChild(elem)
+  elem.select()
+  document.execCommand('copy')
+  document.body.removeChild(elem)
+}

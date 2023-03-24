@@ -78,11 +78,13 @@ export default () => {
     let activeNavIndex: number;
     if (currentPath === '/index') {
       activeNavIndex = 0;
-    } else if (currentPath.includes('project')) {
+    } else if (currentPath.includes('/project')) {
       activeNavIndex = 1;
-    } else if (currentPath.includes('department')) {
+    } else if (currentPath.includes('/resource')) {
+      activeNavIndex = 2;
+    } else if (currentPath.includes('/department')) {
       activeNavIndex = 3;
-    } else if (currentPath.includes('settings')) {
+    } else if (currentPath.includes('/settings')) {
       activeNavIndex = 5;
     } else {
       activeNavIndex = 0;
