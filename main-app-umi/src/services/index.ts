@@ -1,6 +1,5 @@
 import type { AxiosResponse, RequestConfig } from '@@/plugin-request/request';
 import qs from 'qs';
-import { message } from 'antd';
 import { getDvaApp, request, history } from '@@/exports';
 
 const {SERVICE_BASE_URL} = process.env;
@@ -9,6 +8,8 @@ export const requestConfig: RequestConfig = {
   // timeout: 1000,
   // headers: {'X-Requested-With': 'XMLHttpRequest'},
   baseURL: SERVICE_BASE_URL,
+  // 允许进入响应拦截器的status
+  validateStatus: status => status >= 200 && status < 300 || status === 401,
   requestInterceptors: [
     (url, options) => {
       // console.log(url, options);
@@ -30,12 +31,10 @@ export const requestConfig: RequestConfig = {
     }
   ],
   responseInterceptors: [
-    // @ts-ignore
-    (v: AxiosResponse<any>) => {
+    (v: AxiosResponse<any>): AxiosResponse<any> => {
       console.log(v);
       const {dispatch} = getDvaApp()._store;
-      // @ts-ignore
-      const responseStatus = v.status || v.statusCode;
+      const responseStatus = v.status;
       if (responseStatus === 200) {
         // 如果存在token信息，刷新状态以及缓存
         if (v.data?.data?.accessToken && v.data?.data?.refreshToken) {
@@ -49,7 +48,6 @@ export const requestConfig: RequestConfig = {
             type: 'app/connectSocket'
           });
         }
-        return v;
       } else if (responseStatus === 401) {
         // 3002 Token过期  3003 Token不合法
         if ([2001, 3002, 3003].includes(v.data.code)) {
@@ -78,9 +76,9 @@ export const requestConfig: RequestConfig = {
           } else {
             history.push('/auth/login');
           }
-          return v;
         }
       }
+      return v;
     }
   ],
   errorConfig: {

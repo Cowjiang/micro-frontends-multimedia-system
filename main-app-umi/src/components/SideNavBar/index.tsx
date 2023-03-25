@@ -29,7 +29,7 @@ const SideNavBar: React.FC<SideNavBarProps> = (
       name: 'user',
       bottom: true,
       title: '我',
-      ...!userInfo.userId ? {icon: 'fi fi-sr-user'} : {imgUrl: userInfo.avgPath ?? ''}
+      ...!userInfo?.userId ? {icon: 'fi fi-sr-user'} : {imgUrl: userInfo.avgPath ?? ''}
     }
   ]), [userInfo]);
 

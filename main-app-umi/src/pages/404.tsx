@@ -11,11 +11,11 @@ const NotFoundPage = () => {
   return (
     <div className="w-full h-screen flex flex-col justify-center items-center">
       <Image
-        width={300}
+        width={500}
         src={NotFoundImage}
         preview={false}
       />
-      <Text className="mt-16">
+      <Text className="mt-8">
         抱歉，你访问的链接不存在
       </Text>
       <Button

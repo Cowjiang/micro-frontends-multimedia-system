@@ -11,11 +11,11 @@ const ForbiddenPage = () => {
   return (
     <div className="w-full h-screen flex flex-col justify-center items-center">
       <Image
-        width={300}
+        width={500}
         src={ForbiddenImage}
         preview={false}
       />
-      <Text className="mt-16">
+      <Text className="mt-8">
         抱歉，你没有权限访问该页面
       </Text>
       <Button

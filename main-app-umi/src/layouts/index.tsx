@@ -24,7 +24,7 @@ export default () => {
   const {userInfo}: UserModelState = useSelector((state: any) => state.user);
   const dispatch = useDispatch();
   useEffect(() => {
-    if (!userInfo.userId && localStorage.getItem('userInfo')) {
+    if (!userInfo?.userId && localStorage.getItem('userInfo')) {
       dispatch({
         type: 'user/getUserInfo'
       });
