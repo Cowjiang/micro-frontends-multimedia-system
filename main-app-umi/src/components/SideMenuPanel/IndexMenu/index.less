@@ -1,0 +1,26 @@
+.index-menu {
+  .custom-input {
+    //height: 40px;
+    //border-width: 2px !important;
+
+    &:not(&:focus) {
+      border-color: transparent !important;
+    }
+  }
+
+  .ant-menu {
+    .ant-menu-item-group {
+      &:not(&:first-child) {
+        margin-top: 20px;
+      }
+    }
+
+    .ant-menu-item-divider {
+      margin: 0 15px;
+    }
+  }
+
+  .ant-menu-inline {
+    background: transparent !important;
+  }
+}

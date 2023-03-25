@@ -144,7 +144,7 @@ export default () => {
                       <TabsLayout>
                         <Outlet
                           context={{
-                            path: `${lastRoute?.pathname}${location.search}`,
+                            path: `${lastRoute?.pathname}`,
                             title: (lastRoute?.route as RouteObject).title,
                             action: (lastRoute?.route as RouteObject).action
                           }}

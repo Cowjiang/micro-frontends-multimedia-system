@@ -25,7 +25,7 @@ const routes = [
   },
   {
     path: '/project',
-    component: '@/pages/Project/index',
+    component: '@/pages/Project',
     title: '项目概览',
     routes: [
       {path: '/project/edit/new', component: '@/pages/Project/ProjectEdit', title: '新建项目'},
@@ -45,6 +45,7 @@ const routes = [
   {
     path: '/department',
     title: '部门概览',
+    component: '@/pages/Department',
     routes: [
       {path: '/department/:id/detail', component: '@/pages/Department/DepartmentDetail', title: '部门详情'},
       {path: '/department/:id/members', component: '@/pages/Department/DepartmentMembers', title: '部门成员'},
@@ -62,10 +63,10 @@ const routes = [
   {
     path: '/settings',
     title: '设置中心',
-    component: '@/pages/Settings/index',
+    component: '@/pages/Settings',
     routes: [
-      {path: '/settings/personal', component: '@/pages/Settings/index', title: '个人设置'},
-      {path: '/settings/general', component: '@/pages/Settings/index', title: '通用设置'},
+      {path: '/settings/personal', component: '@/pages/Settings', title: '个人设置'},
+      {path: '/settings/general', component: '@/pages/Settings', title: '通用设置'},
     ]
   },
   {

@@ -7,13 +7,13 @@ import SideMenuPanel from '@/components/SideMenuPanel';
 import { useDispatch, useLocation, useMatch, useModel, useNavigate, useSelectedRoutes, useSelector } from '@@/exports';
 import IndexPage from '@/pages/Index';
 import { AppModelState } from '@/models/app';
-import DepartmentMenu from '@/components/SideMenuPanel/DepartmentMenu';
+import IndexMenu from '@/components/SideMenuPanel/IndexMenu';
 import ProjectMenu from '@/components/SideMenuPanel/ProjectMenu';
+import DepartmentMenu from '@/components/SideMenuPanel/DepartmentMenu';
+import ResourceMenu from '@/components/SideMenuPanel/ResourceMenu';
 import SettingMenu from '@/components/SideMenuPanel/SettingMenu';
 import { useSize } from 'ahooks';
-import { render } from 'react-dom';
 import Loading from '@/components/Loading';
-import ResourceMenu from '@/components/SideMenuPanel/ResourceMenu';
 
 const {useToken} = theme;
 
@@ -165,7 +165,9 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
   // 侧边栏组件
   const sideMenuPanel = useMemo(() => {
     let sideMenuPanelContent: React.ReactNode;
-    if (activeTabKey.includes('/department')) {
+    if (activeTabKey.includes('/index')) {
+      sideMenuPanelContent = <IndexMenu />;
+    } else if (activeTabKey.includes('/department')) {
       sideMenuPanelContent = <DepartmentMenu />;
     } else if (activeTabKey.includes('/project')) {
       sideMenuPanelContent = <ProjectMenu />;

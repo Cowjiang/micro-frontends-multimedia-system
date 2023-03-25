@@ -92,7 +92,8 @@ const DepartmentMenu: React.FC = () => {
                     {type: 'divider'},
                     {
                       label: '我的部门',
-                      key: 'my-department'
+                      key: 'my-department',
+                      onClick: () => navigate(`/department`)
                     }
                   ]
                 },
