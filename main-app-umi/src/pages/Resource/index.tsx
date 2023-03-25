@@ -9,22 +9,26 @@ const draftTypeList = [
   {
     title: '项目素材',
     icon: <i className="fi fi-rr-apps" />,
-    type: 'material'
+    targetTypeName: 'mfms-material',
+    prefix: 'project'
   },
   {
     title: '聊天素材',
     icon: <i className="fi fi-rr-comment" />,
-    type: 'chat'
+    targetTypeName: 'mfms-chat',
+    prefix: 'group'
   },
   {
     title: '我的素材',
     icon: <i className="fi fi-rr-box-open" />,
-    type: 'mine'
+    targetTypeName: 'temp',
+    prefix: 'temp'
   },
   {
     title: '其他素材',
     icon: <i className="fi fi-rr-play-alt" />,
-    type: 'others'
+    targetTypeName: 'temp',
+    prefix: 'temp'
   },
 ]
 
@@ -57,7 +61,7 @@ const ResourcePage: React.FC = () => {
                   </div>
                 }
                 bodyStyle={{background: darkTheme ? '#333' : '#f3f5f6'}}
-                onClick={() => navigate(`/resource/list/mfms-${type.type}/`)}
+                onClick={() => navigate(`/resource/list/${type.targetTypeName}/${type.prefix}`)}
               >
                 <div className="w-full py-2 text-center">
                   <Text>

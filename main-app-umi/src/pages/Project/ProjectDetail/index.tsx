@@ -373,13 +373,19 @@ const ProjectDetailPage: React.FC = () => {
               loadingOptions={{paragraph: {rows: 6}}}
             >
               <div className="w-full h-[300px] flex flex-col overflow-y-auto">
-                <Tabs className="!h-auto" defaultActiveKey="1" items={draftTabsItems} />
-                <List
-                  dataSource={[]}
-                  locale={{
-                    emptyText: <div className="pt-12"><Empty /></div>
-                  }}
-                />
+                <div className="pt-12">
+                  <Empty
+                    description={
+                      <Button
+                        className="mt-4"
+                        type="primary"
+                        onClick={() => navigate(`/resource/list/mfms-material/${encodeURIComponent(`project/${projectId}`)}`)}
+                      >
+                        进入素材库
+                      </Button>
+                    }
+                  />
+                </div>
               </div>
             </Card>
           </Col>

@@ -56,7 +56,6 @@ const routes = [
     title: '资源素材库',
     component: '@/pages/Resource',
     routes: [
-      {path: '/resource/list/:targetType', component: '@/pages/Resource/ResourceList', title: '资源列表'},
       {path: '/resource/list/:targetType/:prefix', component: '@/pages/Resource/ResourceList', title: '资源列表'},
     ]
   },

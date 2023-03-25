@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import './index.less';
-import { Outlet, useDispatch, useModel, useNavigate, useSelectedRoutes, useSelector } from '@@/exports';
+import { Outlet, useDispatch, useLocation, useModel, useNavigate, useSelectedRoutes, useSelector } from '@@/exports';
 import { ConfigProvider, Layout, message, theme } from 'antd';
 import Loading from '@/components/Loading';
 import SideNavBar from '@/components/SideNavBar';
@@ -16,6 +16,7 @@ export default () => {
   const {loading, setLoading} = useModel('global');
   const {primaryColor} = useModel('theme');
   const navigate = useNavigate();
+  const location = useLocation();
   const routes = useSelectedRoutes();
   const lastRoute = routes.at(-1); //当前路由
 
@@ -143,7 +144,7 @@ export default () => {
                       <TabsLayout>
                         <Outlet
                           context={{
-                            path: lastRoute?.pathname,
+                            path: `${lastRoute?.pathname}${location.search}`,
                             title: (lastRoute?.route as RouteObject).title,
                             action: (lastRoute?.route as RouteObject).action
                           }}

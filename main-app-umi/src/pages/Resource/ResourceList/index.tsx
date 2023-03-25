@@ -1,13 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './index.less';
-import {
-  ActionType,
-  FooterToolbar,
-  PageContainer,
-  ProColumns,
-  ProDescriptionsItemProps,
-  ProTable
-} from '@ant-design/pro-components';
+import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import { Breadcrumb, Button, Divider, Dropdown, Tag, theme, Typography } from 'antd';
 import { FileInfo, GetResourceFilesParams } from '@/services/api/modules/resource/typings';
 import { formatDate, formatFileType } from '@/utils/format';
@@ -15,6 +8,7 @@ import { resourceApi } from '@/services/api';
 import { TargetTypeName } from '@/services/api/modules/auth/typings';
 import { useNavigate, useParams } from '@@/exports';
 import { setClipboard } from '@/utils';
+import Empty from '@/components/Empty';
 
 const {useToken} = theme;
 const {Title, Text} = Typography;
@@ -30,10 +24,17 @@ const ResourceListPage = () => {
   const actionRef = useRef<ActionType>();
   const [selectedRowsState, setSelectedRows] = useState<FileInfo[]>([]);
 
-  const initParams: GetResourceFilesParams = {
-    targetTypeName: 'mfms-material',
-    preKey: 'project'
-  };
+  useEffect(() => {
+    if (location.pathname.includes('/resource/list/')) {
+      prefix && setInitParams({...initParams, preKey: prefix});
+      prefix && setSearchParams({...searchParams, preKey: prefix});
+    }
+  }, [prefix]);
+
+  const [initParams, setInitParams] = useState<GetResourceFilesParams>({
+    targetTypeName: targetType as TargetTypeName,
+    preKey: prefix || targetType === 'mfms-material' ? 'project' : 'group'
+  });
   const [searchParams, setSearchParams] = useState<GetResourceFilesParams>(initParams);
 
   const columns: ProColumns<FileInfo>[] = [
@@ -245,6 +246,9 @@ const ResourceListPage = () => {
         onReset={() => setSearchParams(initParams)}
         rowSelection={{
           onChange: (_, selectedRows) => setSelectedRows(selectedRows)
+        }}
+        locale={{
+          emptyText: <div className="h-[600px] flex justify-center items-center"><Empty /></div>
         }}
       />
     </div>

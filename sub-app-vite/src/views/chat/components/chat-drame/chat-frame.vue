@@ -599,7 +599,7 @@
         targetTypeName: 'mfms-chat'
       });
       if (signData) {
-        fileFormData.append('key', `${signData.keyPrefix}private/${userInfo.value.userId}/${Date.now()}`);
+        fileFormData.append('key', `${signData.keyPrefix}${props.chatInfo.type === ChatType.PRIVATE ? 'private' : 'group'}/${userInfo.value.userId}/${Date.now()}`);
         fileFormData.append('token', signData.token);
         const res = await axios.post(`http://${signData.uploadDomain}`, fileFormData, {
           headers: {'Content-Type': 'multipart/form-data'}
