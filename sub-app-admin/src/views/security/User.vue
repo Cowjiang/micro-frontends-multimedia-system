@@ -20,9 +20,9 @@
     <el-table :data="users" border style="width: 100%">
       <el-table-column prop="email" label="邮箱"/>
       <el-table-column prop="phone" label="手机号"/>
-      <el-table-column prop="lastLoginTime" label="最后一次登录时间">
+      <el-table-column prop="lastLoginTime" label="注册时间">
         <template #default="scope">
-          {{ formatDate(scope.row.lastLoginTime) }}
+          {{ formatDate(scope.row.createdTime) }}
         </template>
       </el-table-column>
       <el-table-column prop="notLocked" label="是否启用账号">

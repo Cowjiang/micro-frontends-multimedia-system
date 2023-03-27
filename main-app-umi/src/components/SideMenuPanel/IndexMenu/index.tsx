@@ -93,6 +93,11 @@ const IndexMenu: React.FC = () => {
                 children: [
                   {type: 'divider'},
                   {
+                    label: '后台管理',
+                    key: 'admin',
+                    onClick: () => navigate('/admin/general', {replace: true})
+                  },
+                  {
                     label: '系统设置',
                     key: 'system-setting',
                     onClick: () => navigate('/settings/general')

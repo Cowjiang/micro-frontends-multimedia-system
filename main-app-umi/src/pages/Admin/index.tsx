@@ -10,7 +10,8 @@ const {Title} = Typography;
 const adminItemObj: { [key: string]: { title: string; value: string } } = {
   'role': {title: '角色编辑', value: 'role'},
   'permission': {title: '权限管理', value: 'permission'},
-  'request-path': {title: '路径权限', value: 'request-path'}
+  'request-path': {title: '路径权限', value: 'request-path'},
+  'user': {title: '用户管理', value: 'user'}
 };
 
 const AdminPage: React.FC = () => {

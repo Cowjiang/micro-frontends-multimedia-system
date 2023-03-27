@@ -44,6 +44,15 @@ const routes = [
         component: RequestPath
     },
     {
+        path: "/admin/user/user",
+        name: "user",
+        meta: {
+            title: "用户管理",
+            icon: "user"
+        },
+        component: () => import("@/views/security/User.vue")
+    },
+    {
         path: '/',
         name: 'Home',
         component: HomeLayout,
@@ -59,17 +68,7 @@ const routes = [
                     icon: "shield-check"
                 },
                 component: BaseLayout,
-                children: [
-                    {
-                        path: "/admin/user/user",
-                        name: "user",
-                        meta: {
-                            title: "用户管理",
-                            icon: "user"
-                        },
-                        component: () => import("@/views/security/User.vue")
-                    }
-                ]
+                children: []
             }, {
                 path: "/",
                 name: "dynamic",
@@ -86,8 +85,6 @@ const routes = [
                             icon: "star"
                         },
                         component: () => import("@/views/dynamic/dynamic.vue")
-
-
                     }
                 ]
             }, {
