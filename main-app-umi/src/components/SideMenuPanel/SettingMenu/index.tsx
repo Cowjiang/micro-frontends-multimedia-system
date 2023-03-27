@@ -94,6 +94,11 @@ const SettingMenu: React.FC = () => {
                 children: [
                   {type: 'divider'},
                   {
+                    label: '后台管理',
+                    key: 'admin',
+                    onClick: () => navigate('/admin/general', {replace: true})
+                  },
+                  {
                     label: '关于应用',
                     key: 'about'
                   },

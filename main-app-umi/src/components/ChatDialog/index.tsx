@@ -29,7 +29,6 @@ const ChatDialog: React.FC<ChatDialogProps> = (props) => {
   }, [socket]);
 
   const wujieInstance = useMemo(() => {
-    console.log(chatAppConfig.url);
     return (
       <WujieReact
         name="chat"

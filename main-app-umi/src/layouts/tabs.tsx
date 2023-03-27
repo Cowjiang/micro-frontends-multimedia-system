@@ -14,6 +14,7 @@ import ResourceMenu from '@/components/SideMenuPanel/ResourceMenu';
 import SettingMenu from '@/components/SideMenuPanel/SettingMenu';
 import { useSize } from 'ahooks';
 import Loading from '@/components/Loading';
+import AdminMenu from '@/components/SideMenuPanel/AdminMenu';
 
 const {useToken} = theme;
 
@@ -175,6 +176,8 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
       sideMenuPanelContent = <ResourceMenu />;
     } else if (activeTabKey.includes('/setting')) {
       sideMenuPanelContent = <SettingMenu />;
+    } else if (activeTabKey.includes('')) {
+      sideMenuPanelContent = <AdminMenu />;
     } else {
       sideMenuPanelContent = <></>;
     }

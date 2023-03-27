@@ -30,8 +30,8 @@
     "qs": "^6.11.0",
     "socket.io-client": "2.5.0",
     "tinymce": "^6.3.1",
-    "wujie": "^1.0.5",
-    "wujie-react": "^1.0.5"
+    "wujie": "^1.0.11",
+    "wujie-react": "^1.0.11"
   },
   "devDependencies": {
     "@types/qs": "^6.9.7",
