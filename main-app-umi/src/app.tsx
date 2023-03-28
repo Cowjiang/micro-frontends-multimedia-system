@@ -1,6 +1,6 @@
 // 运行时配置
 import React from 'react';
-import { matchRoutes, RuntimeConfig } from '@@/exports';
+import { history, matchRoutes, RuntimeConfig } from '@@/exports';
 import { ConfigProvider } from 'antd';
 import { StyleProvider, legacyLogicalPropertiesTransformer } from '@ant-design/cssinjs';
 import dayjs from 'dayjs';
@@ -10,6 +10,7 @@ import isoWeeksInYearPlugin from 'dayjs/plugin/isoWeeksInYear';
 import isLeapYearPlugin from 'dayjs/plugin/isLeapYear';
 import { requestConfig } from '@/services';
 import { PRIMARY_COLOR } from '@/constants';
+import { userApi } from '@/services/api';
 
 dayjs.extend(isoWeekPlugin);
 dayjs.extend(isoWeeksInYearPlugin);
@@ -17,7 +18,7 @@ dayjs.extend(isLeapYearPlugin);
 dayjs.extend(weekOfYearPlugin);
 
 export const getInitialState: RuntimeConfig['getInitialState'] = async () => {
-  return {loading: false};
+  return JSON.parse(localStorage.getItem('userInfo') ?? '{}');
 };
 
 export const rootContainer: RuntimeConfig['rootContainer'] = (container) => {
@@ -52,6 +53,11 @@ export const rootContainer: RuntimeConfig['rootContainer'] = (container) => {
 
 export const onRouteChange: RuntimeConfig['onRouteChange'] = ({clientRoutes, location, action}) => {
   const route = matchRoutes(clientRoutes, location.pathname)?.pop()?.route as RouteObject;
+  if (!route.path?.includes('/auth') && !route.path?.includes('/dev')) {
+    if (!localStorage.getItem('REFRESH_TOKEN')) {
+      history.push('/auth/login');
+    }
+  }
   if (route) {
     document.title = route.title ?? '';
     route.action = action;

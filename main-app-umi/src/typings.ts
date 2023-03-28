@@ -41,6 +41,7 @@ declare global {
     path?: string;
     title?: string;
     action?: string;
+    access?: string[];
   }
 }
 

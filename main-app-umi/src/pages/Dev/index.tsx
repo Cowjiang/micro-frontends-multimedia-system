@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Row, Space, Switch } from 'antd';
-import { useDispatch, useModel, useNavigate } from '@@/exports';
+import { useAccess, useDispatch, useModel, useNavigate } from '@@/exports';
 import { authApi } from '@/services/api';
 import ChatDialog from '@/components/ChatDialog';
 import SideMenuPanel from '@/components/SideMenuPanel';
@@ -10,6 +10,8 @@ const DevPage: React.FC = () => {
   const dispatch = useDispatch();
   const {messageApi} = useModel('messageApi');
   const {loading, setLoading} = useModel('global');
+
+  const {canSeeAdmin} = useAccess();
 
   const gotoLogin = () => {
     navigate('/auth/login', {
@@ -128,6 +130,11 @@ const DevPage: React.FC = () => {
             </Button>
             <Button onClick={logout}>
               退出登录
+            </Button>
+            <Button onClick={() => {
+              console.log(canSeeAdmin);
+            }}>
+              检查权限
             </Button>
             <Switch
               checkedChildren="暗黑"

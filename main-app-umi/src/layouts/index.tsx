@@ -1,6 +1,15 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import './index.less';
-import { Outlet, useDispatch, useLocation, useModel, useNavigate, useSelectedRoutes, useSelector } from '@@/exports';
+import {
+  Outlet,
+  useAccess,
+  useDispatch,
+  useLocation,
+  useModel,
+  useNavigate,
+  useSelectedRoutes,
+  useSelector
+} from '@@/exports';
 import { ConfigProvider, Layout, message, theme } from 'antd';
 import Loading from '@/components/Loading';
 import SideNavBar from '@/components/SideNavBar';
@@ -11,6 +20,7 @@ import { AppModelState } from '@/models/app';
 import TabsLayout from '@/layouts/tabs';
 import UserInfoDialog from '@/components/UserInfoDialog';
 import { UserInfoDialogProps } from '@/components/UserInfoDialog/typings';
+import { userApi } from '@/services/api';
 
 export default () => {
   const {loading, setLoading} = useModel('global');
@@ -18,24 +28,36 @@ export default () => {
   const navigate = useNavigate();
   const location = useLocation();
   const routes = useSelectedRoutes();
+  const access = useAccess();
   const lastRoute = routes.at(-1); //当前路由
-
-  const chatAppConfig: AppModelState['chatAppConfig'] = useSelector((state: any) => state.app.chatAppConfig);
-  const {userInfo}: UserModelState = useSelector((state: any) => state.user);
-  const dispatch = useDispatch();
-  useEffect(() => {
-    if (!userInfo?.userId && localStorage.getItem('userInfo')) {
-      dispatch({
-        type: 'user/getUserInfo'
-      });
-    }
-  }, []);
 
   const [messageApi, contextHolder] = message.useMessage();
   const {setMessageApi} = useModel('messageApi');
   useEffect(() => {
     setMessageApi(messageApi);
   }, []);
+
+  const chatAppConfig: AppModelState['chatAppConfig'] = useSelector((state: any) => state.app.chatAppConfig);
+  const {userInfo}: UserModelState = useSelector((state: any) => state.user);
+  const dispatch = useDispatch();
+  const {setInitialState} = useModel('@@initialState');
+
+  useEffect(() => {
+    if (!userInfo?.userId && localStorage.getItem('userInfo')) {
+      userApi.getCurrentUserInfo().then(({data}) => {
+        dispatch({
+          type: 'user/setUserInfo',
+          payload: data
+        });
+      }).catch(() => {
+        messageApi.error('网络异常').then(() => {});
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    setInitialState(userInfo);
+  }, [userInfo]);
 
   const {darkTheme} = useModel('theme');
   const {defaultAlgorithm, darkAlgorithm, defaultSeed} = theme;
@@ -77,9 +99,7 @@ export default () => {
   useEffect(() => {
     const currentPath = lastRoute?.pathname ?? '';
     let activeNavIndex: number;
-    if (currentPath === '/index') {
-      activeNavIndex = 0;
-    } else if (currentPath.includes('/project')) {
+    if (currentPath.includes('/project')) {
       activeNavIndex = 1;
     } else if (currentPath.includes('/resource')) {
       activeNavIndex = 2;
@@ -90,7 +110,7 @@ export default () => {
     } else {
       activeNavIndex = 0;
     }
-    dispatch({
+      dispatch({
       type: 'app/setActiveNavIndex',
       payload: {activeNavIndex}
     });
@@ -146,7 +166,8 @@ export default () => {
                           context={{
                             path: `${lastRoute?.pathname}`,
                             title: (lastRoute?.route as RouteObject).title,
-                            action: (lastRoute?.route as RouteObject).action
+                            action: (lastRoute?.route as RouteObject).action,
+                            access: (lastRoute?.route as RouteObject)?.access
                           }}
                         />
                       </TabsLayout>

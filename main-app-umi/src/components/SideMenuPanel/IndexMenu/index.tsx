@@ -95,12 +95,17 @@ const IndexMenu: React.FC = () => {
                   {
                     label: '后台管理',
                     key: 'admin',
-                    onClick: () => navigate('/admin/general', {replace: true})
+                    onClick: () => navigate('/admin/permission')
                   },
                   {
                     label: '系统设置',
                     key: 'system-setting',
                     onClick: () => navigate('/settings/general')
+                  },
+                  {
+                    label: '开发者设置',
+                    key: 'dev',
+                    onClick: () => navigate('/dev')
                   }
                 ]
               }

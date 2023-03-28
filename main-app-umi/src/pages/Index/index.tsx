@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './index.less';
 import { Col, Row, theme, Typography } from 'antd';
 import { UserModelState } from '@/models/user';
-import { useModel, useNavigate, useSelector } from '@@/exports';
+import { useAccess, useModel, useNavigate, useSelector } from '@@/exports';
 
 const {Title, Text} = Typography;
 const {useToken} = theme;

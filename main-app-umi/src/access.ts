@@ -1,9 +1,8 @@
-export default (initialState: API.UserInfo) => {
-  // 在这里按照初始化数据定义项目中的权限，统一管理
-  // 参考文档 https://next.umijs.org/docs/max/access
-  const canSeeAdmin = !!(
-    initialState && initialState.name !== 'dontHaveAccess'
-  );
+import { UserProfileExtVo } from '@/services/api/modules/user/typings';
+
+export default (initialState: UserProfileExtVo) => {
+  const userInfo = initialState;
+  const canSeeAdmin = !!(userInfo && userInfo.roles?.find(role => role.roleName === 'ADMIN'));
   return {
     canSeeAdmin,
   };

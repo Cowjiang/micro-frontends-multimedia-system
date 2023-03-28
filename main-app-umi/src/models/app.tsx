@@ -50,7 +50,17 @@ const appModel: AppModelType = {
   namespace: 'app',
   state: {
     socket: null,
-    tabsList: [],
+    tabsList: [{
+      label: (
+        <div className="flex items-center">
+          <i className="fi fi-rr-apps"></i>
+          <span className="ml-2">首页</span>
+        </div>
+      ),
+      children: <IndexPage />,
+      key: '/index',
+      closable: false
+    }],
     activeTabKey: '',
     activeNavIndex: 0,
     chatAppConfig: {

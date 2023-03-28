@@ -1,6 +1,6 @@
 import { Effect, Reducer } from '@@/plugin-dva/types';
 import { authApi, userApi } from '@/services/api';
-import { getDvaApp } from '@@/exports';
+import { getDvaApp, history } from '@@/exports';
 import { UserProfileExtVo } from '@/services/api/modules/user/typings';
 import { message } from 'antd';
 
@@ -42,7 +42,7 @@ const userModel: UserModelType = {
       accessToken: '',
       expireTime: 0
     },
-    userInfo: {}
+    userInfo: JSON.parse(localStorage.getItem('userInfo') ?? '{}')
   },
   effects: {
     * refreshToken({payload}, {put, call}) {
@@ -97,11 +97,12 @@ const userModel: UserModelType = {
       localStorage.clear();
       yield put({type: 'app/closeSocket'});
       yield put({type: 'reset'});
+      history.push('/index');
     }
   },
   reducers: {
     setUserInfo(state, {payload: userInfo}) {
-      localStorage.setItem('userInfo', userInfo);
+      localStorage.setItem('userInfo', JSON.stringify(userInfo));
       return {
         ...state,
         userInfo

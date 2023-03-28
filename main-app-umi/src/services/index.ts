@@ -31,7 +31,8 @@ export const requestConfig: RequestConfig = {
     }
   ],
   responseInterceptors: [
-    (v: AxiosResponse<any>): AxiosResponse<any> => {
+    //@ts-ignore
+    async (v: AxiosResponse<any>): AxiosResponse<any> | undefined => {
       console.log(v);
       const {dispatch} = getDvaApp()._store;
       const responseStatus = v.status;
@@ -48,6 +49,7 @@ export const requestConfig: RequestConfig = {
             type: 'app/connectSocket'
           });
         }
+        return v;
       } else if (responseStatus === 401) {
         // 3002 Token过期  3003 Token不合法
         if ([2001, 3002, 3003].includes(v.data.code)) {
@@ -61,12 +63,12 @@ export const requestConfig: RequestConfig = {
               history.push('/auth/login');
               return v;
             }
-            dispatch({
+            await dispatch({
               type: 'user/refreshToken'
             }).then(async () => {
               console.log('[HTTP]', '重试请求');
               await request(v.config.url as string, v.config).then((res: AxiosResponse<any, any>) => {
-                v = res;
+                v.data = res;
               });
             }).catch((e: any) => {
               dispatch({type: 'user/logOut'});
@@ -76,9 +78,9 @@ export const requestConfig: RequestConfig = {
           } else {
             history.push('/auth/login');
           }
+          return v;
         }
       }
-      return v;
     }
   ],
   errorConfig: {

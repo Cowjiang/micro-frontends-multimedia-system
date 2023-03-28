@@ -201,6 +201,7 @@ export interface UserProfileExtVo {
    * 姓名
    */
   realName?: string;
+  roles?:    UserRole[];
   /**
    * 个性签名
    */
@@ -293,4 +294,23 @@ export interface UserProfileDto {
    * 用户名
    */
   username?: string;
+}
+
+/**
+ * UserRole
+ */
+export interface UserRole {
+  /**
+   * 所属部门
+   */
+  departmentId?: number;
+  id?:           number;
+  /**
+   * 角色说明
+   */
+  roleDescription?: string;
+  /**
+   * 角色名
+   */
+  roleName?: string;
 }

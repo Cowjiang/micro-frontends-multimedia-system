@@ -1,10 +1,18 @@
-import React, { useEffect, useMemo, useReducer, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import './tabs.less';
 import classNames from 'classnames';
 import { TabsLayoutProps } from '@/layouts/typings';
 import { Drawer, Dropdown, Tabs, theme } from 'antd';
 import SideMenuPanel from '@/components/SideMenuPanel';
-import { useDispatch, useLocation, useMatch, useModel, useNavigate, useSelectedRoutes, useSelector } from '@@/exports';
+import {
+  useAccess,
+  useDispatch,
+  useLocation,
+  useModel,
+  useNavigate,
+  useSelectedRoutes,
+  useSelector
+} from '@@/exports';
 import IndexPage from '@/pages/Index';
 import { AppModelState } from '@/models/app';
 import IndexMenu from '@/components/SideMenuPanel/IndexMenu';
@@ -12,9 +20,10 @@ import ProjectMenu from '@/components/SideMenuPanel/ProjectMenu';
 import DepartmentMenu from '@/components/SideMenuPanel/DepartmentMenu';
 import ResourceMenu from '@/components/SideMenuPanel/ResourceMenu';
 import SettingMenu from '@/components/SideMenuPanel/SettingMenu';
+import AdminMenu from '@/components/SideMenuPanel/AdminMenu';
 import { useSize } from 'ahooks';
 import Loading from '@/components/Loading';
-import AdminMenu from '@/components/SideMenuPanel/AdminMenu';
+import ForbiddenPage from '@/pages/403';
 
 const {useToken} = theme;
 
@@ -30,21 +39,21 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
   const location = useLocation();
   const {tabsList, activeTabKey}: AppModelState = useSelector((state: any) => state.app);
   const dispatch = useDispatch();
+  const access = useAccess();
 
   // 初始化标签页列表
   useEffect(() => {
-    const initTabsList: { label: string | React.ReactNode; children: React.ReactNode; key: string; closable?: boolean }[] = [{
-      label: (
-        <div className="flex items-center">
-          <i className="fi fi-rr-apps"></i>
-          <span className="ml-2">首页</span>
-        </div>
-      ),
-      children: <IndexPage />,
-      key: '/index',
-      closable: false
-    }];
-    if (location.pathname !== '/index' && currentRoute.title) {
+    const initTabsList = tabsList;
+    //@ts-ignore
+    const flag = currentRoute?.access?.find((routeAccess: string) => access[routeAccess] === false);
+    if (flag) {
+      // 权限不足拦截访问
+      initTabsList.push({
+        label: currentRoute?.title ?? '',
+        children: <ForbiddenPage />,
+        key: '/403'
+      });
+    } else if (location.pathname !== '/index' && currentRoute.title) {
       initTabsList.push({
         label: currentRoute?.title ?? '',
         children: currentRoute.element,
@@ -60,6 +69,13 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
   }, []);
 
   useEffect(() => {
+    //@ts-ignore
+    const flag = props.children.props.context.access?.find((routeAccess: string) => access[routeAccess] === false);
+    if (flag != undefined) {
+      // 权限不足拦截访问
+      navigate('/403');
+      return;
+    }
     if (props.children.props.context.action === 'POP') {
       const prevTab = tabsList.find(tab => tab.key === location.pathname);
       if (prevTab) {
@@ -76,6 +92,10 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
         props.children.props.context.title,
         props.children.props.context.path
       );
+    } else if (props.children.props.context.path === '/index' && props.children.props.context.action === 'REPLACE') {
+      const newTabsList = tabsList.filter(tab => tab.key === '/index');
+      dispatch({type: 'app/setTabsList', payload: {tabsList: newTabsList}});
+      dispatch({type: 'app/setActiveTabKey', payload: {activeTabKey: '/index'}});
     } else if (currentRoute?.path === '/*') {
       navigate('/404', {replace: true});
     } else {
@@ -166,9 +186,7 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
   // 侧边栏组件
   const sideMenuPanel = useMemo(() => {
     let sideMenuPanelContent: React.ReactNode;
-    if (activeTabKey.includes('/index')) {
-      sideMenuPanelContent = <IndexMenu />;
-    } else if (activeTabKey.includes('/department')) {
+    if (activeTabKey.includes('/department')) {
       sideMenuPanelContent = <DepartmentMenu />;
     } else if (activeTabKey.includes('/project')) {
       sideMenuPanelContent = <ProjectMenu />;
@@ -176,10 +194,10 @@ const TabsLayout: React.FC<TabsLayoutProps> = (props) => {
       sideMenuPanelContent = <ResourceMenu />;
     } else if (activeTabKey.includes('/setting')) {
       sideMenuPanelContent = <SettingMenu />;
-    } else if (activeTabKey.includes('')) {
+    } else if (activeTabKey.includes('/admin')) {
       sideMenuPanelContent = <AdminMenu />;
     } else {
-      sideMenuPanelContent = <></>;
+      sideMenuPanelContent = <IndexMenu />;
     }
     return (
       <SideMenuPanel hide={!showSideMenuPanel}>

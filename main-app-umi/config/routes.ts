@@ -70,8 +70,8 @@ const routes = [
   {
     path: '/admin',
     routes: [
-      {path: '/admin', component: '@/pages/Admin', title: '后台管理'},
-      {path: '/admin/:item', component: '@/pages/Admin', title: '后台管理'}
+      {path: '/admin', component: '@/pages/Admin', title: '后台管理', access: ['canSeeAdmin', 'canSeeDev']},
+      {path: '/admin/:item', component: '@/pages/Admin', title: '后台管理', access: ['canSeeAdmin', 'canSeeDev'],}
     ]
   },
   {
@@ -84,18 +84,16 @@ const routes = [
   {
     path: '/404',
     title: '404 Not Found',
-    component: '@/pages/404',
-    layout: false
+    component: '@/pages/404'
   },
   {
     path: '/403',
     title: '403 Forbidden',
-    component: '@/pages/403',
-    layout: false
+    component: '@/pages/403'
   },
   {
     path: '/*',
-    component: '@/pages/404',
+    component: '@/pages/404'
   },
 ]
 
