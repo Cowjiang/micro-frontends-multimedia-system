@@ -34,7 +34,7 @@ export const requestConfig: RequestConfig = {
     //@ts-ignore
     async (v: AxiosResponse<any>): AxiosResponse<any> | undefined => {
       console.log(v);
-      const {dispatch} = getDvaApp()._store;
+      const {dispatch} = getDvaApp()?._store ?? {};
       const responseStatus = v.status;
       if (responseStatus === 200) {
         // 如果存在token信息，刷新状态以及缓存
@@ -45,7 +45,7 @@ export const requestConfig: RequestConfig = {
           localStorage.setItem('REFRESH_TOKEN_EXPIRE_IN', v.data.data.refreshTokenExpireIn);
         }
         if (!window.$socket && localStorage.getItem('userInfo')) {
-          dispatch({
+          dispatch && dispatch({
             type: 'app/connectSocket'
           });
         }
@@ -59,11 +59,11 @@ export const requestConfig: RequestConfig = {
             // refreshToken失效不重试
             if (!!refreshTokenExpireIn && refreshTokenExpireIn < new Date().getTime()) {
               console.log('[HTTP]', 'REFRESH_TOKEN过期');
-              dispatch({type: 'user/logOut'});
+              dispatch && dispatch({type: 'user/logOut'});
               history.push('/auth/login');
               return v;
             }
-            await dispatch({
+            dispatch && await dispatch({
               type: 'user/refreshToken'
             }).then(async () => {
               console.log('[HTTP]', '重试请求');
@@ -71,7 +71,7 @@ export const requestConfig: RequestConfig = {
                 v.data = res;
               });
             }).catch((e: any) => {
-              dispatch({type: 'user/logOut'});
+              dispatch && dispatch({type: 'user/logOut'});
               history.push('/auth/login');
               console.log(e);
             });

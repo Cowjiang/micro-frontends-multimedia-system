@@ -183,7 +183,7 @@ async function getStaredProjectList(
 async function setProjectStarStatus(
   data: {
     id: number;
-    starFlag: boolean;
+    starFlag: 0 | 1;
   },
   options?: { [key: string]: any }
 ) {

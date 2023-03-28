@@ -51,3 +51,7 @@ export interface Tabs {
   key: string;
   closable?: boolean;
 }
+
+export enum UserRole {
+  ADMIN = 'ADMIN',
+}

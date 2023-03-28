@@ -163,7 +163,7 @@ export interface UserProfileExtVo {
   /**
    * 信用积分
    */
-  credit?:     number;
+  credit?: number;
   department?: Department;
   /**
    * 邮箱
@@ -201,7 +201,7 @@ export interface UserProfileExtVo {
    * 姓名
    */
   realName?: string;
-  roles?:    UserRole[];
+  roles?: UserRole[];
   /**
    * 个性签名
    */
@@ -210,7 +210,7 @@ export interface UserProfileExtVo {
    * 修改时间
    */
   updatedTime?: number;
-  userId?:      number;
+  userId?: number;
   /**
    * 用户名
    */
@@ -304,7 +304,7 @@ export interface UserRole {
    * 所属部门
    */
   departmentId?: number;
-  id?:           number;
+  id?: number;
   /**
    * 角色说明
    */

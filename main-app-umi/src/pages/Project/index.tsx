@@ -3,8 +3,8 @@ import { Typography, theme, Divider, Table, Tag, Row, Col, Dropdown, Button } fr
 import Card from '@/components/Card';
 import { ColumnsType } from 'antd/es/table';
 import Empty from '@/components/Empty';
-import { useNavigate } from '@@/exports';
-import { ProjectVo } from '@/services/api/modules/project/typings';
+import { useModel, useNavigate } from '@@/exports';
+import { Project, ProjectVo } from '@/services/api/modules/project/typings';
 import { projectApi } from '@/services/api';
 import dayjs from 'dayjs';
 
@@ -16,6 +16,7 @@ const ProjectPage: React.FC = () => {
   const navigate = useNavigate();
 
   const {colorPrimaryText} = token;
+  const {messageApi} = useModel('messageApi');
 
   const columns: ColumnsType<ProjectVo> = [
     {
@@ -109,22 +110,23 @@ const ProjectPage: React.FC = () => {
       title: <div className="!ml-2">操作</div>,
       key: 'action',
       width: 90,
-      render: (_, {project: {id}}) => (
+      render: (_, {project}) => (
         <Dropdown
           menu={{
             items: [
               {
                 label: '进入项目',
                 key: '1',
-                onClick: () => handleProjectClick(id as number)
+                onClick: () => handleProjectClick(project.id as number)
               },
               {
                 label: '编辑项目',
                 key: '2'
               },
               {
-                label: '设置星标',
-                key: '3'
+                label: project.star ? '取消星标' : '设置星标',
+                key: '3',
+                onClick: () => handleStarProject(project)
               }
             ]
           }}
@@ -148,7 +150,7 @@ const ProjectPage: React.FC = () => {
   const getProjectList = async () => {
     const {data: projectList} = await projectApi.getProjectList();
     setProjectList((projectList ?? []).map(project => ({key: project.project.id, ...project})));
-    const {data: starProjectList} = await projectApi.getProjectList();
+    const {data: starProjectList} = await projectApi.getStaredProjectList();
     setStaredProjectList((starProjectList ?? []).map(project => ({key: project.project.id, ...project})));
   };
   useEffect(() => {
@@ -158,6 +160,18 @@ const ProjectPage: React.FC = () => {
   // 项目点击
   const handleProjectClick = (projectId: number) => {
     navigate(`/project/${projectId}/detail`);
+  };
+
+  // 切换项目星标状态
+  const handleStarProject = (project: Project) => {
+    project.id && projectApi.setProjectStarStatus({
+      id: project.id,
+      starFlag: project.star ? 0 : 1
+    }).then(async () => {
+      await getProjectList();
+    }).catch(() => {
+      messageApi.error('设置失败');
+    });
   };
 
   return (

@@ -18,7 +18,17 @@ dayjs.extend(isLeapYearPlugin);
 dayjs.extend(weekOfYearPlugin);
 
 export const getInitialState: RuntimeConfig['getInitialState'] = async () => {
-  return JSON.parse(localStorage.getItem('userInfo') ?? '{}');
+  try {
+    const {data} = await userApi.getCurrentUserInfo();
+    if (data) {
+      localStorage.setItem('userInfo', JSON.stringify(data));
+      return data;
+    }
+    return {}
+  } catch (e) {
+    localStorage.setItem('userInfo', '{}');
+    return {};
+  }
 };
 
 export const rootContainer: RuntimeConfig['rootContainer'] = (container) => {
