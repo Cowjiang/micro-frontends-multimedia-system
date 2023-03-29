@@ -1,5 +1,5 @@
 import { request } from '@@/exports';
-import { IResponseData } from '@/services/typings';
+import { IResponseData, OperationHistoryVo, ResponsePage } from '@/services/typings';
 import {
   DraftType,
   ProjectContribution, ProjectContributionComment,
@@ -148,6 +148,17 @@ async function deployPreviewH5(
   });
 }
 
+// 获取稿件操作历史
+async function getOperationHistory(
+  draftId: number | string,
+  options?: { [key: string]: any }
+) {
+  return request<IResponseData<ResponsePage<OperationHistoryVo>>>(`/operation/history/contribution/${draftId}`, {
+    method: 'GET',
+    ...(options || {})
+  });
+}
+
 export default {
   getProjectDraftList,
   getDraftDetail,
@@ -159,5 +170,6 @@ export default {
   addDraftComment,
   updateDraftComment,
   removeDraftComment,
-  deployPreviewH5
+  deployPreviewH5,
+  getOperationHistory
 };

@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ProjectContribution, ProjectContributionVo } from '@/services/api/modules/draft/typings';
 import { draftApi, projectApi } from '@/services/api';
 import { useLocation, useModel, useNavigate, useParams } from '@@/exports';
-import { Avatar, Breadcrumb, Button, Card as AntdCard, Divider, QRCode, Tag, theme, Typography } from 'antd';
+import { Avatar, Breadcrumb, Button, Card as AntdCard, Col, Divider, QRCode, Row, Tag, theme, Typography } from 'antd';
 import { ProjectVo } from '@/services/api/modules/project/typings';
 import { DRAFT_RELEASE_CHANNEL } from '@/constants';
 import { formatDate, formatDraftType } from '@/utils/format';
@@ -12,6 +12,9 @@ import Loading from '@/components/Loading';
 import Card from '@/components/Card';
 import Empty from '@/components/Empty';
 import messageApi from '@/models/messageApi';
+import { OperationHistoryVo } from '@/services/typings';
+import dayjs from 'dayjs';
+import OperationHistory from '@/components/OperationHistory';
 
 const {Title, Text} = Typography;
 const {useToken} = theme;
@@ -49,9 +52,19 @@ const DraftDetailPage: React.FC = () => {
     }
   };
 
+  // 稿件操作历史
+  const [draftOperationHistory, setDraftOperationHistory] = useState<OperationHistoryVo[]>([]);
+  // 获取项目信息
+  const getProjectOperationHistory = async () => {
+    if (draftId) {
+      const {data} = await draftApi.getOperationHistory(Number(draftId));
+      setDraftOperationHistory(data?.records ?? []);
+    }
+  };
+
   useEffect(() => {
     if (location.pathname.includes('/draft/detail/')) {
-      Promise.all([getProjectInfo(), getDraftDetail()]).then(() => {});
+      Promise.all([getProjectInfo(), getDraftDetail(), getProjectOperationHistory()]).then(() => {});
     }
   }, [draftType, draftId]);
 
@@ -255,12 +268,31 @@ const DraftDetailPage: React.FC = () => {
           />
         </Card>
         <div className="h-4"></div>
-        <Card title="审批记录">
-          <div className="py-12">
-            <Empty />
-          </div>
-        </Card>
-        <div className="h-24"></div>
+        <Row gutter={16}>
+          <Col span={12}>
+            <Card title="操作记录">
+              <div className="min-h-[200px] flex items-center justify-center">
+                <OperationHistory
+                  operationHistory={[
+                    {
+                      createdTime: dayjs(draftDetail?.projectContribution.createdTime ?? '').toDate(),
+                      comment: '创建了此稿件',
+                      userProfile: draftDetail?.creatorInfo
+                    },
+                    ...draftOperationHistory
+                  ]}
+                />
+              </div>
+            </Card>
+          </Col>
+          <Col span={12}>
+            <Card title="审批记录">
+              <div className="min-h-[200px] flex items-center justify-center">
+                <Empty />
+              </div>
+            </Card>
+          </Col>
+        </Row>
       </div>
     </div>
   );

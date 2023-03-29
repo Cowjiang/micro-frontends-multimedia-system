@@ -1,5 +1,19 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Breadcrumb, Button, Col, Divider, List, Row, Tabs, TabsProps, Tag, theme, Typography } from 'antd';
+import {
+  Avatar,
+  Breadcrumb,
+  Button,
+  Col,
+  Divider,
+  List,
+  Row,
+  Tabs,
+  TabsProps,
+  Tag,
+  theme,
+  Timeline,
+  Typography
+} from 'antd';
 import { useDispatch, useModel, useNavigate, useParams } from '@@/exports';
 import Card from '@/components/Card';
 import Empty from '@/components/Empty';
@@ -10,7 +24,9 @@ import { draftApi, projectApi } from '@/services/api';
 import { ProjectMemberVo, ProjectVo } from '@/services/api/modules/project/typings';
 import dayjs from 'dayjs';
 import { DraftType, ProjectContributionVo } from '@/services/api/modules/draft/typings';
-import { formatDraftType } from '@/utils/format';
+import { formatDate, formatDraftType } from '@/utils/format';
+import { OperationHistoryVo } from '@/services/typings';
+import OperationHistory from '@/components/OperationHistory';
 
 const {useToken} = theme;
 const {Title, Text} = Typography;
@@ -74,13 +90,6 @@ const ProjectDetailPage: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    Promise.all([getProjectInfo(), getDraftList(), getProjectMembers()]).then(() => {
-      setLoading(false);
-    });
-  }, []);
-  useSetDocTitle(`项目详情 - ${projectInfo?.project.projectName}`);
-
   // 项目成员列表
   const [projectMemberList, setProjectMemberList] = useState<ProjectMemberVo[]>();
   const getProjectMembers = async () => {
@@ -89,6 +98,23 @@ const ProjectDetailPage: React.FC = () => {
       setProjectMemberList(projectMembers ?? []);
     }
   };
+
+  // 项目操作历史
+  const [projectOperationHistory, setProjectOperationHistory] = useState<OperationHistoryVo[]>([]);
+  // 获取项目信息
+  const getProjectOperationHistory = async () => {
+    if (projectId) {
+      const {data} = await projectApi.getOperationHistory(Number(projectId));
+      setProjectOperationHistory(data?.records ?? []);
+    }
+  };
+
+  useEffect(() => {
+    Promise.all([getProjectInfo(), getDraftList(), getProjectMembers(), getProjectOperationHistory()]).then(() => {
+      setLoading(false);
+    });
+  }, []);
+  useSetDocTitle(`项目详情 - ${projectInfo?.project.projectName}`);
 
   const chartBaseOption: EChartsOption = {
     title: {
@@ -395,8 +421,17 @@ const ProjectDetailPage: React.FC = () => {
               loading={loading}
               loadingOptions={{paragraph: {rows: 6}}}
             >
-              <div className="w-full min-h-[280px]">
-                <div className="pt-12"><Empty /></div>
+              <div className="w-full min-h-[200px] flex items-center justify-center">
+                <OperationHistory
+                  operationHistory={[
+                    {
+                      createdTime: dayjs(projectInfo?.project.createdTime ?? '').toDate(),
+                      comment: '创建了此项目',
+                      userProfile: projectInfo?.creator
+                    },
+                    ...projectOperationHistory
+                  ]}
+                />
               </div>
             </Card>
           </Col>

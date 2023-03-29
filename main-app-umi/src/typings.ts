@@ -53,5 +53,8 @@ export interface Tabs {
 }
 
 export enum UserRole {
-  ADMIN = 'ADMIN',
+  // 超级管理员
+  SUPER_ADMIN = 'SUPER_ADMIN',
+  // 部门管理员
+  DEPARTMENT_ADMIN = 'DEPARTMENT_ADMIN',
 }

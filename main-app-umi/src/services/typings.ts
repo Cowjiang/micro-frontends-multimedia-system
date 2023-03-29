@@ -1,3 +1,5 @@
+import { UserProfile } from '@/services/api/modules/user/typings';
+
 /**
  * 响应体封装
  */
@@ -44,3 +46,32 @@ export interface OrderItem {
   asc?: boolean;
   column?: string;
 }
+
+/**
+ * 操作历史
+ */
+export interface OperationHistoryVo {
+  /**
+   * 操作内容
+   */
+  comment?: string;
+  /**
+   * 操作时间
+   */
+  createdTime?: Date;
+  id?: number;
+  /**
+   * 目标id
+   */
+  targetId?: number;
+  /**
+   * 类型 project-项目 contribution-稿件
+   */
+  targetType?: string;
+  /**
+   * 操作id
+   */
+  userId?: number;
+  userProfile?: UserProfile;
+}
+

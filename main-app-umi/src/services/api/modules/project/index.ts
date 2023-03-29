@@ -1,5 +1,5 @@
 import { request } from '@@/exports';
-import { IResponseData } from '@/services/typings';
+import { IResponseData, OperationHistoryVo, ResponsePage } from '@/services/typings';
 import {
   Project,
   ProjectMemberVo,
@@ -225,6 +225,17 @@ async function setProjectStarStatus(
   });
 }
 
+// 获取项目操作历史
+async function getOperationHistory(
+  projectId: number | string,
+  options?: { [key: string]: any }
+) {
+  return request<IResponseData<ResponsePage<OperationHistoryVo>>>(`/operation/history/project/${projectId}`, {
+    method: 'GET',
+    ...(options || {})
+  });
+}
+
 export default {
   getProjectList,
   getMyProjectList,
@@ -242,5 +253,6 @@ export default {
   addProjectMember,
   deleteProjectMember,
   getStaredProjectList,
-  setProjectStarStatus
+  setProjectStarStatus,
+  getOperationHistory
 };
