@@ -9,7 +9,7 @@ const {useToken} = theme;
 const {Title, Text} = Typography;
 
 const Card: React.FC<CardProps> = (props) => {
-  const {loadingOptions, onActionBtnClick, ...antdCardProps} = props;
+  const {loadingOptions, onActionBtnClick, wrapperStyle, ...antdCardProps} = props;
   const {token} = useToken();
   const {darkTheme} = useModel('theme');
   const {
@@ -31,7 +31,7 @@ const Card: React.FC<CardProps> = (props) => {
         )
       }
       style={{
-        ...props.wrapperStyle,
+        ...wrapperStyle,
         background: darkTheme ? colorFillQuaternary : '#fff'
       }}
       {...antdCardProps}

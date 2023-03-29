@@ -139,6 +139,7 @@ const DraftListPage: React.FC = () => {
                   <Tag
                     className="!mt-1"
                     color={defaultChannel?.color ?? colorPrimary}
+                    key={channel}
                   >
                     {defaultChannel?.label ?? channel}
                   </Tag>

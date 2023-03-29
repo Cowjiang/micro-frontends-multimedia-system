@@ -240,6 +240,7 @@ const DraftCommentPage: React.FC = () => {
                     <Tag
                       className="!mt-1"
                       color={defaultChannel?.color ?? colorPrimary}
+                      key={channel}
                     >
                       {defaultChannel?.label ?? channel}
                     </Tag>
@@ -333,9 +334,10 @@ const DraftCommentPage: React.FC = () => {
             <div className="h-[45vh] overflow-auto">
               <List
                 dataSource={commentList}
-                renderItem={(item) => (
+                renderItem={(item, index) => (
                   <List.Item
                     className="!px-0"
+                    key={index}
                     actions={[
                       ...item.userProfile?.userId === userInfo.userId ? [
                         <a
@@ -359,12 +361,14 @@ const DraftCommentPage: React.FC = () => {
                       ] : []
                     ]}
                   >
-                    <List.Item.Meta
-                      avatar={<Avatar size="large" src={item.userProfile?.avgPath ?? ''} />}
-                      title={item.userProfile?.username ?? ''}
-                      description={formatDate(item.projectContributionComment?.createdTime ?? '')}
-                    />
-                    {item.projectContributionComment?.content ?? ''}
+                    <div className="w-full">
+                      <List.Item.Meta
+                        avatar={<Avatar size="large" src={item.userProfile?.avgPath ?? ''} />}
+                        title={item.userProfile?.username ?? '未知用户'}
+                        description={formatDate(item.projectContributionComment?.createdTime ?? '')}
+                      />
+                      <div className="my-2">{item.projectContributionComment?.content ?? ''}</div>
+                    </div>
                   </List.Item>
                 )}
                 locale={{
