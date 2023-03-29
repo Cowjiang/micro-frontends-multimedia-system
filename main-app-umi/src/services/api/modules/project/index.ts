@@ -17,6 +17,38 @@ async function getProjectList(
   });
 }
 
+// 获取用户参加的项目列表
+async function getMyProjectList(
+  userId: number | string,
+  options?: { [key: string]: any }
+) {
+  return request<IResponseData<ProjectVo[]>>(`/project/list/user/${userId}`, {
+    method: 'GET',
+    ...(options || {})
+  });
+}
+
+// 获取部门下的项目列表
+async function getDepartmentProjectList(
+  departmentId: number | string,
+  options?: { [key: string]: any }
+) {
+  return request<IResponseData<ProjectVo[]>>(`/project/list/department/${departmentId}`, {
+    method: 'GET',
+    ...(options || {})
+  });
+}
+
+// 获取超级项目列表
+async function getSuperProjectList(
+  options?: { [key: string]: any }
+) {
+  return request<IResponseData<ProjectVo[]>>('/project/list/super', {
+    method: 'GET',
+    ...(options || {})
+  });
+}
+
 // 获取项目详情
 async function getProjectDetail(
   projectId: number,
@@ -195,6 +227,9 @@ async function setProjectStarStatus(
 
 export default {
   getProjectList,
+  getMyProjectList,
+  getDepartmentProjectList,
+  getSuperProjectList,
   getProjectDetail,
   createProject,
   updateProject,

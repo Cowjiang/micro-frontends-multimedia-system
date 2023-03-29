@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate, useSearchParams } from '@@/exports';
+import { useAccess, useLocation, useModel, useNavigate, useSearchParams, useSelector } from '@@/exports';
 import { Button, Dropdown, Input, Table, Tabs, Tag, theme, Typography } from 'antd';
 import { useSetDocTitle } from '@/utils/hooks';
 import { ColumnsType } from 'antd/es/table';
 import Empty from '@/components/Empty';
-import { ProjectVo } from '@/services/api/modules/project/typings';
+import { Project, ProjectVo } from '@/services/api/modules/project/typings';
 import { projectApi } from '@/services/api';
 import dayjs from 'dayjs';
+import { UserModelState } from '@/models/user';
 
 const {useToken} = theme;
 const {Title, Text} = Typography;
@@ -22,6 +23,9 @@ const ProjectListPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const location = useLocation();
   const navigate = useNavigate();
+  const {messageApi} = useModel('messageApi');
+  const {isDepartmentAdmin, isSuperAdmin} = useAccess();
+  const {userInfo}: UserModelState = useSelector((state: any) => state.user);
 
   const {token} = useToken();
   const {colorPrimaryText} = token;
@@ -129,22 +133,23 @@ const ProjectListPage: React.FC = () => {
       title: <div className="!ml-2">操作</div>,
       key: 'action',
       width: 90,
-      render: (_, {project: {id}}) => (
+      render: (_, {project}) => (
         <Dropdown
           menu={{
             items: [
               {
                 label: '进入项目',
                 key: '1',
-                onClick: () => handleProjectClick(id as number)
+                onClick: () => handleProjectClick(project.id as number)
               },
               {
                 label: '编辑项目',
                 key: '2'
               },
               {
-                label: '设置星标',
-                key: '3'
+                label: project.star ? '取消星标' : '设置星标',
+                key: '3',
+                onClick: () => handleStarProject(project)
               }
             ]
           }}
@@ -166,9 +171,15 @@ const ProjectListPage: React.FC = () => {
 
   // 获取项目列表
   const getProjectList = async () => {
-    const {data: projectList} = await projectApi.getProjectList();
-    setProjectList((projectList ?? []).map(project => ({key: project.project.id, ...project})));
-    const {data: starProjectList} = await projectApi.getProjectList();
+    if (userInfo.userId) {
+      const {data: projectList} = isSuperAdmin
+        ? await projectApi.getProjectList()
+        : isDepartmentAdmin && userInfo.department?.id
+          ? await projectApi.getDepartmentProjectList(userInfo.department.id)
+          : await projectApi.getMyProjectList(userInfo.userId);
+      setProjectList((projectList ?? []).map(project => ({key: project.project.id, ...project})));
+    }
+    const {data: starProjectList} = await projectApi.getStaredProjectList();
     setStaredProjectList((starProjectList ?? []).map(project => ({key: project.project.id, ...project})));
   };
   useEffect(() => {
@@ -178,6 +189,18 @@ const ProjectListPage: React.FC = () => {
   // 项目点击
   const handleProjectClick = (projectId: number) => {
     navigate(`/project/${projectId}/detail`);
+  };
+
+  // 切换项目星标状态
+  const handleStarProject = (project: Project) => {
+    project.id && projectApi.setProjectStarStatus({
+      id: project.id,
+      starFlag: project.star ? 0 : 1
+    }).then(async () => {
+      await getProjectList();
+    }).catch(() => {
+      messageApi.error('设置失败');
+    });
   };
 
   const handleTabsChange = (newTabKey: string) => {
@@ -240,7 +263,9 @@ const ProjectListPage: React.FC = () => {
                 <Table
                   className="mt-4"
                   columns={columns}
-                  dataSource={projectList}
+                  dataSource={
+                    projectList.filter(project => project.creator.userId === userInfo.userId)
+                  }
                   scroll={{x: 900}}
                   locale={{
                     emptyText: () => (

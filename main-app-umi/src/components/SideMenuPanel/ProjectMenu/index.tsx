@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import './index.less';
 import { Button, Input, Menu, theme, Typography } from 'antd';
-import { useModel, useNavigate } from '@@/exports';
+import { useAccess, useModel, useNavigate, useSelector } from '@@/exports';
 import Loading from '@/components/Loading';
 import { Project, ProjectVo } from '@/services/api/modules/project/typings';
 import { projectApi } from '@/services/api';
+import { UserModelState } from '@/models/user';
 
 const {Title, Text} = Typography;
 const {useToken} = theme;
@@ -16,6 +17,9 @@ const ProjectMenu: React.FC = () => {
   const {token} = useToken();
   const {colorFillSecondary} = token;
 
+  const {isSuperAdmin, isDepartmentAdmin} = useAccess();
+  const {userInfo}: UserModelState = useSelector((state: any) => state.user);
+
   const [loading, setLoading] = useState(false);
 
   // 项目列表
@@ -23,8 +27,14 @@ const ProjectMenu: React.FC = () => {
 
   // 获取项目列表
   const getProjectList = async () => {
-    const {data: projectList} = await projectApi.getProjectList();
-    setProjectList((projectList ?? []).map(project => ({key: project.project.id, ...project})));
+    if (userInfo.userId) {
+      const {data: projectList} = isSuperAdmin
+        ? await projectApi.getProjectList()
+        : isDepartmentAdmin && userInfo.department?.id
+          ? await projectApi.getDepartmentProjectList(userInfo.department.id)
+          : await projectApi.getMyProjectList(userInfo.userId);
+      setProjectList((projectList ?? []).map(project => ({key: project.project.id, ...project})));
+    }
   };
   useEffect(() => {
     getProjectList().then(() => {});

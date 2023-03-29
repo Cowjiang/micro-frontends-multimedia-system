@@ -3,10 +3,11 @@ import { Typography, theme, Divider, Table, Tag, Row, Col, Dropdown, Button } fr
 import Card from '@/components/Card';
 import { ColumnsType } from 'antd/es/table';
 import Empty from '@/components/Empty';
-import { useModel, useNavigate } from '@@/exports';
+import { useAccess, useModel, useNavigate, useSelector } from '@@/exports';
 import { Project, ProjectVo } from '@/services/api/modules/project/typings';
 import { projectApi } from '@/services/api';
 import dayjs from 'dayjs';
+import { UserModelState } from '@/models/user';
 
 const {useToken} = theme;
 const {Title, Text} = Typography;
@@ -14,9 +15,10 @@ const {Title, Text} = Typography;
 const ProjectPage: React.FC = () => {
   const {token} = useToken();
   const navigate = useNavigate();
-
+  const {isDepartmentAdmin, isSuperAdmin} = useAccess();
   const {colorPrimaryText} = token;
   const {messageApi} = useModel('messageApi');
+  const {userInfo}: UserModelState = useSelector((state: any) => state.user);
 
   const columns: ColumnsType<ProjectVo> = [
     {
@@ -148,10 +150,16 @@ const ProjectPage: React.FC = () => {
 
   // 获取项目列表
   const getProjectList = async () => {
-    const {data: projectList} = await projectApi.getProjectList();
-    setProjectList((projectList ?? []).map(project => ({key: project.project.id, ...project})));
-    const {data: starProjectList} = await projectApi.getStaredProjectList();
-    setStaredProjectList((starProjectList ?? []).map(project => ({key: project.project.id, ...project})));
+    if (userInfo.userId) {
+      const {data: projectList} = isSuperAdmin
+        ? await projectApi.getProjectList()
+        : isDepartmentAdmin && userInfo.department?.id
+          ? await projectApi.getDepartmentProjectList(userInfo.department.id)
+          : await projectApi.getMyProjectList(userInfo.userId);
+      setProjectList((projectList ?? []).map(project => ({key: project.project.id, ...project})));
+      const {data: starProjectList} = await projectApi.getStaredProjectList();
+      setStaredProjectList((starProjectList ?? []).map(project => ({key: project.project.id, ...project})));
+    }
   };
   useEffect(() => {
     getProjectList().then(() => {});
