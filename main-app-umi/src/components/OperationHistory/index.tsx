@@ -17,8 +17,8 @@ const OperationHistory: React.FC<OperationHistoryProps> = (props) => {
           label: <Text type="secondary">{formatDate(String(operation.createdTime) ?? '')}</Text>,
           children: (
             <Row gutter={12}>
-              <Col><Avatar size="small" src={operation.userProfile?.avgPath} /></Col>
-              <Col>
+              <Col flex="0 0"><Avatar size="small" src={operation.userProfile?.avgPath} /></Col>
+              <Col flex="0 0 10vw">
                 <Row><Title className="!m-0" level={5}>{operation.userProfile?.username ?? ''}</Title></Row>
                 <Row><Text>{operation.comment}</Text></Row>
               </Col>
