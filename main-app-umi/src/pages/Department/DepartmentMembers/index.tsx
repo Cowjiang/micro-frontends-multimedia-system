@@ -21,7 +21,7 @@ const DepartmentMembersPage: React.FC = () => {
   const navigate = useNavigate();
   const {token} = useToken();
   const {messageApi} = useModel('messageApi');
-  const {canEditDepartment} = useAccess();
+  const {isSuperAdmin, isDepartmentAdmin} = useAccess();
   const {userInfo}: UserModelState = useSelector((state: any) => state.user);
 
   const tableContainerRef = useRef(null);
@@ -281,7 +281,7 @@ const DepartmentMembersPage: React.FC = () => {
             className="ml-4"
             type="primary"
             onClick={() => protectedAccess(
-              canEditDepartment && userInfo.department?.id == departmentId,
+              isSuperAdmin || (isDepartmentAdmin && userInfo.department?.id == departmentId),
               changeEditStatus
             )}
           >

@@ -61,10 +61,8 @@ const DepartmentMenu: React.FC = () => {
           <div className="w-full h-6"></div>
           <SearchUserDialog
             open={showSearchUser}
-            title="搜索项目成员"
-            dataFilter={
-              (data) => data.filter(r => r.department?.id)
-            }
+            title="搜索部门/成员成员"
+            dataFilter={(data) => data.filter(r => r.department?.id)}
             resultAction={
               (user, _) => (
                 <Text className="ml-auto">
@@ -105,11 +103,10 @@ const DepartmentMenu: React.FC = () => {
                     {type: 'divider'},
                     ...departmentList.length
                       ? departmentList.map(department => ({
-                        // label: <Text>{(department.name ?? '') + '（11人）'}</Text>,
                         label: (
                           <div className="w-full flex">
                             <Text ellipsis>{department.name ?? ''}</Text>
-                            <Text className="ml-auto flex-shrink-0" type="secondary">11人</Text>
+                            <Text className="ml-auto flex-shrink-0" type="secondary">{department?.num ?? 0} 人</Text>
                           </div>
                         ),
                         key: department.id ?? '',
