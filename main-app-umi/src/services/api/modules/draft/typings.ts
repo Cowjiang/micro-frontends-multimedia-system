@@ -58,6 +58,7 @@ export interface ProjectContribution {
    * 稿件类型 ARTICLE MEDIA HTML5
    */
   type?: DraftType | string;
+  temp?: string;
   /**
    * 更新时间
    */

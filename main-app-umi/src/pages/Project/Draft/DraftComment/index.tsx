@@ -146,6 +146,14 @@ const DraftCommentPage: React.FC = () => {
     }
   };
 
+  // 保存稿件批注内容（保存至temp字段）
+  const saveDraftTemp = (value?: string) => {
+    value && draftApi.updateDraft({
+      id: Number(draftId),
+      temp: value
+    });
+  };
+
   // 创建批注链接
   const createCommentLinkById = (id: string | number) => {
     editorRef.current?.execCommand('CreateLink', false, '#flag');
@@ -169,6 +177,7 @@ const DraftCommentPage: React.FC = () => {
         element.setAttribute('href', '#none');
         // element.addEventListener('click', handleCommentClick);
       });
+      saveDraftTemp(editorRef.current?.getContent());
     }
   };
 
@@ -186,6 +195,7 @@ const DraftCommentPage: React.FC = () => {
         editorRef.current?.selection.select(element);
         editorRef.current?.execCommand('Unlink');
       }
+      saveDraftTemp(editorRef.current?.getContent());
     }
   };
 
@@ -291,8 +301,7 @@ const DraftCommentPage: React.FC = () => {
                         editorRef.current = editor;
                         setLoading(false);
                       }}
-                      initialValue={draftDetail?.projectContribution?.content ?? ''}
-                      // disabled
+                      initialValue={draftDetail?.projectContribution?.temp ?? draftDetail?.projectContribution?.content ?? ''}
                     />
                   </div>
                 </Loading>
