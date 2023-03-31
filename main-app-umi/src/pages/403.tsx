@@ -16,7 +16,7 @@ const ForbiddenPage = () => {
         preview={false}
       />
       <Text className="mt-8">
-        抱歉，你没有权限访问该页面
+        抱歉，你没有权限访问或操作
       </Text>
       <Button
         className="!w-32 mt-6"

@@ -75,13 +75,6 @@ const routes = [
     ]
   },
   {
-    path: '/test',
-    routes: [
-      {path: '/test/h5-simulator', component: '@/pages/Test/H5Simulator/index', title: 'H5模拟器测试'},
-      {path: '/test/rich-editor', component: '@/pages/Test/RichEditor/index', title: '富文本测试'},
-    ]
-  },
-  {
     path: '/404',
     title: '404 Not Found',
     component: '@/pages/404'

@@ -66,21 +66,9 @@ const DevPage: React.FC = () => {
             </Button>
             <Button
               type="primary"
-              onClick={() => navigate('/test/h5-simulator')}
-            >
-              移动端H5模拟
-            </Button>
-            <Button
-              type="primary"
               onClick={() => navigate('/admin')}
             >
               后台管理
-            </Button>
-            <Button
-              type="primary"
-              onClick={() => navigate('/test/rich-editor')}
-            >
-              富文本
             </Button>
             <Button
               type="primary"

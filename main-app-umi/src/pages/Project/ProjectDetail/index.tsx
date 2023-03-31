@@ -1,20 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import {
-  Avatar,
-  Breadcrumb,
-  Button,
-  Col,
-  Divider,
-  List,
-  Row,
-  Tabs,
-  TabsProps,
-  Tag,
-  theme,
-  Timeline,
-  Typography
-} from 'antd';
-import { useDispatch, useModel, useNavigate, useParams } from '@@/exports';
+import { Breadcrumb, Button, Col, Divider, List, Row, Tabs, TabsProps, Tag, theme, Typography } from 'antd';
+import { useAccess, useDispatch, useModel, useNavigate, useParams } from '@@/exports';
 import Card from '@/components/Card';
 import Empty from '@/components/Empty';
 import { useSetDocTitle } from '@/utils/hooks';
@@ -24,9 +10,10 @@ import { draftApi, projectApi } from '@/services/api';
 import { ProjectMemberVo, ProjectVo } from '@/services/api/modules/project/typings';
 import dayjs from 'dayjs';
 import { DraftType, ProjectContributionVo } from '@/services/api/modules/draft/typings';
-import { formatDate, formatDraftType } from '@/utils/format';
+import { formatDraftType } from '@/utils/format';
 import { OperationHistoryVo } from '@/services/typings';
 import OperationHistory from '@/components/OperationHistory';
+import { protectedAccess } from '@/utils';
 
 const {useToken} = theme;
 const {Title, Text} = Typography;
@@ -55,6 +42,7 @@ const ProjectDetailPage: React.FC = () => {
   const {id: projectId} = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const {canEditProject} = useAccess();
 
   const {darkTheme} = useModel('theme');
   const [loading, setLoading] = useState(true);
@@ -227,7 +215,10 @@ const ProjectDetailPage: React.FC = () => {
             <Button
               className="mr-4"
               type="primary"
-              onClick={() => navigate(`/project/edit/${projectId}`, {replace: true})}
+              onClick={() => protectedAccess(
+                canEditProject,
+                () => navigate(`/project/edit/${projectId}`, {replace: true})
+              )}
             >
               编辑项目
             </Button>

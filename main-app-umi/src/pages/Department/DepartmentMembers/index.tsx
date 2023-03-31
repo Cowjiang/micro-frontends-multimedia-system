@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './index.less';
-import { useModel, useNavigate, useParams } from '@@/exports';
+import { useAccess, useModel, useNavigate, useParams, useSelector } from '@@/exports';
 import { departmentApi } from '@/services/api';
-import { DepartMemberListVo, Department, UserRole } from '@/services/api/modules/department/typings';
-import { Avatar, Breadcrumb, Button, Dropdown, Image, message, Table, Tag, theme, Typography } from 'antd';
+import { DepartMemberListVo, Department } from '@/services/api/modules/department/typings';
+import { Avatar, Breadcrumb, Button, Dropdown, Image, Table, Tag, theme, Typography } from 'antd';
 import { useSetDocTitle } from '@/utils/hooks';
 import { ColumnsType } from 'antd/es/table';
 import { useSize } from 'ahooks';
@@ -11,6 +11,8 @@ import Empty from '@/components/Empty';
 import SearchUserDialog from '@/components/SearchUserDialog';
 import { UserRoleTag } from '@/pages/Department/DepartmentMembers/typings';
 import { TAG_COLOR_LIST } from '@/constants';
+import { UserModelState } from '@/models/user';
+import { protectedAccess } from '@/utils';
 
 const {Title, Text} = Typography;
 const {useToken} = theme;
@@ -19,6 +21,8 @@ const DepartmentMembersPage: React.FC = () => {
   const navigate = useNavigate();
   const {token} = useToken();
   const {messageApi} = useModel('messageApi');
+  const {canEditDepartment} = useAccess();
+  const {userInfo}: UserModelState = useSelector((state: any) => state.user);
 
   const tableContainerRef = useRef(null);
   const tableContainerSize = useSize(tableContainerRef);
@@ -155,9 +159,7 @@ const DepartmentMembersPage: React.FC = () => {
       dataIndex: 'id',
       key: 'id',
       fixed: 'left',
-      render: (_, {userProfile}) => (
-        <Text>{userProfile?.userId ?? ''}</Text>
-      ),
+      render: (_, {userProfile}) => <Text type="secondary"># {userProfile?.userId ?? ''}</Text>,
       sorter: (a, b) => {
         if (a.userProfile?.userId && b.userProfile?.userId) {
           return a.userProfile.userId - b.userProfile.userId;
@@ -174,7 +176,7 @@ const DepartmentMembersPage: React.FC = () => {
       fixed: 'left',
       render: (_, {userProfile}) => (
         <div className="w-full flex items-center">
-          <Avatar icon={<Image src={userProfile?.avgPath ?? ''} alt="" />} />
+          <Avatar src={userProfile?.avgPath ?? ''} />
           <Text className="ml-2">
             {userProfile?.username ?? ''}
           </Text>
@@ -183,7 +185,7 @@ const DepartmentMembersPage: React.FC = () => {
     },
     {
       title: '角色',
-      width: 200,
+      width: 180,
       dataIndex: 'role',
       key: 'role',
       render: (_, {userRoles}) => (
@@ -207,19 +209,19 @@ const DepartmentMembersPage: React.FC = () => {
       )
     },
     {
-      title: '手机号',
-      dataIndex: 'phone',
-      key: 'phone',
-      width: 180,
-      render: (_, {userProfile}) => <Text>{userProfile?.phone ?? ''}</Text>
-    },
-    {
       title: '邮箱',
       dataIndex: 'email',
       ellipsis: true,
       key: 'email',
       width: 200,
-      render: (_, {userProfile}) => <Text>{userProfile?.email ?? ''}</Text>
+      render: (_, {userProfile}) => <Text>{userProfile?.email ?? '无'}</Text>
+    },
+    {
+      title: '手机号',
+      dataIndex: 'phone',
+      key: 'phone',
+      width: 180,
+      render: (_, {userProfile}) => <Text>{userProfile?.phone || '无'}</Text>
     },
     {
       title: '',
@@ -275,7 +277,14 @@ const DepartmentMembersPage: React.FC = () => {
           <Button ghost type="primary" onClick={() => navigate(`/department/${departmentId}/detail`)}>
             部门详情
           </Button>
-          <Button className="ml-4" type="primary" onClick={changeEditStatus}>
+          <Button
+            className="ml-4"
+            type="primary"
+            onClick={() => protectedAccess(
+              canEditDepartment && userInfo.department?.id == departmentId,
+              changeEditStatus
+            )}
+          >
             {editStatus ? '取消' : '编辑人员'}
           </Button>
           {

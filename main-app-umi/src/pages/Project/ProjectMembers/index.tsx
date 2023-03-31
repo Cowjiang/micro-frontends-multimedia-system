@@ -13,13 +13,15 @@ import {
   theme,
   Typography
 } from 'antd';
-import { useDispatch, useModel, useNavigate, useParams } from '@@/exports';
+import { useAccess, useModel, useNavigate, useParams, useSelector } from '@@/exports';
 import { ProjectMemberVo, ProjectVo } from '@/services/api/modules/project/typings';
 import { projectApi } from '@/services/api';
 import { useSetDocTitle } from '@/utils/hooks';
 import SearchUserDialog from '@/components/SearchUserDialog';
 import UserInfoDialog from '@/components/UserInfoDialog';
 import { UserInfoDialogProps } from '@/components/UserInfoDialog/typings';
+import { protectedAccess } from '@/utils';
+import { UserModelState } from '@/models/user';
 
 const {useToken} = theme;
 const {Title, Text} = Typography;
@@ -27,7 +29,8 @@ const {Title, Text} = Typography;
 const ProjectMembersPage = () => {
   const {id: projectId} = useParams();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const {isSuperAdmin, canEditProject} = useAccess();
+  const {userInfo}: UserModelState = useSelector((state: any) => state.user);
 
   const {token} = useToken();
   const {messageApi} = useModel('messageApi');
@@ -125,7 +128,11 @@ const ProjectMembersPage = () => {
           </Tag>
         </div>
         <div className="ml-auto flex">
-          <Button type="primary" danger={editStatus} onClick={() => setEditStatus(!editStatus)}>
+          <Button
+            type="primary"
+            danger={editStatus}
+            onClick={() => protectedAccess(canEditProject, () => setEditStatus(!editStatus))}
+          >
             {editStatus ? '完成编辑' : '编辑成员'}
           </Button>
         </div>
@@ -201,7 +208,10 @@ const ProjectMembersPage = () => {
                           <i
                             className="fi fi-sr-plus text-5xl cursor-pointer"
                             style={{color: token.colorTextDisabled}}
-                            onClick={() => setShowSearchUser(true)}
+                            onClick={() => protectedAccess(
+                              isSuperAdmin || member.department?.id == userInfo.department?.id,
+                              () => setShowSearchUser(true)
+                            )}
                           />
                         </div>
                         <SearchUserDialog

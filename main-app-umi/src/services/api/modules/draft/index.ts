@@ -155,6 +155,10 @@ async function getOperationHistory(
 ) {
   return request<IResponseData<ResponsePage<OperationHistoryVo>>>(`/operation/history/contribution/${draftId}`, {
     method: 'GET',
+    params: {
+      pageNumber: 1,
+      pageSize: 1000
+    },
     ...(options || {})
   });
 }

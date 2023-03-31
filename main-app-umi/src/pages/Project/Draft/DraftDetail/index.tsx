@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ProjectContribution, ProjectContributionVo } from '@/services/api/modules/draft/typings';
+import React, { useEffect, useRef, useState } from 'react';
+import { ProjectContributionVo } from '@/services/api/modules/draft/typings';
 import { draftApi, projectApi } from '@/services/api';
 import { useLocation, useModel, useNavigate, useParams } from '@@/exports';
 import { Avatar, Breadcrumb, Button, Card as AntdCard, Col, Divider, QRCode, Row, Tag, theme, Typography } from 'antd';
@@ -289,7 +289,7 @@ const DraftDetailPage: React.FC = () => {
                       comment: '创建了此稿件',
                       userProfile: draftDetail?.creatorInfo
                     },
-                    ...draftOperationHistory
+                    ...draftOperationHistory.filter(history => history.comment !== '修改内容：[temp]')
                   ]}
                 />
               </div>
