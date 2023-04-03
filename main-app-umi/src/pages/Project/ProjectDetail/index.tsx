@@ -10,7 +10,7 @@ import { draftApi, projectApi } from '@/services/api';
 import { ProjectMemberVo, ProjectVo } from '@/services/api/modules/project/typings';
 import dayjs from 'dayjs';
 import { DraftType, ProjectContributionVo } from '@/services/api/modules/draft/typings';
-import { formatDraftType } from '@/utils/format';
+import { formatDraftType, formatProjectStatus } from '@/utils/format';
 import { OperationHistoryVo } from '@/services/typings';
 import OperationHistory from '@/components/OperationHistory';
 import { protectedAccess } from '@/utils';
@@ -261,15 +261,8 @@ const ProjectDetailPage: React.FC = () => {
                 <Row className="mb-4">
                   <Col span={4}><Text strong>项目状态：</Text></Col>
                   <Col span={20}>
-                    {/*{*/}
-                    {/*  projectInfo.status.map(status => (*/}
-                    {/*    <Tag color="green" key={status}>*/}
-                    {/*      {status}*/}
-                    {/*    </Tag>*/}
-                    {/*  ))*/}
-                    {/*}*/}
-                    <Tag color="green">
-                      {projectInfo?.project.stat ?? '进行中'}
+                    <Tag color={formatProjectStatus(projectInfo?.project).color}>
+                      {formatProjectStatus(projectInfo?.project).tag}
                     </Tag>
                   </Col>
                 </Row>
@@ -412,7 +405,9 @@ const ProjectDetailPage: React.FC = () => {
               loading={loading}
               loadingOptions={{paragraph: {rows: 6}}}
             >
-              <div className="w-full min-h-[200px] flex items-center justify-center">
+              <div
+                className="w-full min-h-[200px] max-h-[50vh] py-4 flex justify-center overflow-x-hidden overflow-y-auto"
+              >
                 <OperationHistory
                   operationHistory={[
                     {

@@ -84,7 +84,7 @@ const DraftDetailPage: React.FC = () => {
     });
   };
 
-  const [showH5Preview, setShowH5Preview] = useState(false)
+  const [showH5Preview, setShowH5Preview] = useState(false);
 
   return (
     <div className="draft-detail-page w-full h-full px-16 flex flex-col">
@@ -281,7 +281,7 @@ const DraftDetailPage: React.FC = () => {
         <Row gutter={16}>
           <Col span={12}>
             <Card title="操作记录">
-              <div className="min-h-[200px] flex items-center justify-center">
+              <div className="min-h-[200px] max-h-[50vh] py-4 flex justify-center overflow-x-hidden overflow-y-auto">
                 <OperationHistory
                   operationHistory={[
                     {
@@ -303,6 +303,7 @@ const DraftDetailPage: React.FC = () => {
             </Card>
           </Col>
         </Row>
+        <div className="h-8"></div>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAccess, useLocation, useModel, useNavigate, useSearchParams, useSelector } from '@@/exports';
-import { Button, Dropdown, Input, Table, Tabs, Tag, theme, Typography } from 'antd';
+import { Button, Dropdown, Input, Modal, Table, Tabs, Tag, theme, Typography } from 'antd';
 import { useSetDocTitle } from '@/utils/hooks';
 import { ColumnsType } from 'antd/es/table';
 import Empty from '@/components/Empty';
@@ -8,6 +8,8 @@ import { Project, ProjectVo } from '@/services/api/modules/project/typings';
 import { projectApi } from '@/services/api';
 import dayjs from 'dayjs';
 import { UserModelState } from '@/models/user';
+import { protectedAccess } from '@/utils';
+import { formatProjectStatus } from '@/utils/format';
 
 const {useToken} = theme;
 const {Title, Text} = Typography;
@@ -24,7 +26,7 @@ const ProjectListPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const {messageApi} = useModel('messageApi');
-  const {isDepartmentAdmin, isSuperAdmin} = useAccess();
+  const {isDepartmentAdmin, isSuperAdmin, canEditProject} = useAccess();
   const {userInfo}: UserModelState = useSelector((state: any) => state.user);
 
   const {token} = useToken();
@@ -83,9 +85,9 @@ const ProjectListPage: React.FC = () => {
       key: 'stat',
       dataIndex: 'stat',
       width: 150,
-      render: (_, {project: {stat}}) => (
-        <Tag color="green">
-          进行中
+      render: (_, {project}) => (
+        <Tag color={formatProjectStatus(project).color}>
+          {formatProjectStatus(project).tag}
         </Tag>
       )
     },
@@ -150,6 +152,28 @@ const ProjectListPage: React.FC = () => {
                 label: project.star ? '取消星标' : '设置星标',
                 key: '3',
                 onClick: () => handleStarProject(project)
+              },
+              {
+                label: '删除项目',
+                key: '4',
+                danger: true,
+                onClick: () => protectedAccess(
+                  canEditProject,
+                  () => {
+                    Modal.confirm({
+                      content: '确定要删除项目吗？',
+                      onOk: () => {
+                        projectApi.deleteProject(project.id as number).then(() => {
+                          getProjectList().then(() => {
+                            messageApi.success('删除成功');
+                          });
+                        }).catch(() => {
+                          messageApi.error('删除失败');
+                        });
+                      }
+                    });
+                  }
+                )
               }
             ]
           }}

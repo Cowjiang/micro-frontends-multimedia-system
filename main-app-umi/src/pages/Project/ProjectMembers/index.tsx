@@ -22,7 +22,6 @@ import UserInfoDialog from '@/components/UserInfoDialog';
 import { UserInfoDialogProps } from '@/components/UserInfoDialog/typings';
 import { protectedAccess } from '@/utils';
 import { UserModelState } from '@/models/user';
-import Empty from '@/components/Empty';
 
 const {useToken} = theme;
 const {Title, Text} = Typography;
