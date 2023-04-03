@@ -95,7 +95,7 @@ const ProjectEditPage: React.FC = () => {
       }).then(({success}) => {
         if (success) {
           messageApi.success('修改成功');
-          navigate(`/project/${projectId}/detail`, {replace: true});
+          navigate(`/project/${projectId}/member/config`, {replace: true});
         }
       }).catch(e => {
         messageApi.error('修改失败');

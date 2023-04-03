@@ -22,6 +22,7 @@ import UserInfoDialog from '@/components/UserInfoDialog';
 import { UserInfoDialogProps } from '@/components/UserInfoDialog/typings';
 import { protectedAccess } from '@/utils';
 import { UserModelState } from '@/models/user';
+import Empty from '@/components/Empty';
 
 const {useToken} = theme;
 const {Title, Text} = Typography;
@@ -81,6 +82,7 @@ const ProjectMembersPage = () => {
 
   // 显示搜索用户弹窗
   const [showSearchUser, setShowSearchUser] = useState(false);
+  const [searchUserDepartmentId, setSearchUserDepartmentId] = useState<number | undefined>();
   // 添加项目成员
   const addProjectMember = (userId?: number) => {
     if (userId && projectId) {
@@ -196,6 +198,25 @@ const ProjectMembersPage = () => {
                     ))
                   }
                   {
+                    !member.userProfileList?.length && !editStatus && (
+                      <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={6} key="add">
+                        <div
+                          className="w-full h-[144px] flex flex-col justify-center items-center border-dashed border-2"
+                          style={{
+                            borderColor: token.colorBorderSecondary,
+                            borderRadius: token.borderRadius
+                          }}
+                        >
+                          <i
+                            className="fi fi-sr-delete-user mb-2 text-4xl"
+                            style={{color: token.colorTextDisabled}}
+                          />
+                          <Text type="secondary">暂无成员</Text>
+                        </div>
+                      </Col>
+                    )
+                  }
+                  {
                     editStatus && (
                       <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={6} key="add">
                         <div
@@ -210,30 +231,13 @@ const ProjectMembersPage = () => {
                             style={{color: token.colorTextDisabled}}
                             onClick={() => protectedAccess(
                               isSuperAdmin || member.department?.id == userInfo.department?.id,
-                              () => setShowSearchUser(true)
+                              () => {
+                                setSearchUserDepartmentId(member.department?.id);
+                                setShowSearchUser(true);
+                              }
                             )}
                           />
                         </div>
-                        <SearchUserDialog
-                          open={showSearchUser}
-                          title="添加项目成员"
-                          dataFilter={
-                            (data) => data.filter(r => r.department?.id === member.department?.id)
-                          }
-                          resultAction={
-                            (user, _) => (
-                              <Text className="ml-auto">
-                                <a
-                                  style={{color: token.colorPrimary}}
-                                  onClick={() => addProjectMember(user.userProfile.userId)}
-                                >
-                                  添加
-                                </a>
-                              </Text>
-                            )
-                          }
-                          onCancel={() => setShowSearchUser(false)}
-                        />
                       </Col>
                     )
                   }
@@ -243,6 +247,27 @@ const ProjectMembersPage = () => {
           ))
         }
       </div>
+      <SearchUserDialog
+        open={showSearchUser}
+        title="添加项目成员"
+        dataFilter={data => data.filter(r => r.department?.id === searchUserDepartmentId)}
+        resultAction={
+          (user, _) => (
+            <Text className="ml-auto">
+              <a
+                style={{color: token.colorPrimary}}
+                onClick={() => addProjectMember(user.userProfile.userId)}
+              >
+                添加
+              </a>
+            </Text>
+          )
+        }
+        onCancel={() => {
+          setShowSearchUser(false);
+          setSearchUserDepartmentId(undefined);
+        }}
+      />
       <UserInfoDialog
         {...userProfileDialogProps}
         destroyOnClose
