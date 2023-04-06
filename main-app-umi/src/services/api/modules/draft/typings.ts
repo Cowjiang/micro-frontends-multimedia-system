@@ -109,3 +109,35 @@ export interface ProjectContributionComment {
    */
   userId?: number;
 }
+
+/**
+ * ContributionCheckVo
+ */
+export interface ContributionCheckVo {
+  contributionCheck?: ContributionCheck;
+  userProfile?: UserProfile;
+}
+
+/**
+ * ContributionCheck
+ */
+export interface ContributionCheck {
+  /**
+   * 审核意见
+   */
+  content?: string;
+  contributionId?: number;
+  /**
+   * 创建时间
+   */
+  createdTime?: number;
+  id?: number;
+  /**
+   * 审核结果 1-通过 2-不通过
+   */
+  result?: number;
+  /**
+   * 审核人
+   */
+  userId?: number;
+}

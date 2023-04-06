@@ -1,6 +1,8 @@
 import { request } from '@@/exports';
 import { IResponseData, OperationHistoryVo, ResponsePage } from '@/services/typings';
 import {
+  ContributionCheck,
+  ContributionCheckVo,
   DraftType,
   ProjectContribution, ProjectContributionComment,
   ProjectContributionCommentVo,
@@ -163,6 +165,52 @@ async function getOperationHistory(
   });
 }
 
+
+// 获取稿件审批列表
+async function getDraftReviewList(
+  draftId: string | number,
+  options?: { [key: string]: any }
+) {
+  return request<IResponseData<ContributionCheckVo[]>>(`/project/contribution/check/${draftId}`, {
+    method: 'GET',
+    ...(options || {})
+  });
+}
+
+// 添加稿件审批
+async function addDraftReview(
+  data: ContributionCheck,
+  options?: { [key: string]: any }
+) {
+  return request<IResponseData<any>>(`/project/contribution/check/`, {
+    method: 'POST',
+    ...(options || {})
+  });
+}
+
+
+// 修改稿件审批
+async function updateDraftReview(
+  data: ContributionCheck,
+  options?: { [key: string]: any }
+) {
+  return request<IResponseData<any>>(`/project/contribution/check/`, {
+    method: 'PUT',
+    ...(options || {})
+  });
+}
+
+// 删除稿件审批
+async function deleteDraftReview(
+  reviewId: number | string,
+  options?: { [key: string]: any }
+) {
+  return request<IResponseData<any>>(`/project/contribution/check/${reviewId}`, {
+    method: 'DELETE',
+    ...(options || {})
+  });
+}
+
 export default {
   getProjectDraftList,
   getDraftDetail,
@@ -175,5 +223,9 @@ export default {
   updateDraftComment,
   removeDraftComment,
   deployPreviewH5,
-  getOperationHistory
+  getOperationHistory,
+  getDraftReviewList,
+  addDraftReview,
+  updateDraftReview,
+  deleteDraftReview
 };
