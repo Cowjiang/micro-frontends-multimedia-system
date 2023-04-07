@@ -12,6 +12,7 @@ import RichTextEditor from '@/components/RichTextEditor';
 import Card from '@/components/Card';
 import Empty from '@/components/Empty';
 import { UserModelState } from '@/models/user';
+import ReviewDialog from '@/pages/Project/Draft/DraftComment/ReviewDialog';
 
 const {Title, Text} = Typography;
 const {useToken} = theme;
@@ -206,6 +207,8 @@ const DraftCommentPage: React.FC = () => {
   //   setCurrentComment(eval(element.getAttribute('data-mce-id') ?? '0'));
   // };
 
+  const [showReviewDialog, setShowReviewDialog] = useState(false);
+
   return (
     <div className="draft-comment-page w-full h-full px-16 flex flex-col">
       <div>
@@ -333,8 +336,11 @@ const DraftCommentPage: React.FC = () => {
               <Button type="primary" size="large" onClick={() => setTourOpen(true)}>
                 添加批注
               </Button>
-              <Button className="ml-4" type="primary" size="large" ghost>
-                审批意见
+              <Button className="ml-4" type="primary" size="large" ghost onClick={() => setShowReviewDialog(true)}>
+                审批流程
+              </Button>
+              <Button className="ml-4" type="primary" size="large" ghost onClick={() => setShowReviewDialog(true)}>
+                新增审批意见
               </Button>
             </div>
           </Card>
@@ -420,6 +426,11 @@ const DraftCommentPage: React.FC = () => {
           />
         </div>
       </Modal>
+      <ReviewDialog
+        draftId={draftId}
+        open={showReviewDialog}
+        onCancel={() => setShowReviewDialog(false)}
+      />
     </div>
   );
 };

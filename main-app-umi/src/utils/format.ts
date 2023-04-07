@@ -4,9 +4,9 @@ import { DraftType } from '@/services/api/modules/draft/typings';
 import { Project } from '@/services/api/modules/project/typings';
 
 // 格式化日期
-export function formatDate(date: string, format: string = 'YYYY年MM月DD日 HH:mm:ss'): string {
+export function formatDate(date: number | string, format: string = 'YYYY年MM月DD日 HH:mm:ss'): string {
   if (date === 'Invalid Date') return '一个无人知晓的次元时间';
-  if (date.length !== 10) return dayjs(date).format(format) ?? '';
+  if (typeof date === 'number' || date.length !== 10) return dayjs(date).format(format) ?? '';
   return dayjs.unix(Number(date)).format(format) ?? '';
 }
 

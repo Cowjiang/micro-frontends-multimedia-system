@@ -184,6 +184,7 @@ async function addDraftReview(
 ) {
   return request<IResponseData<any>>(`/project/contribution/check/`, {
     method: 'POST',
+    data,
     ...(options || {})
   });
 }
@@ -196,6 +197,7 @@ async function updateDraftReview(
 ) {
   return request<IResponseData<any>>(`/project/contribution/check/`, {
     method: 'PUT',
+    data,
     ...(options || {})
   });
 }
