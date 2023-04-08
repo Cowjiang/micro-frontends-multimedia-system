@@ -1,6 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useModel, useNavigate, useParams, useSelector } from '@@/exports';
-import { Avatar, Breadcrumb, Button, Col, Divider, Input, List, Modal, Row, Tag, theme, Tour, Typography } from 'antd';
+import {
+  Avatar,
+  Breadcrumb,
+  Button,
+  Col,
+  Divider,
+  Input,
+  List,
+  Modal,
+  QRCode,
+  Row,
+  Tag,
+  theme,
+  Tour,
+  Typography
+} from 'antd';
 import { ProjectVo } from '@/services/api/modules/project/typings';
 import { draftApi, projectApi } from '@/services/api';
 import { ProjectContributionCommentVo, ProjectContributionVo } from '@/services/api/modules/draft/typings';
@@ -12,7 +27,8 @@ import RichTextEditor from '@/components/RichTextEditor';
 import Card from '@/components/Card';
 import Empty from '@/components/Empty';
 import { UserModelState } from '@/models/user';
-import ReviewDialog from '@/pages/Project/Draft/DraftComment/ReviewDialog';
+import DraftReview from '@/pages/Project/Draft/DraftReview';
+import H5PreviewDialog from '@/components/H5PreviewDialog';
 
 const {Title, Text} = Typography;
 const {useToken} = theme;
@@ -25,7 +41,7 @@ const DraftCommentPage: React.FC = () => {
   const {messageApi} = useModel('messageApi');
   const {darkTheme} = useModel('theme');
   const {token} = useToken();
-  const {colorPrimary, colorError} = token;
+  const {colorPrimary, colorError, colorFillQuaternary} = token;
 
   const {userInfo}: UserModelState = useSelector((state: any) => state.user);
 
@@ -207,6 +223,18 @@ const DraftCommentPage: React.FC = () => {
   //   setCurrentComment(eval(element.getAttribute('data-mce-id') ?? '0'));
   // };
 
+  // 部署H5
+  const handleDeployH5 = () => {
+    setLoading(true);
+    draftId && draftApi.deployPreviewH5(draftId).then(() => {
+      messageApi.success('正在部署，请等待一分钟后刷新');
+    }).catch(err => {
+      messageApi.error('部署失败');
+    }).finally(() => {
+      setLoading(false);
+    });
+  };
+  const [showH5Preview, setShowH5Preview] = useState(false);
   const [showReviewDialog, setShowReviewDialog] = useState(false);
 
   return (
@@ -313,18 +341,73 @@ const DraftCommentPage: React.FC = () => {
             {
               draftType === 'media' && (
                 <div className="w-full h-[60vh] flex justify-center items-center">
-                  <i className="fi fi-sr-play text-6xl" style={{color: colorPrimary}} />
+                  <i className="fi fi-sr-play text-7xl" style={{color: colorPrimary}} />
                   <div className="ml-6 flex flex-col items-center">
                     <Text type="secondary">共一个音视频文件</Text>
                     <div className="w-full flex justify-between mt-2">
                       <Text>
-                        <a href={draftDetail?.projectContribution.mediaUrl} style={{color: colorPrimary}}>
-                          查看
-                        </a>
+                        <a href={draftDetail?.projectContribution.mediaUrl} style={{color: colorPrimary}}>查看</a>
                       </Text>
                       <Text style={{color: colorPrimary}}>下载文件</Text>
                     </div>
                   </div>
+                  {
+                    draftDetail?.projectContribution.mediaUrl && (<>
+                      <Divider type="vertical" className="!h-24 !mx-12" />
+                      <QRCode
+                        value={draftDetail.projectContribution.mediaUrl}
+                        size={110}
+                        bordered={false}
+                        color={colorPrimary}
+                        style={{background: darkTheme ? colorFillQuaternary : '#fff'}}
+                      />
+                    </>)
+                  }
+                </div>
+              )
+            }
+            {
+              draftType === 'h5' && (
+                <div className="w-full h-[60vh] flex justify-center items-center">
+                  <i className="fi fi-br-link-alt text-7xl" style={{color: colorPrimary}} />
+                  <div className="ml-6 flex flex-col items-center">
+                    <Text type="secondary">共一个 H5 项目文件</Text>
+                    <div className="w-full flex justify-between mt-2">
+                      <Text>
+                        <a onClick={() => setShowH5Preview(true)} style={{color: colorPrimary}}>预览</a>
+                        <H5PreviewDialog
+                          open={showH5Preview}
+                          url={draftDetail?.projectContribution.content}
+                          onCancel={() => setShowH5Preview(false)}
+                          destroyOnClose
+                        />
+                      </Text>
+                      <Text style={{color: colorPrimary}}>
+                        <a href={draftDetail?.projectContribution.mediaUrl} style={{color: colorPrimary}}>下载源码</a>
+                      </Text>
+                    </div>
+                  </div>
+                  {
+                    draftDetail?.projectContribution.mediaUrl && (<>
+                      <Divider type="vertical" className="!h-24 !mx-12" />
+                      {
+                        draftDetail?.projectContribution.content
+                          ? <QRCode
+                            value={draftDetail.projectContribution.content}
+                            size={110}
+                            bordered={false}
+                            color={colorPrimary}
+                          />
+                          : <Button
+                            type="primary"
+                            size="large"
+                            onClick={handleDeployH5}
+                          >
+                            生成预览链接
+                          </Button>
+                      }
+                    </>)
+                  }
                 </div>
               )
             }
@@ -426,8 +509,9 @@ const DraftCommentPage: React.FC = () => {
           />
         </div>
       </Modal>
-      <ReviewDialog
+      <DraftReview
         draftId={draftId}
+        isDialog
         open={showReviewDialog}
         onCancel={() => setShowReviewDialog(false)}
       />

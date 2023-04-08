@@ -10,12 +10,12 @@ import RichTextEditor from '@/components/RichTextEditor';
 import { Editor } from 'tinymce';
 import Loading from '@/components/Loading';
 import Card from '@/components/Card';
-import Empty from '@/components/Empty';
 import messageApi from '@/models/messageApi';
 import { OperationHistoryVo } from '@/services/typings';
 import dayjs from 'dayjs';
 import OperationHistory from '@/components/OperationHistory';
 import H5PreviewDialog from '@/components/H5PreviewDialog';
+import DraftReview from '@/pages/Project/Draft/DraftReview';
 
 const {Title, Text} = Typography;
 const {useToken} = theme;
@@ -297,9 +297,10 @@ const DraftDetailPage: React.FC = () => {
           </Col>
           <Col span={12}>
             <Card title="审批记录">
-              <div className="min-h-[200px] flex items-center justify-center">
-                <Empty />
-              </div>
+              <DraftReview
+                draftId={draftId}
+                disabled
+              />
             </Card>
           </Col>
         </Row>
