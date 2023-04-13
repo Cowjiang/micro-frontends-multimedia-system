@@ -79,6 +79,9 @@ export const requestConfig: RequestConfig = {
             history.push('/auth/login');
           }
           return v;
+        } else if (v.data.code === 3001) {
+          // 没有权限
+          history.replace('/403');
         }
       }
     }
