@@ -10,7 +10,7 @@ import { useSize } from 'ahooks';
 import Empty from '@/components/Empty';
 import SearchUserDialog from '@/components/SearchUserDialog';
 import { UserRoleTag } from '@/pages/Department/DepartmentMembers/typings';
-import { TAG_COLOR_LIST } from '@/constants';
+import { PRIMARY_COLOR, TAG_COLOR_LIST } from '@/constants';
 import { UserModelState } from '@/models/user';
 import { protectedAccess } from '@/utils';
 
@@ -188,8 +188,9 @@ const DepartmentMembersPage: React.FC = () => {
       width: 180,
       dataIndex: 'role',
       key: 'role',
-      render: (_, {userRoles}) => (
+      render: (_, {userRoles, userProfile}) => (
         <div>
+          {userProfile?.userId === departmentInfo.userId && <Tag color={PRIMARY_COLOR}>部门管理员</Tag>}
           {userRoles?.map(role => (
             <Tag
               key={role.id}
